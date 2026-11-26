@@ -1,593 +1,187 @@
 
-const $ = (s) => document.querySelector(s);
+const gambit = "https://www.kapowtoys.de/uploads/2020/05/mafex-gambit-4.jpg";
 
-const gambitImg = "https://66703.cdn.simplo7.net/static/66703/sku/action-figures-revoltech-gambit-amazing-yamaguchi-marvel-x-men--p-1640724075839.jpg";
+let posts = [
+  {
+    id: 1,
+    image: "https://pisces.bbystatic.com/image2/BestBuy_US/images/products/b118e48d-1435-4252-8c34-d83d04457b30.jpg",
+    caption: "Batman McFarlane! 🦇",
+    likes: 128,
+    comments: ["raven: Ficou incrível! 🖤", "geovanna: Muito bom!"]
+  },
+  {
+    id: 2,
+    image: "https://i5.walmartimages.com/asr/c8ab619c-99dd-474b-b9b8-ff9bb9db23bf.74d16e9627066bbe87cd7ea14b01e348.jpeg",
+    caption: "Spider-Man MAFEX! 🕷️",
+    likes: 95,
+    comments: ["raven: Esse é muito bonito!", "figs_world: Coleção top!"]
+  },
+  {
+    id: 3,
+    image: "https://img.toy-people.com/member/167351257011.jpg",
+    caption: "Naruto S.H.Figuarts 🍥",
+    likes: 76,
+    comments: ["raven: Adorei esse!", "geovanna: Quero um também."]
+  },
+  {
+    id: 4,
+    image: "https://files.ekmcdn.com/f3c05b/images/the-thing-ultimate-macready-v.3-last-stand-7-inch-scale-action-figure-from-neca-%287%29-40167-1-p.jpg?h=9999&v=FAFED150-46D1-4E94-95A8-A47626006774&w=700",
+    caption: "Mais uma figura para a coleção!",
+    likes: 64,
+    comments: ["raven: Ficou perfeito!"]
+  },
+  {
+    id: 5,
+    image: "https://monsutagames.co.uk/cdn/shop/files/medicom-mafex-the-amazing-spiderman-185-classic-costume-version-01.jpg?v=1741795303",
+    caption: "Mais um Homem-Aranha para a coleção.",
+    likes: 112,
+    comments: ["raven: Esse é meu favorito!"]
+  },
+  {
+    id: 6,
+    image: gambit,
+    caption: "Gambit! Um dos meus favoritos. ♠️",
+    likes: 150,
+    comments: ["raven: Esse combina com seu perfil! 🖤"]
+  }
+];
 
-let posts = [];
-
-try {
-  posts = JSON.parse(localStorage.getItem("facebook_vini_posts")) || [];
-} catch {
-  posts = [];
-}
-
-if (!posts.length) {
-  posts = [
-    {
-      id: 1,
-      author: "VINI_FIGS",
-      text: "Minha nova aquisição! O Gambit chegou para a coleção! 🃏🔥",
-      image: gambitImg,
-      likes: 28,
-      liked: false,
-      comments: [
-        { author: "Raven", text: "Essa figura é linda! Mas capricha mais nas poses." },
-        { author: "Pedro", text: "Que coleção incrível!" }
-      ]
-    },
-    {
-      id: 2,
-      author: "Raven",
-      text: "Um pouco da minha coleção. 🖤",
-      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=900",
-      likes: 42,
-      liked: false,
-      comments: [
-        { author: "VINI_FIGS", text: "Muito bonita sua coleção!" }
-      ]
-    },
-    {
-      id: 3,
-      author: "VINI_FIGS",
-      text: "Testando uma nova pose do Gambit. De 0 a 10? 👀",
-      image: gambitImg,
-      likes: 15,
-      liked: false,
-      comments: [
-        { author: "Raven", text: "8/10! Gostei, mas poderia ter mais movimento." }
-      ]
-    }
-  ];
-}
-
-let currentPage = "home";
-let currentProfile = "VINI_FIGS";
+let liked = [];
 let saved = [];
+let selectedPost = null;
 
-try {
-  saved = JSON.parse(localStorage.getItem("facebook_vini_saved")) || [];
-} catch {
-  saved = [];
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const target = document.getElementById(page);
+  if (target) target.classList.add("active");
+
+  if (page === "home") renderFeed();
+  if (page === "profile") renderProfile();
+  if (page === "explore") renderExplore();
+  if (page === "saved") renderSaved();
 }
 
-function persist() {
-  localStorage.setItem("facebook_vini_posts", JSON.stringify(posts));
-  localStorage.setItem("facebook_vini_saved", JSON.stringify(saved));
-}
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
 
-function safe(text) {
-  return String(text ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  })[c]);
-}
-
-function avatar(name) {
-  if (name === "Raven") {
-    return '<span class="avatar raven">R</span>';
-  }
-  if (name === "Pedro") {
-    return '<span class="avatar blue">P</span>';
-  }
-  if (name === "Maria") {
-    return '<span class="avatar pink">M</span>';
-  }
-  return '<span class="avatar">V</span>';
-}
-
-function toast(message) {
-  const element = $("#toast");
-  if (!element) return;
-
-  element.textContent = message;
-  element.style.display = "block";
-
-  clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => {
-    element.style.display = "none";
-  }, 2200);
-}
-
-function postHTML(post) {
-  const comments = Array.isArray(post.comments) ? post.comments : [];
-
+function postCard(post) {
   return `
-    <article class="card" id="post-${post.id}">
+    <article class="post">
       <div class="post-header">
-        ${avatar(post.author)}
-        <div>
-          <strong>${safe(post.author)}</strong>
-          <small>Agora · 🌎</small>
-        </div>
+        <img src="${gambit}" alt="Gambit" onclick="showPage('profile')">
+        <strong onclick="showPage('profile')">vini_figs</strong>
       </div>
-
-      <div class="post-text">${safe(post.text)}</div>
-
-      ${post.image ? `
-        <img class="post-image"
-          src="${safe(post.image)}"
-          alt="Imagem da publicação"
-          onerror="this.style.display='none'">
-      ` : ""}
-
-      <div class="post-stats">
-        <span>👍 ${Number(post.likes) || 0} curtidas</span>
-        <span>${comments.length} comentários</span>
-      </div>
-
+      <img class="post-image" src="${post.image}" alt="${post.caption}" onclick="openPost(${post.id})"
+        onerror="this.src='https://placehold.co/600x600?text=Action+Figure'">
       <div class="post-actions">
-        <button data-like="${post.id}" class="${post.liked ? "liked" : ""}">
-          👍 Curtir
-        </button>
-        <button data-focus-comment="${post.id}">💬 Comentar</button>
-        <button data-share="${post.id}">↗ Compartilhar</button>
-        <button data-save="${post.id}">
-          ${saved.includes(post.id) ? "🔖" : "☆"}
-        </button>
+        <button onclick="toggleLike(${post.id})">${liked.includes(post.id) ? "❤️" : "🤍"}</button>
+        <button onclick="openPost(${post.id})">💬</button>
+        <button onclick="toggleSave(${post.id})">${saved.includes(post.id) ? "🔖" : "♧"}</button>
       </div>
-
-      <div class="comments">
-        ${comments.map(comment => `
-          <div class="comment">
-            <strong>${safe(comment.author)}</strong>
-            ${safe(comment.text)}
-          </div>
-        `).join("")}
-      </div>
-
-      <form class="comment-form" data-comment-form="${post.id}">
-        <input name="comment" placeholder="Escreva um comentário..." required>
-        <button type="submit">Enviar</button>
+      <div class="post-caption"><strong>${post.likes + (liked.includes(post.id) ? 1 : 0)} curtidas</strong><p><strong>vini_figs</strong> ${post.caption}</p></div>
+      <div class="comments">${post.comments.map(c => `<p>${c}</p>`).join("")}</div>
+      <form class="comment-form" onsubmit="addComment(event, ${post.id})">
+        <input placeholder="Adicione um comentário..." required>
+        <button>Publicar</button>
       </form>
     </article>
   `;
 }
 
-function storiesHTML() {
-  return `
-    <div class="card">
-      <div class="story-list">
-        <div class="story" data-story="VINI_FIGS">
-          <span class="avatar">V</span>
-          Criar story
-        </div>
-
-        <div class="story" data-story="Raven">
-          <span class="avatar raven">R</span>
-          Raven
-        </div>
-
-        <div class="story" data-story="Gambit">
-          <span class="avatar">G</span>
-          Gambit
-        </div>
-
-        <div class="story" data-story="Pedro">
-          <span class="avatar blue">P</span>
-          Pedro
-        </div>
-      </div>
-    </div>
-  `;
+function renderFeed() {
+  document.getElementById("feed").innerHTML = posts.map(postCard).join("");
 }
 
-function composerHTML() {
-  return `
-    <div class="card">
-      <div class="create-post">
-        <span class="avatar">V</span>
-        <input id="openComposer"
-          placeholder="No que você está pensando, VINI_FIGS?">
-      </div>
-      <hr>
-      <button id="openComposerButton">📷 Foto/vídeo</button>
-    </div>
-  `;
+function renderProfile() {
+  document.getElementById("profileGrid").innerHTML = posts.map(post => `
+    <img src="${post.image}" alt="${post.caption}" onclick="openPost(${post.id})"
+      onerror="this.src='https://placehold.co/400x400?text=Action+Figure'">
+  `).join("");
+  document.getElementById("postCount").textContent = posts.length;
 }
 
-function renderHome() {
-  $("#app").innerHTML = `
-    ${storiesHTML()}
-    ${composerHTML()}
-    ${posts.map(postHTML).join("")}
-  `;
-}
-
-function renderProfile(name) {
-  const profilePosts = posts.filter(post => post.author === name);
-
-  $("#app").innerHTML = `
-    <div class="card">
-      <div class="profile-cover"></div>
-
-      <div class="profile-info">
-        ${avatar(name)}
-        <h2>${safe(name)}</h2>
-
-        <p class="muted">
-          ${name === "Raven"
-            ? "Colecionadora e crítica de poses 🖤"
-            : "Colecionador de Action Figures 🦸‍♂️"}
-        </p>
-
-        <p>${profilePosts.length} publicações · ${name === "Raven" ? 328 : 1250} amigos</p>
-
-        <button class="primary" id="profileMessage">Mensagem</button>
-        <button class="secondary" id="profileAdd">Adicionar amigo</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>Publicações</h3>
-      ${profilePosts.length
-        ? profilePosts.map(postHTML).join("")
-        : '<p class="empty">Nenhuma publicação ainda.</p>'}
-    </div>
-  `;
-}
-
-function renderFriends() {
-  const people = ["Raven", "Gambit", "Pedro", "Maria", "Deadpool"];
-
-  $("#app").innerHTML = `
-    <div class="card">
-      <h2>Amigos</h2>
-
-      ${people.map(name => `
-        <div class="contact" style="cursor:pointer">
-          ${avatar(name)}
-          <strong>${safe(name)}</strong>
-          <button class="primary" data-person="${safe(name)}">Ver perfil</button>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-
-function renderGroups() {
-  $("#app").innerHTML = `
-    <div class="card">
-      <h2>Seus grupos</h2>
-      <h3>🦸 Colecionadores de Action Figures</h3>
-      <p class="muted">12 mil membros · Grupo público</p>
-      <button class="primary" data-join>Participar</button>
-    </div>
-
-    <div class="card">
-      <h3>🎮 Universo Geek</h3>
-      <p class="muted">8 mil membros · Grupo público</p>
-      <button class="primary" data-join>Participar</button>
-    </div>
-
-    <div class="card">
-      <h3>🃏 Marvel Figures Brasil</h3>
-      <p class="muted">5 mil membros · Grupo público</p>
-      <button class="primary" data-join>Participar</button>
-    </div>
-  `;
-}
-
-function renderVideos() {
-  $("#app").innerHTML = `
-    <div class="card">
-      <h2>Vídeos</h2>
-      <p class="empty">🎬 Em breve, vídeos da coleção!</p>
-    </div>
-  `;
+function renderExplore() {
+  document.getElementById("exploreGrid").innerHTML = posts.map(post => `
+    <img src="${post.image}" alt="${post.caption}" onclick="openPost(${post.id})">
+  `).join("");
 }
 
 function renderSaved() {
-  const list = posts.filter(post => saved.includes(post.id));
-
-  $("#app").innerHTML = `
-    <div class="card">
-      <h2>Publicações salvas</h2>
-      ${list.length
-        ? list.map(postHTML).join("")
-        : '<p class="empty">Nenhuma publicação salva.</p>'}
-    </div>
-  `;
+  const savedPosts = posts.filter(post => saved.includes(post.id));
+  document.getElementById("savedGrid").innerHTML = savedPosts.map(post => `
+    <img src="${post.image}" alt="${post.caption}" onclick="openPost(${post.id})">
+  `).join("") || "<p>Nenhuma publicação salva ainda.</p>";
 }
 
-function renderMarketplace() {
-  $("#app").innerHTML = `
-    <div class="card">
-      <h2>Marketplace</h2>
-      <p>Encontre figuras e colecionáveis.</p>
-      <div class="empty">🛒 Em breve!</div>
-    </div>
-  `;
+function toggleLike(id) {
+  liked = liked.includes(id) ? liked.filter(x => x !== id) : [...liked, id];
+  renderFeed();
 }
 
-function render() {
-  const app = $("#app");
-  if (!app) throw new Error("Não encontrei o elemento #app no HTML.");
-
-  switch (currentPage) {
-    case "home":
-      renderHome();
-      break;
-    case "profile":
-      renderProfile(currentProfile);
-      break;
-    case "friends":
-      renderFriends();
-      break;
-    case "groups":
-      renderGroups();
-      break;
-    case "videos":
-      renderVideos();
-      break;
-    case "saved":
-      renderSaved();
-      break;
-    case "marketplace":
-      renderMarketplace();
-      break;
-    default:
-      renderHome();
-  }
+function toggleSave(id) {
+  saved = saved.includes(id) ? saved.filter(x => x !== id) : [...saved, id];
+  renderFeed();
 }
 
-function openModal(content) {
-  $("#modalContent").innerHTML = content;
-  $("#modal").classList.remove("hidden");
+function addComment(event, id) {
+  event.preventDefault();
+  const input = event.target.querySelector("input");
+  const post = posts.find(p => p.id === id);
+  post.comments.push("você: " + input.value);
+  input.value = "";
+  renderFeed();
 }
 
-function closeModal() {
-  $("#modal").classList.add("hidden");
+function openPost(id) {
+  selectedPost = posts.find(p => p.id === id);
+  if (!selectedPost) return;
+
+  document.getElementById("modalImage").src = selectedPost.image;
+  document.getElementById("modalCaption").textContent = selectedPost.caption;
+  document.getElementById("modalComments").innerHTML =
+    selectedPost.comments.map(c => `<p>${c}</p>`).join("");
+  document.getElementById("postModal").classList.add("show");
 }
 
-function openComposer() {
-  openModal(`
-    <h2>Criar publicação</h2>
+document.getElementById("closeModal").addEventListener("click", () => {
+  document.getElementById("postModal").classList.remove("show");
+});
 
-    <form id="newPostForm">
-      <textarea name="text"
-        placeholder="No que você está pensando?"
-        required></textarea>
-
-      <input type="text" name="image"
-        placeholder="Link da imagem (opcional)">
-
-      <button class="primary" type="submit">Publicar</button>
-    </form>
-  `);
-}
-
-document.addEventListener("click", event => {
-  const target = event.target;
-
-  const pageButton = target.closest("[data-page]");
-  if (pageButton) {
-    currentPage = pageButton.dataset.page;
-
-    if (currentPage === "profile") {
-      currentProfile = "VINI_FIGS";
-    }
-
-    render();
-    return;
-  }
-
-  const likeButton = target.closest("[data-like]");
-  if (likeButton) {
-    const post = posts.find(p => p.id === Number(likeButton.dataset.like));
-
-    if (post) {
-      post.liked = !post.liked;
-      post.likes = Math.max(0, post.likes + (post.liked ? 1 : -1));
-      persist();
-      render();
-    }
-    return;
-  }
-
-  const saveButton = target.closest("[data-save]");
-  if (saveButton) {
-    const id = Number(saveButton.dataset.save);
-
-    if (saved.includes(id)) {
-      saved = saved.filter(item => item !== id);
-      toast("Publicação removida dos salvos");
-    } else {
-      saved.push(id);
-      toast("Publicação salva!");
-    }
-
-    persist();
-    render();
-    return;
-  }
-
-  const commentButton = target.closest("[data-focus-comment]");
-  if (commentButton) {
-    $(`#post-${commentButton.dataset.focusComment} .comment-form input`)?.focus();
-    return;
-  }
-
-  const shareButton = target.closest("[data-share]");
-  if (shareButton) {
-    const post = posts.find(p => p.id === Number(shareButton.dataset.share));
-    if (post) {
-      const message = `Publicação de ${post.author}: ${post.text}`;
-
-      if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(message)
-          .then(() => toast("Texto copiado!"))
-          .catch(() => toast(message));
-      } else {
-        toast(message);
-      }
-    }
-    return;
-  }
-
-  const person = target.closest("[data-person]");
-  if (person) {
-    currentProfile = person.dataset.person;
-    currentPage = "profile";
-    render();
-    return;
-  }
-
-  if (target.closest("#openComposer") || target.closest("#openComposerButton")) {
-    openComposer();
-    return;
-  }
-
-  if (target.closest("#closeModal") || target.id === "modal") {
-    closeModal();
-    return;
-  }
-
-  if (target.closest("#themeBtn") || target.closest("#sideTheme")) {
-    document.body.classList.toggle("dark");
-    localStorage.setItem(
-      "facebook_vini_dark",
-      document.body.classList.contains("dark")
-    );
-    return;
-  }
-
-  if (target.closest("[data-join]")) {
-    target.closest("[data-join]").textContent = "Participando ✓";
-    target.closest("[data-join]").disabled = true;
-    toast("Você entrou no grupo!");
-    return;
-  }
-
-  const story = target.closest("[data-story]");
-  if (story) {
-    toast("Story de " + story.dataset.story);
-    return;
-  }
-
-  if (target.closest("#profileMessage")) {
-    openModal(`
-      <h2>Mensagem para ${safe(currentProfile)}</h2>
-      <textarea placeholder="Escreva uma mensagem..."></textarea>
-      <button class="primary" id="sendMessage">Enviar</button>
-    `);
-    return;
-  }
-
-  if (target.closest("#sendMessage")) {
-    toast("Mensagem enviada!");
-    closeModal();
-    return;
-  }
-
-  if (target.closest("#profileAdd")) {
-    toast("Solicitação de amizade enviada!");
-    return;
-  }
-
-  if (target.closest("#notificationsBtn")) {
-    toast("Você não tem novas notificações.");
+document.getElementById("postModal").addEventListener("click", event => {
+  if (event.target.id === "postModal") {
+    event.currentTarget.classList.remove("show");
   }
 });
 
-document.addEventListener("submit", event => {
-  if (event.target.id === "newPostForm") {
-    event.preventDefault();
+document.getElementById("modalCommentForm").addEventListener("submit", event => {
+  event.preventDefault();
+  if (!selectedPost) return;
 
-    const form = new FormData(event.target);
-    const text = String(form.get("text") || "").trim();
-    const image = String(form.get("image") || "").trim();
-
-    if (!text) return;
-
-    posts.unshift({
-      id: Date.now(),
-      author: "VINI_FIGS",
-      text,
-      image,
-      likes: 0,
-      liked: false,
-      comments: []
-    });
-
-    persist();
-    closeModal();
-    currentPage = "home";
-    render();
-    toast("Publicação criada!");
-    return;
-  }
-
-  const commentForm = event.target.closest("[data-comment-form]");
-  if (commentForm) {
-    event.preventDefault();
-
-    const id = Number(commentForm.dataset.commentForm);
-    const input = commentForm.elements.comment;
-    const text = input.value.trim();
-    const post = posts.find(p => p.id === id);
-
-    if (!post || !text) return;
-
-    post.comments.push({
-      author: "VINI_FIGS",
-      text
-    });
-
-    persist();
-    render();
-  }
+  const input = document.getElementById("modalCommentInput");
+  selectedPost.comments.push("você: " + input.value);
+  document.getElementById("modalComments").innerHTML =
+    selectedPost.comments.map(c => `<p>${c}</p>`).join("");
+  input.value = "";
 });
 
-const search = $("#search");
+document.getElementById("createForm").addEventListener("submit", event => {
+  event.preventDefault();
 
-if (search) {
-  search.addEventListener("keydown", event => {
-    if (event.key !== "Enter") return;
+  const image = document.getElementById("imageUrl").value;
+  const caption = document.getElementById("caption").value;
 
-    const term = search.value.toLowerCase().trim();
-
-    const results = posts.filter(post =>
-      post.text.toLowerCase().includes(term) ||
-      post.author.toLowerCase().includes(term)
-    );
-
-    $("#app").innerHTML = `
-      <div class="card">
-        <h2>Resultados da pesquisa</h2>
-        ${results.length
-          ? results.map(postHTML).join("")
-          : '<p class="empty">Nenhum resultado encontrado.</p>'}
-      </div>
-    `;
+  posts.unshift({
+    id: Date.now(),
+    image,
+    caption,
+    likes: 0,
+    comments: ["raven: Amei a publicação! 🖤"]
   });
-}
 
-if (localStorage.getItem("facebook_vini_dark") === "true") {
-  document.body.classList.add("dark");
-}
+  event.target.reset();
+  showPage("home");
+});
 
-try {
-  render();
-} catch (error) {
-  console.error(error);
-  $("#app").innerHTML = `
-    <div class="card">
-      <h2>Ops! Erro ao carregar o Facebook.</h2>
-      <p>${safe(error.message)}</p>
-      <button class="primary" onclick="location.reload()">Recarregar</button>
-    </div>
-  `;
-}
+renderFeed();
+renderProfile();
