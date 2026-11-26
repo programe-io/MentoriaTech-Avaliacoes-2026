@@ -1,73 +1,74 @@
 
-const dadosNoticias = [
-    {
-        titulo: "O futuro do Universo Cinematográfico Marvel",
-        categoria: "Filmes",
-        descricao: "Confira novidades, produções e os próximos caminhos do universo dos super-heróis."
-    },
-    {
-        titulo: "Os Vingadores e suas maiores batalhas",
-        categoria: "Heróis",
-        descricao: "Relembre os momentos mais marcantes da equipe mais poderosa da Terra."
-    },
-    {
-        titulo: "Thanos: o grande desafio dos Vingadores",
-        categoria: "Vilões",
-        descricao: "Conheça a história do Titã Louco e seu plano para mudar o universo."
-    },
-    {
-        titulo: "O multiverso Marvel",
-        categoria: "Universo",
-        descricao: "Entenda como diferentes realidades se conectam no universo Marvel."
-    }
-];
+// FEED DE NOTÍCIAS MARVEL
 
-let categoriaAtual = "Todas";
+const pesquisa = document.getElementById('pesquisa');
 
-function filtrarCategoria(categoria) {
-    categoriaAtual = categoria;
-    filtrarNoticias();
-}
+const botoesFiltro = document.querySelectorAll('.filtro');
 
+const noticiasFeed = document.querySelectorAll('.feed-card');
+
+const semResultados = document.getElementById('semResultados');
+
+let filtroAtual = 'todos';
+
+// Função para pesquisar e filtrar notícias
 function filtrarNoticias() {
-    const pesquisa = document
-        .getElementById("pesquisa")
-        .value.toLowerCase();
 
-    const noticias = document.querySelectorAll(".noticia");
+    const texto = pesquisa.value.toLowerCase();
 
     let quantidade = 0;
 
-    noticias.forEach((noticia) => {
-        const titulo = noticia.querySelector("h3")
-            .textContent.toLowerCase();
+    noticiasFeed.forEach((noticia) => {
+
+        const conteudo = noticia.innerText.toLowerCase();
 
         const categoria = noticia.dataset.categoria;
 
-        const correspondeTexto = titulo.includes(pesquisa);
-        const correspondeCategoria =
-            categoriaAtual === "Todas" ||
-            categoria === categoriaAtual;
+        const correspondeTexto = conteudo.includes(texto);
 
-        const mostrar =
-            correspondeTexto && correspondeCategoria;
+        const correspondeFiltro =
+            filtroAtual === 'todos' ||
+            categoria === filtroAtual;
 
-        noticia.style.display = mostrar ? "block" : "none";
+        if (correspondeTexto && correspondeFiltro) {
 
-        if (mostrar) quantidade++;
+            noticia.style.display = 'block';
+
+            quantidade++;
+
+        } else {
+
+            noticia.style.display = 'none';
+
+        }
+
     });
 
-    document.getElementById("semResultados").hidden =
-        quantidade !== 0;
+    semResultados.style.display =
+        quantidade === 0 ? 'block' : 'none';
+
 }
 
-function lerNoticia(indice) {
-    const noticia = dadosNoticias[indice];
+// Pesquisa enquanto digita
+pesquisa.addEventListener('input', filtrarNoticias);
 
-    alert(
-        noticia.titulo +
-        "\n\nCategoria: " + noticia.categoria +
-        "\n\n" + noticia.descricao +
-        "\n\nConteúdo demonstrativo do portal Marvel News."
-    );
-}
+// Botões de categorias
+botoesFiltro.forEach((botao) => {
+
+    botao.addEventListener('click', () => {
+
+        botoesFiltro.forEach((b) => {
+            b.classList.remove('ativo');
+        });
+
+        botao.classList.add('ativo');
+
+        filtroAtual = botao.dataset.filtro;
+
+        filtrarNoticias();
+
+    });
+
+});
+
+console.log("Feed Marvel carregado com sucesso!");
