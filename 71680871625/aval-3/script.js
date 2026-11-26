@@ -1,40 +1,66 @@
-function calcularMedia() {
-    // Captura os valores digitados nos inputs e converte para número decimal (float)
-    const n1 = parseFloat(document.getElementById('nota1').value);
-    const n2 = parseFloat(document.getElementById('nota2').value);
-    const n3 = parseFloat(document.getElementById('nota3').value);
-    const n4 = parseFloat(document.getElementById('nota4').value);
+// Seleção dos elementos do DOM
+const form = document.getElementById('imc-form');
+const inputNome = document.getElementById('nome');
+const inputPeso = document.getElementById('peso');
+const inputAltura = document.getElementById('altura');
 
-    // Captura os elementos de exibição do resultado
-    const container = document.getElementById('resultado-container');
-    const elementoMedia = document.getElementById('valor-media');
-    const elementoStatus = document.getElementById('status-aluno');
+const boxResultado = document.getElementById('resultado');
+const mensagemPaciente = document.getElementById('mensagem-paciente');
+const valorImcEl = document.getElementById('valor-imc');
+const badgeClassificacao = document.getElementById('classificacao-badge');
 
-    // Validação: Verifica se algum campo está vazio ou se os valores estão fora do intervalo de 0 a 10
-    if (isNaN(n1) || isNaN(n2) || isNaN(n3) || isNaN(n4) ||
-        n1 < 0 || n1 > 10 || n2 < 0 || n2 > 10 || 
-        n3 < 0 || n3 > 10 || n4 < 0 || n4 > 10) {
-        
-        alert("Por favor, preencha as 4 notas corretamente com valores de 0 a 10.");
-        container.classList.add('hidden');
-        return;
-    }
-
-    // Calcula a média aritmética
-    const media = (n1 + n2 + n3 + n4) / 4;
-
-    // Atualiza o texto da média na tela (com apenas 1 casa decimal)
-    elementoMedia.textContent = media.toFixed(1);
-
-    // Limpa as classes de estilo anteriores do container
-    container.className = ""; 
-
-    // Verifica a condição de aprovação (Critério: Média igual ou maior que 7.0)
-    if (media >= 7) {
-        elementoStatus.textContent = "ALUNO APROVADO! 🎉";
-        container.classList.add('aprovado');
-    } else {
-        elementoStatus.textContent = "ALUNO REPROVADO. ❌";
-        container.classList.add('reprovado');
-    }
+// Função pura: apenas calcula o IMC
+function calcularIMC(peso, altura) {
+  return peso / (altura * altura);
 }
+
+// Função pura: retorna a classificação e a classe CSS correspondente
+function obterClassificacaoIMC(imc) {
+  if (imc < 18.5) {
+    return { texto: 'Abaixo do peso', classeCor: 'bg-alerta' };
+  }
+  if (imc < 25) {
+    return { texto: 'Peso normal', classeCor: 'bg-normal' };
+  }
+  if (imc < 30) {
+    return { texto: 'Sobrepeso', classeCor: 'bg-alerta' };
+  }
+  if (imc < 35) {
+    return { texto: 'Obesidade Grau I', classeCor: 'bg-perigo' };
+  }
+  if (imc < 40) {
+    return { texto: 'Obesidade Grau II', classeCor: 'bg-perigo' };
+  }
+  return { texto: 'Obesidade Grau III', classeCor: 'bg-perigo' };
+}
+
+// Função de interface: atualiza o HTML com os dados processados
+function exibirResultado(nome, imc, classificacao) {
+  mensagemPaciente.textContent = `Paciente: ${nome}`;
+  valorImcEl.textContent = imc.toFixed(2);
+  
+  badgeClassificacao.textContent = classificacao.texto;
+  badgeClassificacao.className = `badge ${classificacao.classeCor}`;
+  
+  boxResultado.classList.remove('hidden');
+}
+
+// Evento principal do formulário
+form.addEventListener('submit', (event) => {
+  event.preventDefault(); // Evita o recarregamento da página
+
+  const nome = inputNome.value.trim();
+  const peso = parseFloat(inputPeso.value);
+  const altura = parseFloat(inputAltura.value);
+
+  // Validação defensiva
+  if (!nome || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+    alert('Por favor, preencha todos os campos com valores válidos.');
+    return;
+  }
+
+  const imc = calcularIMC(peso, altura);
+  const classificacao = obterClassificacaoIMC(imc);
+
+  exibirResultado(nome, imc, classificacao);
+});
