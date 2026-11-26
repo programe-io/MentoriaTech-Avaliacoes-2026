@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de Controle de Estoque</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <main class="container">
+    <header class="topo">
+      <div>
+        <h1>Controle de Estoque</h1>
+        <p class="subtitulo">Cadastre produtos, ajuste quantidades e acompanhe alertas de reposição.</p>
+      </div>
+      <button type="button" id="btn-limpar-tudo" class="btn btn-perigo-outline">
+        Limpar Estoque
+      </button>
+    </header>
+
+    <section class="resumo" aria-label="Resumo do estoque">
+      <div class="card-resumo">
+        <span>Total de Itens</span>
+        <strong id="total-itens">0</strong>
+      </div>
+      <div class="card-resumo">
+        <span>Unidades em Estoque</span>
+        <strong id="total-unidades">0</strong>
+      </div>
+      <div class="card-resumo">
+        <span>Estoque Baixo</span>
+        <strong id="total-baixo">0</strong>
+      </div>
+    </section>
+
+    <section class="painel-cadastro">
+      <h2>Novo Produto</h2>
+      <form id="form-produto" novalidate>
+        <div class="grid-form">
+          <div class="campo">
+            <label for="nome-produto">Nome do produto</label>
+            <input
+              type="text"
+              id="nome-produto"
+              placeholder="Ex.: Teclado Mecânico"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="categoria-produto">Categoria</label>
+            <select id="categoria-produto">
+              <option value="Periféricos">Periféricos</option>
+              <option value="Monitores">Monitores</option>
+              <option value="Cabos e Adaptadores">Cabos e Adaptadores</option>
+              <option value="Acessórios">Acessórios</option>
+            </select>
+          </div>
+
+          <div class="campo">
+            <label for="quantidade-produto">Quantidade inicial</label>
+            <input
+              type="number"
+              id="quantidade-produto"
+              min="0"
+              step="1"
+              placeholder="Ex.: 12"
+            />
+          </div>
+
+          <div class="campo">
+            <label for="minimo-produto">Estoque mínimo</label>
+            <input
+              type="number"
+              id="minimo-produto"
+              min="0"
+              step="1"
+              value="5"
+            />
+          </div>
+        </div>
+
+        <p id="mensagem-erro" class="mensagem-erro" hidden></p>
+
+        <div class="acoes-form">
+          <button type="submit" class="btn btn-primario">Adicionar ao Estoque</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel-lista">
+      <div class="barra-filtros">
+        <input
+          type="search"
+          id="campo-busca"
+          placeholder="Buscar produto ou categoria..."
+          aria-label="Buscar produto ou categoria"
+        />
+
+        <div class="grupos-filtro" id="filtros-status">
+          <button type="button" class="filtro-btn ativo" data-filtro="todos">Todos</button>
+          <button type="button" class="filtro-btn" data-filtro="baixo">Estoque Baixo</button>
+          <button type="button" class="filtro-btn" data-filtro="zerado">Zerados</button>
+        </div>
+      </div>
+
+      <div class="tabela-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Categoria</th>
+              <th>Qtd.</th>
+              <th>Mín.</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="corpo-tabela"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+<script src="script.js"></script></body>
+</html>
