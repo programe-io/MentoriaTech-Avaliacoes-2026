@@ -1,112 +1,81 @@
-document.getElementById("btAdd").onclick = Add;
-document.getElementById("btAtualizar").onclick = Atualizar;
-document.getElementById("btExcluir").onclick = Excluir;
+// Array para armazenar as tarefas
+let tarefas = [];
 
-const descricao = document.getElementById("nomeP");
-const qtd = document.getElementById("qtdP");
-const valor = document.getElementById("precoP");
+// Função auxiliar para gerar um código único (ID)
+let proximoId = 1;
 
-let produtos = [];
-
-function Add(){
-    ValidarProdutos(descricao.value, qtd.value, valor.value);
-
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao.value,
-        "quantidade": qtd.value,
-        "valor": valor.value
+/**
+ * 1. Cadastrar uma nova tarefa
+ * Regras: Título com no mínimo 5 caracteres; Prioridade entre 1 e 3.
+ */
+function cadastrarTarefa(titulo, prioridade) {
+    // Validação do título
+    if (!titulo || titulo.trim().length < 5) {
+        console.log("Erro: O título deve ter no mínimo 5 caracteres.");
+        return false;
     }
 
-    produtos.push(novoProduto);
-    limparCampos();
-    exibirProdutos();
-}
-
-function ValidarProdutos(descricao, qtd, valor){
-    if (descricao.length < 5){
-        alert("A descrição deve ter +4 caracteres");
-        throw new Error("A descrição deve ter +4 caracteres");
+    // Validação da prioridade (1 = alta, 2 = média, 3 = baixa)
+    if (prioridade < 1 || prioridade > 3) {
+        console.log("Erro: A prioridade deve ser um valor entre 1 (alta) e 3 (baixa).");
+        return false;
     }
 
-    if(qtd < 1){
-        alert("Quantidade deve ser maior que zero");
-        throw new Error("Quantidade deve ser maior que zero");
+    const novaTarefa = {
+        codigo: proximoId++,
+        titulo: titulo.trim(),
+        prioridade: prioridade,
+        statusConclusao: false // false = pendente, true = concluída
+    };
+
+    tarefas.push(novaTarefa);
+    console.log(`Sucesso: Tarefa "${novaTarefa.titulo}" cadastrada com o código ${novaTarefa.codigo}.`);
+    return true;
+}
+
+/**
+ * 2. Listar as tarefas cadastradas
+ */
+function listarTarefas() {
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa cadastrada.");
+        return;
     }
 
-    if(valor <= 0){
-        alert("valor deve ser maior que zero");
-        throw new Error("valor deve ser maior que zero");
+    console.log("--- LISTA DE TAREFAS ---");
+    tarefas.forEach(tarefa => {
+        let status = tarefa.statusConclusao ? "Concluída" : "Pendente";
+        let textoPrioridade;
+        
+        if (tarefa.prioridade === 1) textoPrioridade = "Alta (1)";
+        else if (tarefa.prioridade === 2) textoPrioridade = "Média (2)";
+        else textoPrioridade = "Baixa (3)";
+
+        console.log(`[Código: ${tarefa.codigo}] ${tarefa.titulo} | Prioridade: ${textoPrioridade} | Status: ${status}`);
+    });
+    console.log("------------------------");
+}
+
+/**
+ * 3. Marcar uma tarefa como concluída
+ */
+function concluirTarefa(codigo) {
+    const tarefa = tarefas.find(t => t.codigo === codigo);
+
+    if (!tarefa) {
+        console.log(`Erro: Tarefa com o código ${codigo} não foi encontrada.`);
+        return false;
     }
+
+    tarefa.statusConclusao = true;
+    console.log(`Sucesso: Tarefa "${tarefa.titulo}" marcada como concluída.`);
+    return true;
 }
 
-function exibirProdutos() {
-    const listaUl = document.getElementById("listaProdutos");
-
-    listaUl.innerHTML = produtos.map(item =>
-        `<li>
-            <strong>Código:</strong> ${item.codigo} |
-            <strong>Produto:</strong> ${item.descricao} |
-            <strong>Qtd:</strong> ${item.quantidade} |
-            <strong>Valor:</strong> R$ ${item.valor}
-        </li>`
-    ).join('');
-}
-
-function Atualizar(){
-
-    let buscarcod = prompt("Digite o código do produto que deseja atualizar:");
-
-    if (buscarcod !== null && buscarcod.trim() !== "") {
-
-        let codigo = Number(buscarcod) - 1;
-
-        if(codigo < produtos.length){
-            let novoV = prompt("Digite o novo Preço:");
-
-            if (novoV !== null && novoV.trim() !== "" && Number(novoV) > 0) {
-                produtos[codigo].valor = Number(novoV);
-                exibirProdutos();
-            } else {
-                alert("Operação cancelada ou valor inválido.");
-            }
-        } else {
-            alert("Código inválido.");
-        }
-    } else {
-        alert("Operação cancelada ou código inválido.");
-    }
-}
-
-function Excluir(){
-
-    let buscarcod = prompt("Digite o código do produto que deseja excluir:");
-
-    if (buscarcod !== null && buscarcod.trim() !== "") {
-
-        let codigo = Number(buscarcod) - 1;
-
-        if(codigo >= 0 && codigo < produtos.length){
-
-            produtos.splice(codigo, 1);
-
-            for (let i = 0; i < produtos.length; i++) {
-                produtos[i].codigo = i + 1;
-            }
-
-            exibirProdutos();
-            alert("Produto excluído com sucesso!");
-        } else {
-            alert("Código inválido ou produto não encontrado.");
-        }
-    } else {
-        alert("Operação cancelada ou código inválido.");
-    }
-}
-
-function limparCampos(){
-    descricao.value = "";
-    qtd.value = "";
-    valor.value = "";
-    descricao.focus();
-}
+/**
+ * 4. Alterar a prioridade de uma tarefa
+ * Regras: Nova prioridade deve ser um valor entre 1 e 3.
+ */
+function alterarPrioridade(codigo, novaPrioridade) {
+    if (novaPrioridade < 1 || novaPrioridade > 3) {
+        console.
