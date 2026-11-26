@@ -1,15 +1,36 @@
 
-const musicas = [
-    "musica1.mp3",
-    "musica2.mp3",
-    "musica3.mp3"
-];
+// 💗 SISTEMA DE FAVORITOS
 
-function tocarMusica(numero) {
-    const player = document.getElementById("player");
+function favoritar(grupo) {
+    const mensagem = document.getElementById("mensagem");
 
-    player.src = musicas[numero];
+    mensagem.innerHTML =
+        "🎀 Você favoritou " + grupo + "! 💗";
 
-    player.load();
-    player.play();
+    alert("Você adicionou " + grupo + " aos seus favoritos! ♡");
+}
+
+// 🎵 MENSAGEM DE BOAS-VINDAS
+
+window.addEventListener("load", function() {
+    console.log("Bem-vinda ao K-Pop World! 💜");
+});
+
+// ✨ EFEITO NOS CARDS
+
+const cards = document.querySelectorAll(".card");
+
+cards.forEach(function(card) {
+    card.addEventListener("mouseenter", function() {
+        card.style.transition = "0.3s";
+    });
+});
+
+// 💕 BOTÃO DE VOLTAR AO TOPO
+
+function voltarAoTopo() {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
