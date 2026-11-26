@@ -1,217 +1,173 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const headerContent = document.querySelector('.header-content');
-    const navLinks = document.querySelectorAll('header nav a');
-    const main = document.querySelector('main');
-    const newPostSection = document.querySelector('.new-post');
-    const userTextContainer = newPostSection.querySelector('.user > div:last-child');
-    const placeholderSpan = userTextContainer.querySelector('span');
-    const publishBtn = newPostSection.querySelector('button');
+document.addEventListener("DOMContentLoaded", () => {
+    const subtitulo = document.getElementById("subtituloDigitado");
+    const textoSubtitulo = "Seu mundo de games começa aqui!";
+    let indexTexto = 0;
 
-    const searchInput = document.createElement('input');
-    searchInput.type = 'text';
-    searchInput.placeholder = 'Pesquisar no feed...';
-    searchInput.className = 'js-search-input';
-    headerContent.insertBefore(searchInput, document.querySelector('header nav'));
+    function digitarTexto() {
+        if (indexTexto < textoSubtitulo.length) {
+            subtitulo.textContent += textoSubtitulo.charAt(indexTexto);
+            indexTexto++;
+            setTimeout(digitarTexto, 60);
+        }
+    }
+    digitarTexto();
 
-    const profileCard = document.createElement('section');
-    profileCard.className = 'js-profile-card';
-    profileCard.innerHTML = `
-        <div class="user">
-            <div class="avatar">K</div>
-            <div>
-                <strong>Julia Fernandes</strong>
-                <span>@juliafernandes • Perfil ativo</span>
-            </div>
-        </div>
-        <div id="js-post-counter" style="color: #bb86fc; font-weight: bold;"></div>
-    `;
-    main.insertBefore(profileCard, newPostSection);
+    const bannerTitulo = document.getElementById("saudacaoBanner");
+    const horaAtual = new Date().getHours();
+    if (horaAtual >= 5 && horaAtual < 12) {
+        bannerTitulo.textContent = "🌅 Bom dia, gamer! Pronto para jogar?";
+    } else if (horaAtual >= 12 && horaAtual < 18) {
+        bannerTitulo.textContent = "☀️ Boa tarde, gamer! Confira os destaques:";
+    } else {
+        bannerTitulo.textContent = "🌙 Boa noite, gamer! Hora da gameplay!";
+    }
 
-    const textarea = document.createElement('textarea');
-    textarea.rows = 2;
-    textarea.placeholder = placeholderSpan.textContent;
-    textarea.className = 'js-post-textarea';
-    placeholderSpan.replaceWith(textarea);
-
-    const toolsDiv = document.createElement('div');
-    toolsDiv.className = 'js-post-tools';
-    toolsDiv.innerHTML = `
-        <label class="js-file-label">
-            📷 Adicionar Foto
-            <input type="file" accept="image/*" style="display: none;">
-        </label>
-        <span class="js-file-status" style="font-size: 12px; color: #888;"></span>
-    `;
-    userTextContainer.appendChild(toolsDiv);
-
-    const previewImg = document.createElement('img');
-    previewImg.className = 'js-preview-img';
-    userTextContainer.appendChild(previewImg);
-
-    const fileInput = toolsDiv.querySelector('input[type="file"]');
-    const fileStatus = toolsDiv.querySelector('.js-file-status');
-    let uploadedImageBase64 = '';
-
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        fileStatus.textContent = file.name;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            uploadedImageBase64 = ev.target.result;
-            previewImg.src = uploadedImageBase64;
-            previewImg.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
+    const btnExplorar = document.getElementById("btnExplorar");
+    btnExplorar.addEventListener("click", () => {
+        document.getElementById("jogos").scrollIntoView({ behavior: "smooth" });
     });
 
-    function setupPost(postEl) {
-        if (postEl.dataset.initialized) return;
-        postEl.dataset.initialized = 'true';
+    const barraProgresso = document.getElementById("barraProgresso");
+    const navbar = document.getElementById("navbar");
+    const btnTopo = document.getElementById("btnTopo");
+    const secoes = document.querySelectorAll("section, main");
+    const linksMenu = document.querySelectorAll("nav a");
 
-        const header = postEl.querySelector('.post-header');
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'js-delete-btn';
-        deleteBtn.innerHTML = '&times;';
-        deleteBtn.title = 'Excluir publicação';
-        header.appendChild(deleteBtn);
+    window.addEventListener("scroll", () => {
+        const scrollTop = window.scrollY;
+        const alturaDoc = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const percentual = (scrollTop / alturaDoc) * 100;
+        barraProgresso.style.width = percentual + "%";
 
-        const actions = postEl.querySelector('.post-actions');
-        const buttons = actions.querySelectorAll('button');
-        const likeBtn = buttons[0];
-        const commentBtn = buttons[1];
-
-        let likes = Math.floor(Math.random() * 15) + 1;
-        let liked = false;
-        likeBtn.textContent = `🤍 Curtir (${likes})`;
-
-        const shareBtn = document.createElement('button');
-        shareBtn.textContent = '🔗 Compartilhar';
-        actions.appendChild(shareBtn);
-
-        const commentsBox = document.createElement('div');
-        commentsBox.className = 'js-comments-box';
-        commentsBox.innerHTML = `
-            <div class="js-comments-list"></div>
-            <div class="js-comment-form">
-                <input type="text" class="js-comment-input" placeholder="Escreva um comentário...">
-                <button type="button">Enviar</button>
-            </div>
-        `;
-        postEl.appendChild(commentsBox);
-
-        const commentsList = commentsBox.querySelector('.js-comments-list');
-        const commentInput = commentsBox.querySelector('.js-comment-input');
-        const sendCommentBtn = commentsBox.querySelector('button');
-
-        likeBtn.addEventListener('click', () => {
-            liked = !liked;
-            likes += liked ? 1 : -1;
-            likeBtn.classList.toggle('liked', liked);
-            likeBtn.textContent = liked ? `❤️ Curtido (${likes})` : `🤍 Curtir (${likes})`;
-        });
-
-        commentBtn.addEventListener('click', () => {
-            commentsBox.classList.toggle('open');
-            if (commentsBox.classList.contains('open')) commentInput.focus();
-        });
-
-        function addComment() {
-            const text = commentInput.value.trim();
-            if (!text) return;
-            const item = document.createElement('div');
-            item.className = 'js-comment-item';
-            item.innerHTML = `<strong>Julia Fernandes:</strong> ${text}`;
-            commentsList.appendChild(item);
-            commentInput.value = '';
-            const total = commentsList.children.length;
-            commentBtn.textContent = `💬 Comentar (${total})`;
+        if (scrollTop > 50) {
+            navbar.classList.add("rolando");
+        } else {
+            navbar.classList.remove("rolando");
         }
 
-        sendCommentBtn.addEventListener('click', addComment);
-        commentInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addComment();
+        if (scrollTop > 300) {
+            btnTopo.classList.add("mostrar");
+        } else {
+            btnTopo.classList.remove("mostrar");
+        }
+
+        let secaoAtual = "";
+        secoes.forEach(secao => {
+            const topoSecao = secao.offsetTop - 150;
+            if (scrollTop >= topoSecao) {
+                secaoAtual = secao.getAttribute("id");
+            }
         });
 
-        shareBtn.addEventListener('click', () => {
-            const originalText = shareBtn.textContent;
-            shareBtn.textContent = '✅ Link copiado!';
-            setTimeout(() => shareBtn.textContent = originalText, 2000);
-        });
-
-        deleteBtn.addEventListener('click', () => {
-            postEl.remove();
-            updateCounter();
-        });
-    }
-
-    function updateCounter() {
-        const count = document.querySelectorAll('.Post').length;
-        document.getElementById('js-post-counter').textContent = `${count} publicações no feed`;
-    }
-
-    document.querySelectorAll('.Post').forEach(setupPost);
-    updateCounter();
-
-    publishBtn.addEventListener('click', () => {
-        const text = textarea.value.trim();
-        if (!text && !uploadedImageBase64) return;
-
-        const article = document.createElement('article');
-        article.className = 'Post';
-        article.innerHTML = `
-            <div class="post-header">
-                <div class="avatar">K</div>
-                <div>
-                    <strong>julia fernandes</strong>
-                    <span>Agora mesmo</span>
-                </div>
-            </div>
-            <div class="post-text">${text}</div>
-            ${uploadedImageBase64 ? `<img src="${uploadedImageBase64}" alt="imagem publicada">` : ''}
-            <div class="post-actions">
-                <button>Curtir</button>
-                <button>Comentar</button>
-            </div>
-        `;
-
-        newPostSection.insertAdjacentElement('afterend', article);
-        setupPost(article);
-        updateCounter();
-
-        textarea.value = '';
-        fileInput.value = '';
-        fileStatus.textContent = '';
-        uploadedImageBase64 = '';
-        previewImg.style.display = 'none';
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        document.querySelectorAll('.Post').forEach(post => {
-            const content = post.textContent.toLowerCase();
-            post.style.display = content.includes(term) ? 'block' : 'none';
-        });
-    });
-
-    navLinks.forEach((link, index) => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            navLinks.forEach(l => l.classList.remove('active-nav'));
-            link.classList.add('active-nav');
-
-            if (index === 1) {
-                profileCard.classList.add('visible');
-                document.querySelectorAll('.Post').forEach(post => {
-                    const author = post.querySelector('.post-header strong').textContent.toLowerCase();
-                    post.style.display = author.includes('julia') ? 'block' : 'none';
-                });
-            } else {
-                profileCard.classList.remove('visible');
-                document.querySelectorAll('.Post').forEach(post => {
-                    post.style.display = 'block';
-                });
+        linksMenu.forEach(link => {
+            link.classList.remove("ativo");
+            if (link.getAttribute("href") === `#${secaoAtual}`) {
+                link.classList.add("ativo");
             }
         });
     });
+
+    btnTopo.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    const observador = new IntersectionObserver((entradas) => {
+        entradas.forEach(entrada => {
+            if (entrada.isIntersecting) {
+                entrada.target.classList.add("visivel");
+            }
+        });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll(".revelar").forEach(el => observador.observe(el));
+
+    const cards = document.querySelectorAll(".card-gamer");
+    const inputBusca = document.getElementById("inputBusca");
+    const botoesFiltro = document.querySelectorAll(".btn-filtro");
+    const contadorFav = document.getElementById("contadorFav");
+    let filtroAtual = "todos";
+
+    function atualizarExibicaoCards() {
+        const termo = inputBusca.value.toLowerCase();
+        let totalFavoritos = 0;
+
+        cards.forEach(card => {
+            const titulo = card.querySelector("h3").textContent.toLowerCase();
+            const descricao = card.querySelector("p").textContent.toLowerCase();
+            const ehFavorito = card.classList.contains("favorito");
+
+            if (ehFavorito) totalFavoritos++;
+
+            const bateBusca = titulo.includes(termo) || descricao.includes(termo);
+            const bateFiltro = filtroAtual === "todos" || (filtroAtual === "favoritos" && ehFavorito);
+
+            card.style.display = (bateBusca && bateFiltro) ? "block" : "none";
+        });
+
+        contadorFav.textContent = `Favoritos: ${totalFavoritos} ⭐`;
+    }
+
+    inputBusca.addEventListener("input", atualizarExibicaoCards);
+
+    botoesFiltro.forEach(botao => {
+        botao.addEventListener("click", () => {
+            botoesFiltro.forEach(b => b.classList.remove("ativo"));
+            botao.classList.add("ativo");
+            filtroAtual = botao.dataset.filtro;
+            atualizarExibicaoCards();
+        });
+    });
+
+    const modal = document.getElementById("modalJogo");
+    const modalTitulo = document.getElementById("modalTitulo");
+    const modalGenero = document.getElementById("modalGenero");
+    const modalDescricao = document.getElementById("modalDescricao");
+    const modalNota = document.getElementById("modalNota");
+    const fecharModal = document.getElementById("fecharModal");
+
+    cards.forEach(card => {
+        const btnFav = card.querySelector(".btn-fav");
+        const btnDetalhes = card.querySelector(".btn-detalhes");
+
+        btnFav.addEventListener("click", () => {
+            card.classList.toggle("favorito");
+            btnFav.textContent = card.classList.contains("favorito") ? "⭐ Favoritado" : "⭐ Favoritar";
+            atualizarExibicaoCards();
+        });
+
+        btnDetalhes.addEventListener("click", () => {
+            modalTitulo.textContent = card.querySelector("h3").textContent;
+            modalGenero.textContent = `Gênero: ${card.dataset.genero}`;
+            modalDescricao.textContent = card.querySelector("p").textContent;
+            modalNota.textContent = `Avaliação do Blog: ${card.dataset.nota} / 10 🏆`;
+            modal.classList.add("aberto");
+        });
+
+        card.addEventListener("mousemove", (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centroX = rect.width / 2;
+            const centroY = rect.height / 2;
+            const rotacaoX = ((y - centroY) / centroY) * -6;
+            const rotacaoY = ((x - centroX) / centroX) * 6;
+
+            card.style.transform = `perspective(1000px) rotateX(${rotacaoX}deg) rotateY(${rotacaoY}deg) translateY(-5px)`;
+        });
+
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+        });
+    });
+
+    fecharModal.addEventListener("click", () => {
+        modal.classList.remove("aberto");
+    });
+
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.remove("aberto");
+        }
+    });
 });
+/* Como sou um editor de JS, estou mantendo a lógica. Para o site funcionar, você deve criar o HTML com os IDs: subtituloDigitado, saudacaoBanner, btnExplorar, barraProgresso, navbar, btnTopo, inputBusca, contadorFav, modalJogo, etc. */

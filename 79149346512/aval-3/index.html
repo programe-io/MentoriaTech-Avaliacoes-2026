@@ -1,153 +1,523 @@
-<html lang="pt-br"><head>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniFeed</title>
-     <link rel="stylesheet" href="style.css">
-    <link href="style.css" rel="stylesheet"><link href="style.css" rel="stylesheet"></head>
-    <body>
+    <title>GameVault | Seu Portal Gamer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Rajdhani:wght@500;700&display=swap');
 
-        <header>
+        :root {
+            --canvas: #0a0a0c;
+            --surface: #16161e;
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.3);
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+        }
 
-            <div class="header-content">
+        body {
+            background-color: var(--canvas);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
 
-                 <h1>MiniFeed</h1>
+        h1, h2, h3, .font-gaming {
+            font-family: 'Rajdhani', sans-serif;
+        }
 
-                 <nav>
-                    <a href="#">Inicio</a>
-                    <a href="#">Perfil</a>
-                 </nav>
+        #barraProgresso {
+            height: 4px;
+            background: linear-gradient(to right, var(--accent), #c084fc);
+            width: 0%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
 
+        #navbar {
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        #navbar.rolando {
+            background-color: rgba(22, 22, 30, 0.8);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-link {
+            position: relative;
+            color: var(--text-muted);
+            transition: color 0.3s;
+        }
+
+        .nav-link.ativo, .nav-link:hover {
+            color: var(--text-main);
+        }
+
+        .nav-link.ativo::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
+        }
+
+        .card-gamer {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            transition: border-color 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            will-change: transform;
+        }
+
+        .card-gamer:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .card-gamer.favorito {
+            border-color: #eab308;
+        }
+
+        .btn-filtro {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .btn-filtro.ativo {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        #btnTopo {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 50;
+        }
+
+        #btnTopo.mostrar {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .revelar {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .revelar.visivel {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #modalJogo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #modalJogo.aberto {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            max-width: 600px;
+            width: 90%;
+            padding: 2rem;
+            border-radius: 1rem;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        #modalJogo.aberto .modal-content {
+            transform: scale(1);
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <div id="barraProgresso"></div>
+
+    <nav id="navbar" class="fixed top-0 w-full z-40 py-6 px-4 md:px-12 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <i data-lucide="gamepad-2" class="text-violet-500 w-8 h-8"></i>
+            <span class="font-gaming text-2xl font-bold tracking-tighter">GAME<span class="text-violet-500">VAULT</span></span>
+        </div>
+        <div class="hidden md:flex gap-8 font-medium text-sm uppercase tracking-widest">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#jogos" class="nav-link">Jogos</a>
+            <a href="#sobre" class="nav-link">Sobre</a>
+            <a href="#contato" class="nav-link">Contato</a>
+        </div>
+        <button class="md:hidden text-white" id="menuMobile">
+            <i data-lucide="menu"></i>
+        </button>
+    </nav>
+
+    <section id="home" class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 hero-gradient">
+        <h1 id="saudacaoBanner" class="text-4xl md:text-7xl font-bold mb-4 max-w-4xl leading-tight">
+            Carregando saudação...
+        </h1>
+        <p id="subtituloDigitado" class="text-lg md:text-2xl text-zinc-400 font-light mb-10 h-8"></p>
+        <button id="btnExplorar" class="bg-violet-600 hover:bg-violet-500 text-white px-8 py-4 rounded-full font-bold transition-all flex items-center gap-2 group">
+            EXPLORAR BIBLIOTECA 
+            <i data-lucide="arrow-down" class="group-hover:translate-y-1 transition-transform"></i>
+        </button>
+    </section>
+
+    <main id="jogos" class="py-20 px-4 md:px-12 max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 revelar">
+            <div>
+                <h2 class="text-4xl font-bold mb-2">Catálogo de Jogos</h2>
+                <p class="text-zinc-400">Análises sinceras e recomendações para todo tipo de player.</p>
+            </div>
+            <div id="contadorFav" class="text-yellow-500 font-bold bg-yellow-500/10 px-4 py-2 rounded-lg border border-yellow-500/20">
+                Favoritos: 0 ⭐
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 mb-8 revelar">
+            <div class="relative flex-1">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 w-5 h-5"></i>
+                <input type="text" id="inputBusca" placeholder="Buscar jogo ou gênero..." 
+                    class="w-full bg-zinc-900 border border-zinc-800 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-violet-500 transition-colors">
+            </div>
+            <div class="flex gap-2 overflow-x-auto pb-2">
+                <button class="btn-filtro ativo px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap" data-filtro="todos">Todos</button>
+                <button class="btn-filtro px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap" data-filtro="favoritos">⭐ Favoritos</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="gridJogos">
+            <!-- Card 1 -->
+            <div class="card-gamer p-6 rounded-2xl revelar" data-genero="RPG / Open World" data-nota="9.5">
+                <div class="aspect-video bg-zinc-800 rounded-lg mb-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a2c8?auto=format&fit=crop&w=500&q=80" alt="Game" class="w-full h-full object-cover opacity-80">
+                </div>
+                <h3 class="text-xl font-bold mb-2">Elden Ring</h3>
+                <p class="text-zinc-400 text-sm mb-6 line-clamp-2">Uma obra prima de exploração e desafio. O mundo aberto mais imersivo da década.</p>
+                <div class="flex gap-2">
+                    <button class="btn-fav flex-1 py-2 rounded-lg bg-zinc-800 text-xs font-bold hover:bg-zinc-700 transition-colors">⭐ Favoritar</button>
+                    <button class="btn-detalhes px-4 py-2 rounded-lg bg-violet-600 text-xs font-bold hover:bg-violet-500 transition-colors">Detalhes</button>
+                </div>
             </div>
 
-        </header>
-        
-        <main>
-
-            <section class="new-post">
-
-                <div class="user">
-
-                    <div class="avatar">
-                         K
-                    </div>
-
-                    <div>
-                        <strong>julia fernandes</strong>
-                        <span>O que voce esta pensando?</span>
-                    </div>
-
-
+            <!-- Card 2 -->
+            <div class="card-gamer p-6 rounded-2xl revelar" data-genero="FPS / Competitivo" data-nota="8.0">
+                <div class="aspect-video bg-zinc-800 rounded-lg mb-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1552820728-8b8778359687?auto=format&fit=crop&w=500&q=80" alt="Game" class="w-full h-full object-cover opacity-80">
                 </div>
-
-                <button>Publicar</button>
-
-
-            </section>
-
-           <article class="Post">
-
-                <div class="post-header">
-
-                  <div class="avatar">
-                         E
-                    </div>
-
-                    <div>
-                        <strong>Ercilandia</strong>
-                        <span>Há 10 minutos</span>
-                    </div>
-
+                <h3 class="text-xl font-bold mb-2">Valorant</h3>
+                <p class="text-zinc-400 text-sm mb-6 line-clamp-2">Tática, precisão e habilidades únicas. O cenário competitivo mais vibrante do momento.</p>
+                <div class="flex gap-2">
+                    <button class="btn-fav flex-1 py-2 rounded-lg bg-zinc-800 text-xs font-bold hover:bg-zinc-700 transition-colors">⭐ Favoritar</button>
+                    <button class="btn-detalhes px-4 py-2 rounded-lg bg-violet-600 text-xs font-bold hover:bg-violet-500 transition-colors">Detalhes</button>
                 </div>
+            </div>
 
-                <div class="post-text">
-                     Hoje eu vi o novo filme do miranha com meu filho ,top, to feliz :D
-
+            <!-- Card 3 -->
+            <div class="card-gamer p-6 rounded-2xl revelar" data-genero="Aventura / Indie" data-nota="10">
+                <div class="aspect-video bg-zinc-800 rounded-lg mb-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=500&q=80" alt="Game" class="w-full h-full object-cover opacity-80">
                 </div>
-
-                <img src="https://plus.unsplash.com/premium_photo-1668046107817-42bc9d5025e7?w=500&amp;auto=format&amp;fit=crop&amp;q=60&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZmlsbWUlMjBob21lbSUyMGFyYW5oYXxlbnwwfHwwfHx8MA%3D%3D" alt="imagem filme do homem aranha">
-
-                 <div class="post-actions">
-
-                    <button>Curtir</button>
-                    <button>Comentar</button>
-
-                 </div>
-
-
-             </article>
-
-             <article class="Post">
-
-                <div class="post-header">
-
-                  <div class="avatar">
-                         A
-                    </div>
-
-                    <div>
-                        <strong>Anne karolina</strong>
-                        <span>Há 26 minutos</span>
-                    </div>
-
+                <h3 class="text-xl font-bold mb-2">Hollow Knight</h3>
+                <p class="text-zinc-400 text-sm mb-6 line-clamp-2">Arte impecável e gameplay desafiadora. Um dos melhores metroidvanias já criados.</p>
+                <div class="flex gap-2">
+                    <button class="btn-fav flex-1 py-2 rounded-lg bg-zinc-800 text-xs font-bold hover:bg-zinc-700 transition-colors">⭐ Favoritar</button>
+                    <button class="btn-detalhes px-4 py-2 rounded-lg bg-violet-600 text-xs font-bold hover:bg-violet-500 transition-colors">Detalhes</button>
                 </div>
+            </div>
 
-                <div class="post-text">
-                     Cade dezembro que não chega, já cansei de dar aula...
-
+            <!-- Card 4 -->
+            <div class="card-gamer p-6 rounded-2xl revelar" data-genero="Simulação / Estratégia" data-nota="8.5">
+                <div class="aspect-video bg-zinc-800 rounded-lg mb-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=500&q=80" alt="Game" class="w-full h-full object-cover opacity-80">
                 </div>
-
-                <img src="https://plus.unsplash.com/premium_photo-1680807869780-e0876a6f3cd5?w=500&amp;auto=format&amp;fit=crop&amp;q=60&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8ZXNjb2xhfGVufDB8fDB8fHww" alt="imagem filme do homem aranha">
-
-                 <div class="post-actions">
-
-                    <button>Curtir</button>
-                    <button>Comentar</button>
-
-                 </div>
-
-
-             </article>
-
-             <article class="Post">
-
-                <div class="post-header">
-
-                  <div class="avatar">
-                         S
-                    </div>
-
-                    <div>
-                        <strong>Sara Caravalho</strong>
-                        <span>Há 30 minutos</span>
-                    </div>
-
+                <h3 class="text-xl font-bold mb-2">Civilization VI</h3>
+                <p class="text-zinc-400 text-sm mb-6 line-clamp-2">Construa seu império do zero. A definição de "só mais um turno" antes de dormir.</p>
+                <div class="flex gap-2">
+                    <button class="btn-fav flex-1 py-2 rounded-lg bg-zinc-800 text-xs font-bold hover:bg-zinc-700 transition-colors">⭐ Favoritar</button>
+                    <button class="btn-detalhes px-4 py-2 rounded-lg bg-violet-600 text-xs font-bold hover:bg-violet-500 transition-colors">Detalhes</button>
                 </div>
+            </div>
 
-                <div class="post-text">
-                     Venha ajeitar suas unhas comigo...
-
+            <!-- Card 5 -->
+            <div class="card-gamer p-6 rounded-2xl revelar" data-genero="Ação / Stealth" data-nota="9.0">
+                <div class="aspect-video bg-zinc-800 rounded-lg mb-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1538481199705-c71ddd575387?auto=format&fit=crop&w=500&q=80" alt="Game" class="w-full h-full object-cover opacity-80">
                 </div>
+                <h3 class="text-xl font-bold mb-2">Metal Gear Solid</h3>
+                <p class="text-zinc-400 text-sm mb-6 line-clamp-2">Espionagem tática e narrativas complexas que definiram todo um gênero de jogos.</p>
+                <div class="flex gap-2">
+                    <button class="btn-fav flex-1 py-2 rounded-lg bg-zinc-800 text-xs font-bold hover:bg-zinc-700 transition-colors">⭐ Favoritar</button>
+                    <button class="btn-detalhes px-4 py-2 rounded-lg bg-violet-600 text-xs font-bold hover:bg-violet-500 transition-colors">Detalhes</button>
+                </div>
+            </div>
 
-                <img src="https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&amp;auto=format&amp;fit=crop&amp;q=60&amp;ixlib=rb-4.1.0&amp;ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dW5oYXN8ZW58MHx8MHx8fDA%3D" alt="imagem filme do homem aranha">
+            <!-- Card 6 -->
+            <div class="card-gamer p-6 rounded-2xl revelar" data-genero="Terror / Survival" data-nota="7.5">
+                <div class="aspect-video bg-zinc-800 rounded-lg mb-4 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1509248961158-6128737f667d?auto=format&fit=crop&w=500&q=80" alt="Game" class="w-full h-full object-cover opacity-80">
+                </div>
+                <h3 class="text-xl font-bold mb-2">Resident Evil Village</h3>
+                <p class="text-zinc-400 text-sm mb-6 line-clamp-2">Atmosfera opressora e puzzles inteligentes. O terror gótico em sua melhor forma.</p>
+                <div class="flex gap-2">
+                    <button class="btn-fav flex-1 py-2 rounded-lg bg-zinc-800 text-xs font-bold hover:bg-zinc-700 transition-colors">⭐ Favoritar</button>
+                    <button class="btn-detalhes px-4 py-2 rounded-lg bg-violet-600 text-xs font-bold hover:bg-violet-500 transition-colors">Detalhes</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
-                 <div class="post-actions">
+    <section id="sobre" class="py-20 px-4 md:px-12 bg-zinc-900/50 border-y border-zinc-800">
+        <div class="max-w-4xl mx-auto text-center revelar">
+            <h2 class="text-4xl font-bold mb-6">Sobre o GameVault</h2>
+            <p class="text-zinc-400 leading-relaxed text-lg">
+                Nascido da paixão por pixels e narrativas, o GameVault é mais que um blog. É um refúgio para quem busca análises profundas, dicas de gameplay e a descoberta de joias escondidas na indústria dos games. De indies minimalistas a blockbusters AAA, cobrimos tudo o que move o controle.
+            </p>
+        </div>
+    </section>
 
-                    <button>Curtir</button>
-                    <button>Comentar</button>
+    <footer id="contato" class="py-12 px-4 text-center text-zinc-500 text-sm">
+        <div class="flex justify-center gap-6 mb-6">
+            <a href="#" class="hover:text-violet-500 transition-colors"><i data-lucide="instagram"></i></a>
+            <a href="#" class="hover:text-violet-500 transition-colors"><i data-lucide="twitter"></i></a>
+            <a href="#" class="hover:text-violet-500 transition-colors"><i data-lucide="youtube"></i></a>
+            <a href="#" class="hover:text-violet-500 transition-colors"><i data-lucide="twitch"></i></a>
+        </div>
+        <p>&copy; 2026 GameVault. Desenvolvido para Gamers.</p>
+    </footer>
 
-                 </div>
+    <button id="btnTopo" class="bg-violet-600 text-white p-3 rounded-full shadow-lg hover:bg-violet-500 transition-all">
+        <i data-lucide="chevron-up"></i>
+    </button>
 
+    <div id="modalJogo">
+        <div class="modal-content relative">
+            <button id="fecharModal" class="absolute top-4 right-4 text-zinc-500 hover:text-white">
+                <i data-lucide="x"></i>
+            </button>
+            <h3 id="modalTitulo" class="text-3xl font-bold mb-2">Título do Jogo</h3>
+            <span id="modalGenero" class="inline-block bg-violet-500/20 text-violet-400 text-xs font-bold px-3 py-1 rounded-full mb-4">Gênero</span>
+            <p id="modalDescricao" class="text-zinc-400 mb-6 leading-relaxed">Descrição detalhada do jogo aparecerá aqui.</p>
+            <div id="modalNota" class="text-xl font-bold text-yellow-500">Nota: 0/10</div>
+        </div>
+    </div>
 
-             </article>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
 
+            const subtitulo = document.getElementById("subtituloDigitado");
+            const textoSubtitulo = "Seu mundo de games começa aqui!";
+            let indexTexto = 0;
 
+            function digitarTexto() {
+                if (indexTexto < textoSubtitulo.length) {
+                    subtitulo.textContent += textoSubtitulo.charAt(indexTexto);
+                    indexTexto++;
+                    setTimeout(digitarTexto, 60);
+                }
+            }
+            digitarTexto();
 
+            const bannerTitulo = document.getElementById("saudacaoBanner");
+            const horaAtual = new Date().getHours();
+            if (horaAtual >= 5 && horaAtual < 12) {
+                bannerTitulo.textContent = "🌅 Bom dia, gamer! Pronto para jogar?";
+            } else if (horaAtual >= 12 && horaAtual < 18) {
+                bannerTitulo.textContent = "☀️ Boa tarde, gamer! Confira os destaques:";
+            } else {
+                bannerTitulo.textContent = "🌙 Boa noite, gamer! Hora da gameplay!";
+            }
 
-        </main>
+            const btnExplorar = document.getElementById("btnExplorar");
+            btnExplorar.addEventListener("click", () => {
+                document.getElementById("jogos").scrollIntoView({ behavior: "smooth" });
+            });
 
-        <footer>
-           <p>MiniFeed - Todos os direitos reservados - 2026</p> 
-        </footer>
+            const barraProgresso = document.getElementById("barraProgresso");
+            const navbar = document.getElementById("navbar");
+            const btnTopo = document.getElementById("btnTopo");
+            const secoes = document.querySelectorAll("section, main");
+            const linksMenu = document.querySelectorAll("nav a");
 
-    <script src="script.js"></script>
-<script src="script.js"></script></body></html>
+            window.addEventListener("scroll", () => {
+                const scrollTop = window.scrollY;
+                const alturaDoc = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const percentual = (scrollTop / alturaDoc) * 100;
+                barraProgresso.style.width = percentual + "%";
+
+                if (scrollTop > 50) {
+                    navbar.classList.add("rolando");
+                } else {
+                    navbar.classList.remove("rolando");
+                }
+
+                if (scrollTop > 300) {
+                    btnTopo.classList.add("mostrar");
+                } else {
+                    btnTopo.classList.remove("mostrar");
+                }
+
+                let secaoAtual = "";
+                secoes.forEach(secao => {
+                    const topoSecao = secao.offsetTop - 150;
+                    if (scrollTop >= topoSecao) {
+                        secaoAtual = secao.getAttribute("id");
+                    }
+                });
+
+                linksMenu.forEach(link => {
+                    link.classList.remove("ativo");
+                    if (link.getAttribute("href") === `#${secaoAtual}`) {
+                        link.classList.add("ativo");
+                    }
+                });
+            });
+
+            btnTopo.addEventListener("click", () => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+
+            const observador = new IntersectionObserver((entradas) => {
+                entradas.forEach(entrada => {
+                    if (entrada.isIntersecting) {
+                        entrada.target.classList.add("visivel");
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll(".revelar").forEach(el => observador.observe(el));
+
+            const cards = document.querySelectorAll(".card-gamer");
+            const inputBusca = document.getElementById("inputBusca");
+            const botoesFiltro = document.querySelectorAll(".btn-filtro");
+            const contadorFav = document.getElementById("contadorFav");
+            let filtroAtual = "todos";
+
+            function atualizarExibicaoCards() {
+                const termo = inputBusca.value.toLowerCase();
+                let totalFavoritos = 0;
+
+                cards.forEach(card => {
+                    const titulo = card.querySelector("h3").textContent.toLowerCase();
+                    const descricao = card.querySelector("p").textContent.toLowerCase();
+                    const ehFavorito = card.classList.contains("favorito");
+
+                    if (ehFavorito) totalFavoritos++;
+
+                    const bateBusca = titulo.includes(termo) || descricao.includes(termo);
+                    const bateFiltro = filtroAtual === "todos" || (filtroAtual === "favoritos" && ehFavorito);
+
+                    card.style.display = (bateBusca && bateFiltro) ? "block" : "none";
+                });
+
+                contadorFav.textContent = `Favoritos: ${totalFavoritos} ⭐`;
+            }
+
+            inputBusca.addEventListener("input", atualizarExibicaoCards);
+
+            botoesFiltro.forEach(botao => {
+                botao.addEventListener("click", () => {
+                    botoesFiltro.forEach(b => b.classList.remove("ativo"));
+                    botao.classList.add("ativo");
+                    filtroAtual = botao.dataset.filtro;
+                    atualizarExibicaoCards();
+                });
+            });
+
+            const modal = document.getElementById("modalJogo");
+            const modalTitulo = document.getElementById("modalTitulo");
+            const modalGenero = document.getElementById("modalGenero");
+            const modalDescricao = document.getElementById("modalDescricao");
+            const modalNota = document.getElementById("modalNota");
+            const fecharModal = document.getElementById("fecharModal");
+
+            cards.forEach(card => {
+                const btnFav = card.querySelector(".btn-fav");
+                const btnDetalhes = card.querySelector(".btn-detalhes");
+
+                btnFav.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    card.classList.toggle("favorito");
+                    btnFav.textContent = card.classList.contains("favorito") ? "⭐ Favoritado" : "⭐ Favoritar";
+                    atualizarExibicaoCards();
+                });
+
+                btnDetalhes.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    modalTitulo.textContent = card.querySelector("h3").textContent;
+                    modalGenero.textContent = `Gênero: ${card.dataset.genero}`;
+                    modalDescricao.textContent = card.querySelector("p").textContent;
+                    modalNota.textContent = `Avaliação do Blog: ${card.dataset.nota} / 10 🏆`;
+                    modal.classList.add("aberto");
+                });
+
+                card.addEventListener("mousemove", (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centroX = rect.width / 2;
+                    const centroY = rect.height / 2;
+                    const rotacaoX = ((y - centroY) / centroY) * -6;
+                    const rotacaoY = ((x - centroX) / centroX) * 6;
+
+                    card.style.transform = `perspective(1000px) rotateX(${rotacaoX}deg) rotateY(${rotacaoY}deg) translateY(-5px)`;
+                });
+
+                card.addEventListener("mouseleave", () => {
+                    card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)";
+                });
+            });
+
+            fecharModal.addEventListener("click", () => {
+                modal.classList.remove("aberto");
+            });
+
+            modal.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove("aberto");
+                }
+            });
+        });
+    </script>
+<script src="script.js"></script></body>
+</html>
