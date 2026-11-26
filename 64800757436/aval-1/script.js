@@ -1,31 +1,101 @@
- JavaScript — script.js
-
-javascript
-
-function toggleMenu() {
-    const menu = document.getElementById("menu");
-    menu.classList.toggle("active");
+// MENSAGEM DE MATRÍCULA
+function matricular() {
+    alert(
+        "💪 Seja bem-vindo à Power Fitness!\n\n" +
+        "Estamos felizes pelo seu interesse.\n" +
+        "Venha transformar sua vida com a gente!"
+    );
 }
 
-// Fechar menu ao clicar em um link
-document.querySelectorAll("#menu a").forEach(link => {
-    link.addEventListener("click", () => {
-        document.getElementById("menu").classList.remove("active");
-    });
+// ESCOLHA DE PLANOS
+function contratar(plano) {
+
+    let mensagem = "";
+
+    switch (plano) {
+
+        case "Básico":
+            mensagem = "Você escolheu o Plano Básico - R$ 69,90";
+            break;
+
+        case "Premium":
+            mensagem = "Você escolheu o Plano Premium - R$ 99,90";
+            break;
+
+        case "VIP":
+            mensagem = "Você escolheu o Plano VIP - R$ 129,90";
+            break;
+
+        default:
+            mensagem = "Plano não encontrado!";
+    }
+
+    alert(mensagem + "\n\nEntre em contato para finalizar sua inscrição!");
+}
+
+// MENSAGEM DE BOAS-VINDAS
+window.addEventListener("load", function() {
+    console.log("Bem-vindo ao site Power Fitness!");
 });
 
-// Matrícula pelo WhatsApp
-function matricular(plano) {
+// FORMULÁRIO DE CONTATO
+function enviarMensagem() {
 
-    const telefone = "5599999999999";
+    let nome = document.getElementById("nome").value;
+    let email = document.getElementById("email").value;
+    let mensagem = document.getElementById("mensagem").value;
 
-    const mensagem =
-        `Olá! Tenho interesse no plano ${plano} da Power Fitness Academy. Gostaria de mais informações sobre a matrícula.`;
+    if (nome === "" || email === "" || mensagem === "") {
+        alert("Por favor, preencha todos os campos!");
+        return;
+    }
 
-    const url =
-        `https://wa.me/${telefone}?text=${encodeURIComponent(mensagem)}`;
-
-    window.open(url, "_blank");
+    alert(
+        "Mensagem enviada com sucesso!\n\n" +
+        "Nome: " + nome +
+        "\nEmail: " + email
+    );
 }
 
-console.log("Power Fitness Academy carregada!");
+// MENU PARA CELULAR
+function abrirMenu() {
+
+    let menu = document.getElementById("menu");
+
+    menu.classList.toggle("ativo");
+}
+
+// BOTÃO DE VOLTAR AO TOPO
+function voltarTopo() {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+// ANO AUTOMÁTICO NO RODAPÉ
+document.addEventListener("DOMContentLoaded", function() {
+
+    let ano = document.getElementById("ano");
+
+    if (ano) {
+        ano.textContent = new Date().getFullYear();
+    }
+
+});
+
+// EFEITO DE ANIMAÇÃO AO ROLAR A PÁGINA
+window.addEventListener("scroll", function() {
+
+    let botao = document.getElementById("voltarTopo");
+
+    if (botao) {
+        if (window.scrollY > 300) {
+            botao.style.display = "block";
+        } else {
+            botao.style.display = "none";
+        }
+    }
+
+});
