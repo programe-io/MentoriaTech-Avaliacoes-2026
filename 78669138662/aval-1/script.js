@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Moda, beleza, carreira e histórias para celebrar o universo Barbie em cada detalhe.">
+  <title>Barbie World | Moda e inspiração</title>
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="cabecalho" id="inicio">
+    <a class="marca" href="#inicio" aria-label="Barbie World - início">
+      <span class="marca-icone" aria-hidden="true">B</span>
+      <span>BARBIE <strong>WORLD</strong></span>
+    </a>
+    <div class="cabecalho-conteudo">
+      <p class="chamada">Vista sua imaginação</p>
+      <h1>Todo mundo pode ser tudo</h1>
+      <p>Moda, sonhos e novas possibilidades em um universo cheio de cor.</p>
+    </div>
+  </header>
+
+  <nav class="navegacao" aria-label="Navegação principal">
+    <a href="#inicio">Início</a>
+    <a href="#moda">Moda</a>
+    <a href="#beleza">Beleza</a>
+    <a href="#carreira">Carreiras</a>
+    <a href="#lifestyle">Lifestyle</a>
+  </nav>
+
+  <div class="layout">
+    <aside class="barra-lateral" aria-label="Sobre o blog e galeria">
+      <section class="sobre">
+        <p class="sobretitulo">SOBRE O BLOG</p>
+        <h2>Seu universo cor-de-rosa, todos os dias.</h2>
+        <p>Um espaço alegre para celebrar estilo, autoconfiança e todas as maneiras de transformar sonhos em histórias reais.</p>
+      </section>
+
+      <section class="galeria" aria-labelledby="titulo-galeria">
+        <p class="sobretitulo">INSPIRAÇÃO</p>
+        <h2 id="titulo-galeria">Momentos em rosa</h2>
+        <figure class="foto-galeria">
+          <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Bastidores de moda com roupas coloridas" loading="lazy">
+          <figcaption>Estilo para brilhar</figcaption>
+        </figure>
+        <figure class="foto-galeria">
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Mulher com look moderno em ambiente urbano" loading="lazy">
+          <figcaption>Looks do dia</figcaption>
+        </figure>
+        <figure class="foto-galeria">
+          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&amp;fit=crop&amp;w=700&amp;q=80" alt="Retrato feminino com maquiagem suave" loading="lazy">
+          <figcaption>Confiança em foco</figcaption>
+        </figure>
+      </section>
+    </aside>
+
+    <main class="conteudo" aria-label="Artigos recentes">
+      <article class="postagem" id="moda">
+        <img class="imagem-postagem" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&amp;fit=crop&amp;w=1400&amp;q=85" alt="Variedade de roupas e acessórios em uma loja de moda" fetchpriority="high">
+        <div class="postagem-corpo">
+          <p class="categoria">MODA <span aria-hidden="true">•</span> TENDÊNCIAS</p>
+          <h2>Rosa, glitter e muito charme: a moda que celebra você</h2>
+          <p class="data"><time datetime="2026-11-12">12 de novembro de 2026</time> <span aria-hidden="true">·</span> Por Equipe Barbie World</p>
+          <p>Do rosa claro aos tons mais vibrantes, misturar texturas e acessórios é uma forma divertida de criar uma identidade própria. O segredo está em escolher peças que façam você se sentir poderosa.</p>
+          <p class="texto-postagem">Combine sapatos marcantes, bolsas divertidas e uma jaqueta oversize para um visual moderno. Moda é uma brincadeira — use-a para contar sua história.</p>
+        </div>
+      </article>
+
+      <article class="postagem" id="beleza">
+        <img class="imagem-postagem" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&amp;fit=crop&amp;w=1400&amp;q=85" alt="Retrato feminino com maquiagem natural e elegante" loading="lazy">
+        <div class="postagem-corpo">
+          <p class="categoria">BELEZA <span aria-hidden="true">•</span> AUTOESTIMA</p>
+          <h2>Brilho natural começa com cuidados simples</h2>
+          <p class="data"><time datetime="2026-11-08">8 de novembro de 2026</time> <span aria-hidden="true">·</span> Por Equipe Barbie World</p>
+          <p>Uma rotina leve pode transformar a maneira como você se sente. Limpeza, hidratação e proteção solar são aliados essenciais para manter a pele saudável todos os dias.</p>
+          <p class="texto-postagem">Experimente um toque de blush rosa e um gloss iluminado para realçar sua beleza natural. Os melhores detalhes são aqueles que valorizam quem você já é.</p>
+        </div>
+      </article>
+
+      <article class="postagem" id="carreira">
+        <img class="imagem-postagem" src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&amp;fit=crop&amp;w=1400&amp;q=85" alt="Espaço de trabalho moderno e criativo" loading="lazy">
+        <div class="postagem-corpo">
+          <p class="categoria">CARREIRAS <span aria-hidden="true">•</span> SONHOS</p>
+          <h2>Você pode ser cientista, artista, líder e muito mais</h2>
+          <p class="data"><time datetime="2026-11-02">2 de novembro de 2026</time> <span aria-hidden="true">·</span> Por Equipe Barbie World</p>
+          <p>Explorar novas áreas é uma forma de descobrir talentos que nem sabíamos ter. Estudos, cursos e experiências podem abrir portas para caminhos surpreendentes.</p>
+          <p class="texto-postagem" id="lifestyle">Comece com uma pequena meta, crie uma rotina de aprendizado e não tenha medo de recomeçar. Toda grande conquista nasce de um primeiro passo corajoso.</p>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <footer>
+    <a class="
