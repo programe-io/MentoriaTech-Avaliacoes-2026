@@ -1,89 +1,177 @@
-3. JavaScript — script.js
+let totalPosts = 0;
 
-javascript
+// CURTIR
+function likePost(button) {
+    const count = button.querySelector("span");
 
-function toggleMenu() {
-    document.getElementById("menu")
-        .classList.toggle("active");
+    if (!count) return;
+
+    let number = Number(count.textContent);
+
+    if (button.classList.contains("liked")) {
+        button.classList.remove("liked");
+        count.textContent = number - 1;
+    } else {
+        button.classList.add("liked");
+        count.textContent = number + 1;
+    }
 }
 
-// Fechar menu ao clicar nos links
-document.querySelectorAll("#menu a").forEach(link => {
-    link.addEventListener("click", () => {
-        document.getElementById("menu")
-            .classList.remove("active");
-    });
-});
+// COMENTAR
+function addComment(button) {
+    const area = button.parentElement;
+    const input = area.querySelector("input");
+    const text = input.value.trim();
 
-// CRONÔMETRO
-let segundos = 60;
-let intervalo = null;
+    if (!text) return;
 
-function atualizarTela() {
-    let minutos = Math.floor(segundos / 60);
-    let resto = segundos % 60;
+    const comments = area.previousElementSibling;
+    const comment = document.createElement("div");
 
-    document.getElementById("tempo").textContent =
-        String(minutos).padStart(2, "0") + ":" +
-        String(resto).padStart(2, "0");
+    comment.className = "comment";
+    comment.textContent = "💪 Você: " + text;
+
+    comments.appendChild(comment);
+    input.value = "";
 }
 
-function iniciar() {
+// ABRIR COMENTÁRIO
+function focusComment(button) {
+    const post = button.closest(".post");
+    post.querySelector(".comment-area input").focus();
+}
 
-    if (intervalo !== null || segundos <= 0) {
+// CRIAR PUBLICAÇÃO
+function createPost() {
+    const text = document.getElementById("postText");
+    const image = document.getElementById("postImage");
+
+    const description = text.value.trim();
+    const imageUrl = image.value.trim();
+
+    if (!description) {
+        alert("Escreva alguma coisa sobre seu treino!");
         return;
     }
 
-    intervalo = setInterval(() => {
+    const post = document.createElement("article");
+    post.className = "post";
 
-        segundos--;
+    const header = document.createElement("div");
+    header.className = "post-user";
+    header.innerHTML = `
+        <div class="avatar">EU</div>
+        <div>
+            <strong>Meu Perfil</strong>
+            <small>💪 Fitness · Agora</small>
+        </div>
+    `;
 
-        atualizarTela();
+    const paragraph = document.createElement("p");
+    paragraph.textContent = description;
 
-        if (segundos <= 0) {
-            clearInterval(intervalo);
-            intervalo = null;
+    post.appendChild(header);
 
-            alert("Descanso finalizado! Hora de treinar!");
+    if (imageUrl) {
+        try {
+            const url = new URL(imageUrl);
+
+            if (url.protocol === "https:" || url.protocol === "http:") {
+                const img = document.createElement("img");
+                img.className = "post-img";
+                img.src = url.href;
+                img.alt = "Foto do treino";
+                img.onerror = () => img.remove();
+                post.appendChild(img);
+            }
+        } catch {
+            alert("Digite um endereço de imagem válido.");
+            return;
         }
+    }
 
-    }, 1000);
+    post.appendChild(paragraph);
+
+    const actions = document.createElement("div");
+    actions.className = "post-actions";
+    actions.innerHTML = `
+        <button onclick="likePost(this)">❤️ <span>0</span></button>
+        <button onclick="focusComment(this)">💬 Comentar</button>
+        <button onclick="sharePost()">↗ Compartilhar</button>
+    `;
+
+    post.appendChild(actions);
+
+    const comments = document.createElement("div");
+    comments.className = "comments";
+    post.appendChild(comments);
+
+    const commentArea = document.createElement("div");
+    commentArea.className = "comment-area";
+    commentArea.innerHTML = `
+        <input placeholder="Adicione um comentário...">
+        <button onclick="addComment(this)">Enviar</button>
+    `;
+
+    post.appendChild(commentArea);
+
+    document.getElementById("feed").prepend(post);
+
+    totalPosts++;
+    document.getElementById("myPosts").textContent = totalPosts;
+
+    text.value = "";
+    image.value = "";
 }
 
-function pausar() {
-
-    clearInterval(intervalo);
-    intervalo = null;
+// COMPARTILHAR
+function sharePost() {
+    if (navigator.share) {
+        navigator.share({
+            title: "Fitgram",
+            text: "Confira esta publicação fitness!"
+        }).catch(() => {});
+    } else {
+        alert("Compartilhamento disponível pelo seu dispositivo!");
+    }
 }
 
-function reiniciar() {
+// PESQUISAR
+document.getElementById("search").addEventListener("input", function() {
+    const value = this.value.toLowerCase();
 
-    pausar();
-    segundos = 60;
-    atualizarTela();
+    document.querySelectorAll(".post").forEach(post => {
+        post.style.display = post.textContent.toLowerCase().includes(value)
+            ? "block"
+            : "none";
+    });
+});
+
+// NAVEGAÇÃO
+function showFeed() {
+    window.scrollTo({top: 0, behavior: "smooth"});
 }
 
-function definirTempo(valor) {
-
-    pausar();
-    segundos = valor;
-    atualizarTela();
+function showExplore() {
+    document.getElementById("search").focus();
 }
 
-atualizarTela();
+function showNotifications() {
+    alert("Você não tem novas notificações!");
+}
 
-console.log("BODY FIT carregado com sucesso!");
-4. Divisão dos grupos musculares
-Exemplo de organização semanal
-Dia
+function showProfile() {
+    alert("Perfil do atleta!");
+}
 
-Treino
+function showTraining() {
+    alert("Área de treinos!");
+}
 
-Segunda	Peito e tríceps
-Terça	Costas e bíceps
-Quarta	Pernas completas
-Quinta	Ombros e abdômen
-Sexta	Corpo todo
-Sábado	Descanso ou atividade leve
-Domingo	Descanso
-Importante: essa é uma divisão ilustrativa. O treino de sexta-feira deve ter volume ajustado para não sobrecarregar os músculos já trabalhados durante a semana. Adapte cargas, séries e exercícios ao seu nível, com orientação de um profissional de educação física.
+function showAthletes() {
+    alert("Conheça outros atletas!");
+}
+
+function showSports() {
+    alert("Explore os esportes!");
+}
