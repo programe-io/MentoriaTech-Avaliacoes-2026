@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projetor de Apresentação Interativo</title>
+  <style>
+    /* Reset e Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Barra de Progresso Superior */
+    .progress-container {
+      width: 100%;
+      height: 5px;
+      background-color: #1e293b;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 20;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      transition: width 0.35s ease;
+    }
+
+    /* Área de Projeção (Palco dos Slides) */
+    .projector-stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+    }
+
+    .slide {
+      position: absolute;
+      width: 85%;
+      max-width: 1000px;
+      opacity: 0;
+      transform: translateY(25px) scale(0.98);
+      pointer-events: none;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      text-align: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    /* Tipografia e Elementos dos Slides */
+    .badge {
+      display: inline-block;
+      background-color: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .slide h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide h2 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      margin-bottom: 1.5rem;
+      color: #f1f5f9;
+    }
+
+    .slide p {
+      font-size: clamp(1.1rem, 2vw, 1.5rem);
+      color: #94a3b8;
+      line-height: 1.6;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    /* Cards para slides com tópicos */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .card {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      padding: 1.5rem;
+      border-radius: 14px;
+    }
+
+    .card h3 {
+      color: #38bdf8;
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+    }
+
+    .card p {
+      font-size: 1rem;
+      color: #cbd5e1;
+    }
+
+    /* Controles Inferiores do Projetor */
+    .controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background-color: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 0.6rem 1.2rem;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      z-index: 20;
+    }
+
+    .controls button {
+      background-color: #334155;
+      color: #f8fafc;
+      border: none;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .controls button:hover:not(:disabled) {
+      background-color: #38bdf8;
+      color: #0f172a;
+    }
+
+    .controls button:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .controls button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .controls button.active-tool {
+      background-color: #ef4444;
+      color: #ffffff;
+    }
+
+    .slide-counter {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      padding: 0 0.5rem;
+      min-width: 65px;
+      text-align: center;
+    }
+
+    /* Ponteiro Laser Virtual */
+    .laser-pointer {
+      position: fixed;
+      width: 16px;
+      height: 16px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      box-shadow: 0 0 12px 4px rgba(239, 68, 68, 0.8);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+      display: none;
+    }
+
+    body.laser-mode {
+      cursor: none;
+    }
+
+    body.laser-mode .laser-pointer {
+      display: block;
+    }
+
+    /* Tela escura (Blackout - tecla B) */
+    .blackout-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #000000;
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .blackout-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de Progresso -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- Ponteiro Laser -->
+  <div class="laser-pointer" id="laserPointer"></div>
+
+  <!-- Tela Preta (Pausa na apresentação) -->
+  <div class="blackout-screen" id="blackoutScreen"></div>
+
+  <!-- Área Principal de Projeção -->
+  <main class="projector-stage" id="stage">
+    
+    <!-- Slide 1 -->
+    <section class="slide active">
+      <span class="badge">Apresentação Web</span>
+      <h1>Projetor Digital Interativo</h1>
+      <p>Use as setas do teclado (← / →), clique nos botões abaixo ou ative o modo tela cheia para iniciar sua projeção.</p>
+    </section>
+
+    <!-- Slide 2 -->
+    <section class="slide">
+      <span class="badge">Recursos Principais</span>
+      <h2>Controles de Apresentação</h2>
+      <div class="grid-cards">
+        <div class="card">
+          <h3>Tela Cheia (F)</h3>
+          <p>Expande a apresentação para ocupar 100% do projetor ou monitor externo.</p>
+        </div>
+        <div class="card">
+          <h3>Ponteiro Laser (L)</h3>
+          <p>Destaca pontos importantes na tela acompanhando o movimento do mouse.</p>
+        </div>
+        <div class="card">
+          <h3>Tela Preta (B)</h3>
+          <p>Escurece a projeção instantaneamente para focar a atenção no apresentador.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3 -->
+    <section class="slide">
+      <span class="badge">Estrutura Moderna</span>
+      <h2>HTML + CSS + JavaScript</h2>
+      <p>Transições suaves com CSS3, layout responsivo com Flexbox/Grid e controle de eventos em tempo real via JavaScript.</p>
+    </section>
+
+    <!-- Slide 4 -->
+    <section class="slide">
+      <span class="badge">Fim da Apresentação</span>
+      <h2>Obrigado!</h2>
+      <p>Pressione <strong>Home</strong> ou clique em <strong>Reiniciar</strong> para voltar ao primeiro slide.</p>
+    </section>
+
+  </main>
+
+  <!-- Barra de Controle do Projetor -->
+  <nav class="controls">
+    <button id="prevBtn" title="Slide Anterior (Seta Esquerda)">← Anterior</button>
+    <span class="slide-counter" id="slideCounter">1 / 4</span>
+    <button id="nextBtn" title="Próximo Slide (Seta Direita ou Espaço)">Próximo →</button>
+    <button id="laserBtn" title="Ativar/Desativar Laser (Tecla L)">Laser</button>
+    <button id="fullscreenBtn" title="Tela Cheia (Tecla F)">Tela Cheia</button>
+  </nav>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const laserBtn = document.getElementById('laserBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const slideCounter = document.getElementById('slideCounter');
+    const progressBar = document.getElementById('progressBar');
+    const laserPointer = document.getElementById('laserPointer');
+    const blackoutScreen = document.getElementById('blackoutScreen');
+
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+
+    // Atualiza exibição do slide, contador e barra de progresso
+    function updateProjector() {
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+      });
+
+      slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.textContent = currentSlide === totalSlides - 1 ? 'Reiniciar ↺' : 'Próximo →';
+
+      const progress = ((currentSlide + 1) / totalSlides) * 100;
+      progressBar.style.width = `${progress}%`;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+      } else {
+        currentSlide = 0; // Reinicia ao chegar no final
+      }
+      updateProjector();
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateProjector();
+      }
+    }
+
+    // Alternar Tela Cheia
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+        fullscreenBtn.textContent = 'Sair Tela Cheia';
+      } else {
+        document.exitFullscreen();
+        fullscreenBtn.textContent = 'Tela Cheia';
+      }
+    }
+
+    // Alternar Ponteiro Laser
+    function toggleLaser() {
+      document.body.classList.toggle('laser-mode');
+      laserBtn.classList.toggle('active-tool');
+    }
+
+    // Eventos dos botões
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    laserBtn.addEventListener('click', toggleLaser);
+
+    // Movimento do laser
+    document.addEventListener('mousemove', (e) => {
+      laserPointer.style.left = `${e.clientX}px`;
+      laserPointer.style.top = `${e.clientY}px`;
+    });
+
+    // Atalhos de teclado (padrão de passadores de slides)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        currentSlide = 0;
+        updateProjector();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'l') {
+        toggleLaser();
+      } else if (e.key.
+  <script src="script.js"></script>
+  
+</body>
+</html>
