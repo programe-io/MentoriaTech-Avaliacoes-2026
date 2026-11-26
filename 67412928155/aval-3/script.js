@@ -2,64 +2,55 @@
 const formulario = document.getElementById("formIMC");
 const resultado = document.getElementById("resultado");
 
+// Receber e calcular os dados
 formulario.addEventListener("submit", function(event) {
-
     event.preventDefault();
 
-        // Receber os dados do paciente
-            const nome = document.getElementById("nome").value.trim();
-                const peso = Number(document.getElementById("peso").value);
-                    const altura = Number(document.getElementById("altura").value);
+        const nome = document.getElementById("nome").value.trim();
+            const peso = Number(document.getElementById("peso").value);
+                const altura = Number(document.getElementById("altura").value);
 
-                        // Validar os dados
-                            if (nome === "" || peso <= 0 || altura <= 0) {
-                                    resultado.className = "resultado erro";
-                                            resultado.innerHTML = "Preencha todos os campos corretamente.";
-                                                    return;
-                                                        }
+                    // Verificar os campos
+                        if (nome === "" || peso <= 0 || altura <= 0) {
+                                resultado.className = "resultado erro";
+                                        resultado.textContent = "Por favor, preencha os dados corretamente.";
+                                                return;
+                                                    }
 
-                                                            // Calcular o IMC
-                                                                const imc = peso / (altura * altura);
+                                                        // Calcular o IMC
+                                                            const imc = peso / (altura * altura);
 
-                                                                    // Criar mensagem de referência ilustrativa para adultos
-                                                                        let mensagem = "";
-                                                                            let classe = "";
+                                                                // Exibir o resultado
+                                                                    resultado.className = "resultado mostrar sucesso";
 
-                                                                                if (imc < 18.5) {
-                                                                                        mensagem = "O valor calculado está abaixo da faixa de referência adulta.";
-                                                                                                classe = "baixo";
+                                                                        resultado.innerHTML = `
+                                                                                <h2>✓ Cálculo concluído!</h2>
 
-                                                                                                    } else if (imc < 25) {
-                                                                                                            mensagem = "O valor calculado está dentro de uma faixa de referência adulta.";
+                                                                                        <p>Olá, <strong>${nome}</strong>!</p>
 
-                                                                                                                    classe = "referencia";
+                                                                                                <div class="destaque">
+                                                                                                            <p>Seu resultado calculado</p>
 
-                                                                                                                        } else {
-                                                                                                                                mensagem = "O valor calculado está acima da faixa de referência adulta.";
-                                                                                                                                        classe = "alto";
-                                                                                                                                            }
+                                                                                                                        <span class="numero">${imc.toFixed(2)}</span>
 
-                                                                                                                                                // Exibir resultado
-                                                                                                                                                    resultado.className = "resultado " + classe;
+                                                                                                                                    <p>Índice de Massa Corporal (IMC)</p>
+                                                                                                                                            </div>
 
-                                                                                                                                                        resultado.innerHTML = `
-                                                                                                                                                                <h2>Resultado do cálculo</h2>
+                                                                                                                                                    <p><strong>Peso informado:</strong> ${peso} kg</p>
 
-                                                                                                                                                                        <p><strong>Nome:</strong> ${nome}</p>
+                                                                                                                                                            <p><strong>Altura informada:</strong> ${altura} m</p>
 
-                                                                                                                                                                                <p><strong>Peso:</strong> ${peso} kg</p>
+                                                                                                                                                                    <p class="aviso">
+                                                                                                                                                                                O IMC é uma medida de referência e não avalia sozinho
+                                                                                                                                                                                            a saúde de uma pessoa. Em adolescentes, sua interpretação
+                                                                                                                                                                                                        considera idade e desenvolvimento.
+                                                                                                                                                                                                                </p>
+                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                    });
 
-                                                                                                                                                                                        <p><strong>Altura:</strong> ${altura} m</p>
-
-                                                                                                                                                                                                <p><strong>IMC calculado:</strong> ${imc.toFixed(2)}</p>
-
-                                                                                                                                                                                                        <p>${mensagem}</p>
-
-                                                                                                                                                                                                                <p class="aviso">
-                                                                                                                                                                                                                            Esta classificação é apenas ilustrativa para adultos.
-                                                                                                                                                                                                                                        Em adolescentes, o IMC precisa ser interpretado
-                                                                                                                                                                                                                                                    considerando idade e desenvolvimento.
-                                                                                                                                                                                                                                                            </p>
-                                                                                                                                                                                                                                                                `;
-                                                                                                                                                                                                                                                                });
-                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                    // Limpar o resultado ao limpar o formulário
+                                                                                                                                                                                                                    formulario.addEventListener("reset", function() {
+                                                                                                                                                                                                                        resultado.className = "resultado";
+                                                                                                                                                                                                                            resultado.innerHTML = "";
+                                                                                                                                                                                                                            });
+                                                                                                                                                                                                                            
