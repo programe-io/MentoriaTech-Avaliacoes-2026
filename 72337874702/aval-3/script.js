@@ -1,349 +1,549 @@
-/* ==========================================
-   MAISON ÉLISE - JAVASCRIPT ENGINE PRO
-   ========================================== */
 
-let tasks = [
-    {
-        id: 101,
-        title: "Vestido de Noiva Coleção Inverno",
-        description: "Revisar bordados em pérolas taitianas e conferir simetria do corpete com renda francesa.",
-        category: "Vestido de Noiva",
-        priority: "Alta",
-        budget: 4500.00,
-        date: "2026-10-15",
-        status: "progress"
-    },
-    {
-        id: 102,
-        title: "Reposição de Renda Guipure Paris",
-        description: "Aquisição de 25 metros de tecido importado para os novos modelos de gala.",
-        category: "Alta-Costura",
-        priority: "Média",
-        budget: 1800.50,
-        date: "2026-10-18",
-        status: "todo"
-    },
-    {
-        id: 103,
-        title: "Capa de Veludo com Cristais Swarovski",
-        description: "Aplicação manual de cristais e acabamento acetinado nas barras.",
-        category: "Bordado a Mão",
-        priority: "Baixa",
-        budget: 2200.00,
-        date: "2026-10-25",
-        status: "done"
-    }
-];
+// ========================================
+// 1. VARIÁVEIS E REFERÊNCIAS DO HTML
+// ========================================
 
-let systemLogs = [];
+const formPessoa = document.getElementById("form-pessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputAltura = document.getElementById("altura");
+const inputPeso = document.getElementById("peso");
 
-// Sistema de Auditoria de Ações do DOM
-function logAction(msg) {
-    const time = new Date().toLocaleTimeString();
-    systemLogs.unshift(`[${time}] ${msg}`);
-    document.getElementById('logCount').innerText = systemLogs.length;
+const tabelaPessoas = document.getElementById("tabela-pessoas");
+const mensagemDeErro = document.getElementById("erro");
+
+const btnCancelar = document.getElementById("btn-cancelar");
+const btnSalvar = document.getElementById("btn-salvar");
+
+const CHAVE_PESSOAS = "pessoas";
+
+let codigo = 0;
+let pessoaEmEdicao = null;
+
+
+// ========================================
+// 2. GERAÇÃO AUTOMÁTICA DE IDENTIFICADOR
+// ========================================
+
+function gerarCodigo() {
+    codigo++;
+    return codigo;
 }
 
-// ==========================================
-// MOTOR FÍSICO DE PARTÍCULAS EM CANVAS (HTML5)
-// ==========================================
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
-let particlesArray = [];
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+// ========================================
+// 3. FUNÇÕES DE CÁLCULO DO IMC
+// ========================================
 
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2.2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.35;
-        this.speedY = (Math.random() - 0.5) * 0.35;
-    }
-    update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x > canvas.width) this.x = 0;
-        if (this.x < 0) this.x = canvas.width;
-        if (this.y > canvas.height) this.y = 0;
-        if (this.y < 0) this.y = canvas.height;
-    }
-    draw() {
-        ctx.fillStyle = 'rgba(236, 72, 153, 0.35)'; // Partículas em Rosa
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
+function calcularIMC(peso, altura) {
+    return peso / (altura * altura);
 }
 
-function initParticles() {
-    particlesArray = [];
-    for (let i = 0; i < 45; i++) {
-        particlesArray.push(new Particle());
-    }
-}
-initParticles();
 
-function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-    });
-    requestAnimationFrame(animateParticles);
-}
-animateParticles();
+// ========================================
+// 4. CLASSIFICAÇÃO DO IMC
+// ========================================
 
-// ==========================================
-// GESTÃO DO KANBAN E RENDERIZAÇÃO
-// ==========================================
-const colTodo = document.getElementById('colTodo');
-const colProgress = document.getElementById('colProgress');
-const colDone = document.getElementById('colDone');
-const searchInput = document.getElementById('searchInput');
-const categoryFilter = document.getElementById('categoryFilter');
-const priorityFilter = document.getElementById('priorityFilter');
-const sortFilter = document.getElementById('sortFilter');
-const taskModal = document.getElementById('taskModal');
-const modalContainer = document.getElementById('modalContainer');
-const taskForm = document.getElementById('taskForm');
+function classificarIMC(imc) {
 
-document.addEventListener('DOMContentLoaded', () => {
-    renderKanban();
-    logAction("Sistema Atelier Maison Élise inicializado com sucesso.");
-});
-
-document.getElementById('btnNewTask').addEventListener('click', () => openModal("Nova Demanda de Peça"));
-document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-document.getElementById('btnCancelModal').addEventListener('click', closeModal);
-
-document.getElementById('btnLogs').addEventListener('click', () => {
-    const container = document.getElementById('logsContainer');
-    container.innerHTML = systemLogs.length ? systemLogs.map(l => `<div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700">${l}</div>`).join('') : '<p class="text-slate-400">Nenhum log registrado até o momento.</p>';
-    document.getElementById('logsModal').classList.remove('hidden');
-    setTimeout(() => document.getElementById('logsModal').classList.remove('opacity-0'), 10);
-});
-
-function closeLogsModal() {
-    document.getElementById('logsModal').classList.add('opacity-0');
-    setTimeout(() => document.getElementById('logsModal').classList.add('hidden'), 300);
-}
-
-taskForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    saveTaskData();
-});
-
-searchInput.addEventListener('input', renderKanban);
-categoryFilter.addEventListener('change', renderKanban);
-priorityFilter.addEventListener('change', renderKanban);
-sortFilter.addEventListener('change', renderKanban);
-
-function renderKanban() {
-    colTodo.innerHTML = '';
-    colProgress.innerHTML = '';
-    colDone.innerHTML = '';
-
-    const query = searchInput.value.toLowerCase();
-    const catVal = categoryFilter.value;
-    const priorityVal = priorityFilter.value;
-    const sortVal = sortFilter.value;
-
-    let filtered = tasks.filter(t => {
-        const matchesQuery = t.title.toLowerCase().includes(query) || t.description.toLowerCase().includes(query) || t.id.toString().includes(query) || t.category.toLowerCase().includes(query);
-        const matchesCategory = catVal === "" || t.category === catVal;
-        const matchesPriority = priorityVal === "" || t.priority === priorityVal;
-        return matchesQuery && matchesCategory && matchesPriority;
-    });
-
-    if (sortVal === 'date') {
-        filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-    } else if (sortVal === 'budget') {
-        filtered.sort((a, b) => b.budget - a.budget);
-    } else if (sortVal === 'priority') {
-        const weight = { 'Alta': 3, 'Média': 2, 'Baixa': 1 };
-        filtered.sort((a, b) => weight[b.priority] - weight[a.priority]);
-    }
-
-    let countT = 0, countP = 0, countD = 0, countU = 0, totalBudgetCalc = 0;
-
-    filtered.forEach(t => {
-        if (t.status === 'todo') countT++;
-        if (t.status === 'progress') countP++;
-        if (t.status === 'done') countD++;
-        if (t.priority === 'Alta') countU++;
-        totalBudgetCalc += Number(t.budget || 0);
-
-        const card = document.createElement('div');
-        card.className = "kanban-card bg-white p-4 rounded-xl border border-slate-200 shadow-xs cursor-grab active:cursor-grabbing relative group";
-        card.setAttribute('draggable', 'true');
-        card.dataset.id = t.id;
-
-        card.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', t.id);
-            card.classList.add('dragging');
-        });
-        card.addEventListener('dragend', () => card.classList.remove('dragging'));
-
-        let priorityBadge = "bg-emerald-50 text-emerald-700 border-emerald-200";
-        if (t.priority === 'Média') priorityBadge = "bg-amber-50 text-amber-700 border-amber-200";
-        if (t.priority === 'Alta') priorityBadge = "bg-pink-50 text-pink-700 border-pink-200";
-
-        card.innerHTML = `
-            <div class="flex items-start justify-between gap-2 mb-2">
-                <h4 class="font-bold text-sm text-slate-900 tracking-wide group-hover:text-blue-600 transition-colors">${t.title}</h4>
-                <span class="text-[10px] px-2.5 py-0.5 rounded-full uppercase font-mono font-bold border ${priorityBadge}">${t.priority}</span>
-            </div>
-            <div class="mb-2">
-                <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-pink-50 text-pink-600 border border-pink-100 font-bold"><i class="fa-solid fa-tag text-pink-500 mr-1"></i> ${t.category}</span>
-            </div>
-            <p class="text-xs font-medium text-slate-600 mb-3 line-clamp-2 leading-relaxed">${t.description}</p>
-            <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 pt-3 border-t border-slate-100">
-                <span class="text-blue-600 font-bold"><i class="fa-solid fa-wallet mr-1"></i> R$ ${Number(t.budget).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                <span class="flex items-center"><i class="fa-regular fa-calendar mr-1 text-pink-500"></i> ${formatDate(t.date)}</span>
-            </div>
-            <div class="flex items-center justify-end space-x-1 mt-2 pt-2 border-t border-slate-50">
-                <button class="btn-edit p-1.5 rounded hover:bg-slate-100 text-slate-400 hover:text-blue-600 transition-colors" title="Editar" data-id="${t.id}"><i class="fa-solid fa-pen"></i></button>
-                <button class="btn-delete p-1.5 rounded hover:bg-slate-100 text-slate-400 hover:text-pink-600 transition-colors" title="Excluir" data-id="${t.id}"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        `;
-
-        card.querySelector('.btn-edit').addEventListener('click', () => openEditModal(t.id));
-        card.querySelector('.btn-delete').addEventListener('click', () => removeTask(t.id));
-
-        if (t.status === 'todo') colTodo.appendChild(card);
-        if (t.status === 'progress') colProgress.appendChild(card);
-        if (t.status === 'done') colDone.appendChild(card);
-    });
-
-    document.getElementById('countTodo').innerText = countT;
-    document.getElementById('countProgress').innerText = countP;
-    document.getElementById('countDone').innerText = countD;
-    document.getElementById('kpiTotal').innerText = tasks.length;
-    document.getElementById('kpiProgress').innerText = tasks.filter(t => t.status === 'progress').length;
-    document.getElementById('kpiCompleted').innerText = tasks.filter(t => t.status === 'done').length;
-    document.getElementById('kpiUrgent').innerText = countU;
-    document.getElementById('kpiBudget').innerText = `R$ ${totalBudgetCalc.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-}
-
-// Drag & Drop Handlers
-function allowDrop(event) { event.preventDefault(); }
-function dropTask(event, newStatus) {
-    event.preventDefault();
-    const id = Number(event.dataTransfer.getData('text/plain'));
-    const task = tasks.find(t => t.id === id);
-    if (task) {
-        task.status = newStatus;
-        logAction(`Peça #${task.id} movida para coluna: ${newStatus.toUpperCase()}`);
-        renderKanban();
-        showToast(`Demanda movida para ${newStatus.toUpperCase()}!`, 'fa-arrows-split-up-and-left');
-    }
-}
-
-function formatDate(dateString) {
-    if (!dateString) return '';
-    const p = dateString.split('-');
-    return `${p[2]}/${p[1]}/${p[0]}`;
-}
-
-// Modal Controllers
-function openModal(titleText, task = null) {
-    document.getElementById('modalTitle').innerHTML = `<i class="fa-solid fa-pen-nib text-pink-500"></i> ${titleText}`;
-    taskForm.reset();
-    document.getElementById('taskId').value = '';
-
-    if (task) {
-        document.getElementById('taskId').value = task.id;
-        document.getElementById('taskTitle').value = task.title;
-        document.getElementById('taskDesc').value = task.description;
-        document.getElementById('taskCategory').value = task.category;
-        document.getElementById('taskPriority').value = task.priority;
-        document.getElementById('taskBudget').value = task.budget;
-        document.getElementById('taskDate').value = task.date;
-    }
-
-    taskModal.classList.remove('hidden');
-    setTimeout(() => {
-        taskModal.classList.remove('opacity-0');
-        modalContainer.classList.remove('scale-95');
-    }, 10);
-}
-
-function closeModal() {
-    taskModal.classList.add('opacity-0');
-    modalContainer.classList.add('scale-95');
-    setTimeout(() => taskModal.classList.add('hidden'), 300);
-}
-
-function saveTaskData() {
-    const id = document.getElementById('taskId').value;
-    const title = document.getElementById('taskTitle').value;
-    const description = document.getElementById('taskDesc').value;
-    const category = document.getElementById('taskCategory').value;
-    const priority = document.getElementById('taskPriority').value;
-    const budget = Number(document.getElementById('taskBudget').value);
-    const date = document.getElementById('taskDate').value;
-
-    if (id) {
-        const task = tasks.find(t => t.id == id);
-        if (task) {
-            task.title = title;
-            task.description = description;
-            task.category = category;
-            task.priority = priority;
-            task.budget = budget;
-            task.date = date;
-            logAction(`Peça #${task.id} editada com sucesso.`);
-            showToast("Demanda atualizada com sucesso!", "fa-circle-check");
-        }
-    } else {
-        const newTask = {
-            id: Date.now().toString().slice(-4),
-            title,
-            description,
-            category,
-            priority,
-            budget,
-            date,
-            status: 'todo'
+    if (imc < 18.5) {
+        return {
+            texto: "Abaixo do peso",
+            classe: "abaixo"
         };
-        tasks.push(newTask);
-        logAction(`Nova peça cadastrada: #${newTask.id} - ${title}`);
-        showToast("Nova demanda cadastrada no ateliê!", "fa-circle-plus");
     }
 
-    closeModal();
-    renderKanban();
+    if (imc < 25) {
+        return {
+            texto: "Peso normal",
+            classe: "normal"
+        };
+    }
+
+    if (imc < 30) {
+        return {
+            texto: "Sobrepeso",
+            classe: "sobrepeso"
+        };
+    }
+
+    if (imc < 35) {
+        return {
+            texto: "Obesidade grau I",
+            classe: "obesidade"
+        };
+    }
+
+    if (imc < 40) {
+        return {
+            texto: "Obesidade grau II",
+            classe: "obesidade"
+        };
+    }
+
+    return {
+        texto: "Obesidade grau III",
+        classe: "obesidade"
+    };
 }
 
-function openEditModal(id) {
-    const task = tasks.find(t => t.id === id);
-    if (task) openModal("Editar Demanda", task);
+
+// ========================================
+// 5. FORMATAÇÃO DOS VALORES NUMÉRICOS
+// ========================================
+
+function formatar(valor, casas = 1) {
+    return valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: casas,
+        maximumFractionDigits: casas
+    });
 }
 
-function removeTask(id) {
-    if (confirm("Deseja realmente remover esta demanda do sistema?")) {
-        tasks = tasks.filter(t => t.id !== id);
-        logAction(`Peça #${id} removida.`);
-        renderKanban();
-        showToast("Demanda removida com sucesso.", "fa-trash");
+
+// ========================================
+// 6. LEITURA DOS DADOS DO FORMULÁRIO
+// ========================================
+
+function lerFormulario() {
+
+    return {
+        nome: inputNome.value.trim(),
+        idade: Number(inputIdade.value),
+        altura: Number(inputAltura.value),
+        peso: Number(inputPeso.value)
+    };
+}
+
+
+// ========================================
+// 7. VALIDAÇÃO DOS DADOS
+// ========================================
+
+function validarDados(dados) {
+
+    if (dados.nome.length < 2) {
+        return "Informe um nome com no mínimo duas letras.";
+    }
+
+    if (
+        !Number.isInteger(dados.idade) ||
+        dados.idade < 1 ||
+        dados.idade > 120
+    ) {
+        return "A idade deve ser um número inteiro entre 1 e 120.";
+    }
+
+    if (
+        !Number.isFinite(dados.altura) ||
+        dados.altura < 0.5 ||
+        dados.altura > 2.5
+    ) {
+        return "A altura deve estar entre 0,50 m e 2,50 m.";
+    }
+
+    if (
+        !Number.isFinite(dados.peso) ||
+        dados.peso < 2 ||
+        dados.peso > 500
+    ) {
+        return "O peso deve estar entre 2 kg e 500 kg.";
+    }
+
+    return "";
+}
+
+
+// ========================================
+// 8. MENSAGENS DE ERRO
+// ========================================
+
+function mostrarErro(mensagem) {
+    mensagemDeErro.textContent = mensagem;
+    mensagemDeErro.hidden = false;
+}
+
+function limparErro() {
+    mensagemDeErro.textContent = "";
+    mensagemDeErro.hidden = true;
+}
+
+
+// ========================================
+// 9. ADICIONAR OU ATUALIZAR PESSOA
+// ========================================
+
+function adicionarPessoa(dados) {
+
+    if (pessoaEmEdicao !== null) {
+
+        const pessoa = pessoas.find(
+            pessoa => pessoa.id === pessoaEmEdicao
+        );
+
+        if (pessoa) {
+            pessoa.nome = dados.nome;
+            pessoa.idade = dados.idade;
+            pessoa.altura = dados.altura;
+            pessoa.peso = dados.peso;
+        }
+
+        pessoaEmEdicao = null;
+        btnSalvar.textContent = "Salvar paciente";
+
+    } else {
+
+        const novaPessoa = {
+            id: gerarCodigo(),
+            nome: dados.nome,
+            idade: dados.idade,
+            altura: dados.altura,
+            peso: dados.peso
+        };
+
+        pessoas.push(novaPessoa);
+    }
+
+    salvar();
+}
+
+
+// ========================================
+// 10. CRIAR CÉLULA DA TABELA
+// ========================================
+
+function criarCelula(conteudo) {
+
+    const td = document.createElement("td");
+
+    td.textContent = conteudo;
+
+    return td;
+}
+
+
+// ========================================
+// 11. CRIAR LINHA DA TABELA
+// ========================================
+
+function criarLinha(pessoa) {
+
+    const tr = document.createElement("tr");
+
+    tr.dataset.id = pessoa.id;
+
+    const imc = calcularIMC(pessoa.peso, pessoa.altura);
+    const classificacao = classificarIMC(imc);
+
+    tr.appendChild(criarCelula(pessoa.id));
+    tr.appendChild(criarCelula(pessoa.nome));
+    tr.appendChild(criarCelula(pessoa.idade));
+    tr.appendChild(criarCelula(formatar(pessoa.altura, 2) + " m"));
+    tr.appendChild(criarCelula(formatar(pessoa.peso, 1) + " kg"));
+    tr.appendChild(criarCelula(formatar(imc, 1)));
+
+    // Coluna de classificação
+
+    const tdClassificacao = document.createElement("td");
+
+    const selo = document.createElement("span");
+
+    selo.classList.add("selo", classificacao.classe);
+
+    selo.textContent = classificacao.texto;
+
+    tdClassificacao.appendChild(selo);
+
+    tr.appendChild(tdClassificacao);
+
+    // Coluna de ações
+
+    const tdAcoes = document.createElement("td");
+
+    const btnEditar = document.createElement("button");
+
+    btnEditar.textContent = "Editar";
+    btnEditar.classList.add("btn-editar");
+    btnEditar.dataset.acao = "editar";
+
+    const btnExcluir = document.createElement("button");
+
+    btnExcluir.textContent = "Excluir";
+    btnExcluir.classList.add("btn-excluir");
+    btnExcluir.dataset.acao = "excluir";
+
+    tdAcoes.appendChild(btnEditar);
+    tdAcoes.appendChild(btnExcluir);
+
+    tr.appendChild(tdAcoes);
+
+    return tr;
+}
+
+
+// ========================================
+// 12. FUNÇÃO DE RENDERIZAÇÃO
+// ========================================
+
+function render() {
+
+    tabelaPessoas.innerHTML = "";
+
+    if (pessoas.length === 0) {
+
+        const tr = document.createElement("tr");
+
+        const td = document.createElement("td");
+
+        td.colSpan = 8;
+        td.classList.add("vazio");
+        td.textContent = "Nenhuma pessoa cadastrada ainda.";
+
+        tr.appendChild(td);
+
+        tabelaPessoas.appendChild(tr);
+
+        return;
+    }
+
+    pessoas.forEach(pessoa => {
+
+        const linha = criarLinha(pessoa);
+
+        tabelaPessoas.appendChild(linha);
+
+    });
+}
+
+
+// ========================================
+// 13. ARMAZENAMENTO NO LOCALSTORAGE
+// ========================================
+
+function salvar() {
+
+    try {
+        localStorage.setItem(
+            CHAVE_PESSOAS,
+            JSON.stringify(pessoas)
+        );
+    } catch (erro) {
+        mostrarErro("Não foi possível salvar os dados no navegador.");
     }
 }
 
-// Toast Notificações Customizadas
-function showToast(message, iconClass) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastMessage').innerText = message;
-    document.getElementById('toastIcon').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
 
-    toast.classList.remove('translate-y-28', 'opacity-0');
-    setTimeout(() => {
-        toast.classList.add('translate-y-28', 'opacity-0');
-    }, 3000);
+// ========================================
+// 14. CARREGAR PESSOAS SALVAS
+// ========================================
+
+function carregarPessoas() {
+
+    try {
+
+        const dados = localStorage.getItem(CHAVE_PESSOAS);
+
+        if (dados === null) {
+            return [];
+        }
+
+        const resultado = JSON.parse(dados);
+
+        if (!Array.isArray(resultado)) {
+            return [];
+        }
+
+        return resultado.filter(pessoa =>
+            Number.isInteger(pessoa.id) &&
+            typeof pessoa.nome === "string" &&
+            Number.isInteger(pessoa.idade) &&
+            Number.isFinite(pessoa.altura) &&
+            Number.isFinite(pessoa.peso)
+        );
+
+    } catch (erro) {
+
+        console.error("Erro ao carregar pacientes:", erro);
+
+        return [];
+    }
 }
+
+
+// ========================================
+// 15. AJUSTAR CONTADOR DE CÓDIGO
+// ========================================
+
+function ajustarContadorCodigo() {
+
+    let maior = 0;
+
+    pessoas.forEach(pessoa => {
+
+        if (pessoa.id > maior) {
+            maior = pessoa.id;
+        }
+
+    });
+
+    codigo = maior;
+}
+
+
+// ========================================
+// 16. EDITAR PESSOA
+// ========================================
+
+function editarPessoa(id) {
+
+    const pessoa = pessoas.find(
+        pessoa => pessoa.id === id
+    );
+
+    if (!pessoa) return;
+
+    inputNome.value = pessoa.nome;
+    inputIdade.value = pessoa.idade;
+    inputAltura.value = pessoa.altura;
+    inputPeso.value = pessoa.peso;
+
+    pessoaEmEdicao = id;
+
+    btnSalvar.textContent = "Atualizar paciente";
+
+    limparErro();
+
+    inputNome.focus();
+
+    formPessoa.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+// ========================================
+// 17. EXCLUIR PESSOA
+// ========================================
+
+function excluirPessoa(id) {
+
+    const pessoa = pessoas.find(
+        pessoa => pessoa.id === id
+    );
+
+    if (!pessoa) return;
+
+    const confirmar = confirm(
+        `Deseja excluir o cadastro de ${pessoa.nome}?`
+    );
+
+    if (!confirmar) return;
+
+    pessoas = pessoas.filter(
+        pessoa => pessoa.id !== id
+    );
+
+    if (pessoaEmEdicao === id) {
+        cancelarFormulario();
+    }
+
+    salvar();
+    render();
+}
+
+
+// ========================================
+// 18. CANCELAR FORMULÁRIO
+// ========================================
+
+function cancelarFormulario() {
+
+    formPessoa.reset();
+
+    pessoaEmEdicao = null;
+
+    btnSalvar.textContent = "Salvar paciente";
+
+    limparErro();
+
+    inputNome.focus();
+}
+
+
+// ========================================
+// 19. EVENTO DE ENVIO DO FORMULÁRIO
+// ========================================
+
+formPessoa.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const dados = lerFormulario();
+
+    const erro = validarDados(dados);
+
+    if (erro !== "") {
+
+        mostrarErro(erro);
+
+        return;
+    }
+
+    limparErro();
+
+    adicionarPessoa(dados);
+
+    formPessoa.reset();
+
+    render();
+
+    inputNome.focus();
+
+});
+
+
+// ========================================
+// 20. EVENTOS DOS BOTÕES DA TABELA
+// ========================================
+
+tabelaPessoas.addEventListener("click", function(event) {
+
+    const botao = event.target.closest("button");
+
+    if (!botao) return;
+
+    const linha = botao.closest("tr");
+
+    if (!linha) return;
+
+    const id = Number(linha.dataset.id);
+
+    const acao = botao.dataset.acao;
+
+    if (acao === "editar") {
+        editarPessoa(id);
+    }
+
+    if (acao === "excluir") {
+        excluirPessoa(id);
+    }
+
+});
+
+
+// ========================================
+// 21. EVENTO DO BOTÃO CANCELAR
+// ========================================
+
+btnCancelar.addEventListener("click", cancelarFormulario);
+
+
+// ========================================
+// 22. INICIALIZAÇÃO DA APLICAÇÃO
+// ========================================
+
+let pessoas = carregarPessoas();
+
+ajustarContadorCodigo();
+
+render();
