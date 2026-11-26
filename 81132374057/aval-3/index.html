@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instagram Clone Completo</title>
+  <link rel="stylesheet" href="style.css" />
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+  <div class="app-layout">
+    <!-- Barra Lateral / Navegação -->
+    <aside class="sidebar">
+      <h1 class="logo">Instagram</h1>
+      <nav class="menu">
+        <button class="nav-btn ativo" data-aba="feed" type="button">🏠 <span>Página inicial</span></button>
+        <button class="nav-btn" data-aba="explorar" type="button">🧭 <span>Explorar</span></button>
+        <button class="nav-btn" id="btn-abrir-dm" type="button">✉️ <span>Mensagens</span></button>
+        <button class="nav-btn" id="btn-abrir-notif" type="button">❤️ <span>Notificações</span></button>
+        <button class="nav-btn" id="btn-novo-post" type="button">➕ <span>Criar</span></button>
+        <button class="nav-btn" data-aba="salvos" type="button">🔖 <span>Salvos</span></button>
+        <button class="nav-btn" data-aba="perfil" type="button">👤 <span>Perfil</span></button>
+      </nav>
+      <button id="btn-tema" class="btn-tema" type="button">🌙 Modo escuro</button>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="conteudo-principal">
+      <!-- ABA FEED -->
+      <section id="aba-feed" class="aba ativa">
+        <div class="feed-layout">
+          <div class="coluna-central">
+            <div id="stories" class="stories"></div>
+            <div id="feed" class="feed"></div>
+          </div>
+
+          <aside class="coluna-direita">
+            <div class="perfil-mini">
+              <img id="mini-avatar" src="" alt="Seu avatar" />
+              <div>
+                <strong id="mini-usuario"></strong>
+                <span id="mini-nome"></span>
+              </div>
+            </div>
+            <div class="sugestoes-box">
+              <p class="sugestoes-titulo">Sugestões para você</p>
+              <div id="lista-sugestoes"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ABA EXPLORAR -->
+      <section id="aba-explorar" class="aba">
+        <div class="topo-aba">
+          <input id="busca-explorar" type="search" placeholder="Pesquisar por usuário ou legenda..." />
+        </div>
+        <div id="grid-explorar" class="grid-fotos"></div>
+      </section>
+
+      <!-- ABA SALVOS -->
+      <section id="aba-salvos" class="aba">
+        <div class="topo-aba">
+          <h2>Publicações salvas</h2>
+        </div>
+        <div id="grid-salvos" class="grid-fotos"></div>
+      </section>
+
+      <!-- ABA PERFIL -->
+      <section id="aba-perfil" class="aba">
+        <header class="perfil-header">
+          <img id="perfil-avatar" src="" alt="Foto de perfil" />
+          <div class="perfil-dados">
+            <div class="perfil-linha1">
+              <h2 id="perfil-usuario"></h2>
+              <button id="btn-editar-perfil" class="btn-secundario" type="button">Editar perfil</button>
+            </div>
+            <div class="perfil-stats">
+              <span><strong id="stat-posts">0</strong> publicações</span>
+              <span><strong id="stat-seguidores">0</strong> seguidores</span>
+              <span><strong id="stat-seguindo">0</strong> seguindo</span>
+            </div>
+            <p><strong id="perfil-nome"></strong></p>
+            <p id="perfil-bio" class="bio"></p>
+          </div>
+        </header>
+        <div id="grid-perfil" class="grid-fotos"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL: CRIAR POST -->
+  <dialog id="modal-criar" class="modal">
+    <form id="form-criar" class="modal-box">
+      <div class="modal-topo">
+        <h3>Criar nova publicação</h3>
+        <button type="button" data-fechar="modal-criar">✕</button>
+      </div>
+      <label class="upload-area">
+        <span>Selecionar foto do computador</span>
+        <input id="input-arquivo" type="file" accept="image/*" hidden />
+      </label>
+      <input id="input-url" type="url" placeholder="Ou cole a URL da imagem (ex: https://picsum.photos)" />
+      <textarea id="input-legenda" rows="3" placeholder="Escreva uma legenda..." required></textarea>
+      <button type="submit" class="btn-primario">Compartilhar</button>
+    </form>
+  </dialog>
+
+  <!-- MODAL: EDITAR PERFIL -->
+  <dialog id="modal-perfil" class="modal">
+    <form id="form-perfil" class="modal-box">
+      <div class="modal-topo">
+        <h3>Editar perfil</h3>
+        <button type="button" data-fechar="modal-perfil">✕</button>
+      </div>
+      <input id="edit-nome" type="text" placeholder="Nome" required />
+      <input id="edit-usuario" type="text" placeholder="Nome de usuário" required />
+      <input id="edit-avatar" type="url" placeholder="URL da foto de perfil" required />
+      <textarea id="edit-bio" rows="3" placeholder="Sua bio"></textarea>
+      <button type="submit" class="btn-primario">Salvar alterações</button>
+    </form>
+  </dialog>
+
+  <!-- MODAL: VISUALIZADOR DE STORIES -->
+  <dialog id="modal-story" class="modal-story">
+    <div class="story-viewer">
+      <div class="story-progresso"><div id="story-barra"></div></div>
+      <div class="story-header">
+        <div class="story-user">
+          <img id="story-avatar" src="" alt="" />
+          <strong id="story-nome"></strong>
+        </div>
+        <button id="fechar-story" type="button">✕</button>
+      </div>
+      <img id="story-imagem" class="story-foto" src="" alt="Story" />
+      <p id="story-texto" class="story-legenda"></p>
+    </div>
+  </dialog>
+
+  <!-- MODAL: DIRECT (MENSAGENS) -->
+  <dialog id="modal-dm" class="modal">
+    <div class="modal-box dm-box">
+      <div class="modal-topo">
+        <h3>Direct</h3>
+        <button type="button" data-fechar="modal-dm">✕</button>
+      </div>
+      <div class="dm-container">
+        <div id="dm-contatos" class="dm-contatos"></div>
+        <div class="dm-chat">
+          <div id="dm-mensagens" class="dm-mensagens"></div>
+          <form id="form-dm" class="dm-form">
+            <input id="input-dm" type="text" placeholder="Mensagem..." required />
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: NOTIFICAÇÕES -->
+  <dialog id="modal-notif" class="modal">
+    <div class="modal-box">
+      <div class="modal-topo">
+        <h3>Notificações</h3>
+        <button type="button" data-fechar="modal-notif">✕</button>
+      </div>
+      <div id="lista-notif" class="lista-notif"></div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: VER POST AMPLIADO -->
+  <dialog id="modal-ver-post" class="modal">
+    <div id="conteudo-ver-post" class="modal-box"></div>
+  </dialog>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
