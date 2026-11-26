@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeroFeed - Rede Social dos Super-Heróis</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --spidey-red: #e11d48;
+            --spidey-blue: #2563eb;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: linear-gradient(90deg, var(--spidey-red), var(--spidey-blue));
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px 15px;
+        }
+
+        .new-post-box {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .new-post-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        select, textarea, input[type="text"] {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.95rem;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+            height: 70px;
+            margin-bottom: 10px;
+        }
+
+        .media-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .file-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .preview-box {
+            position: relative;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .preview-box img {
+            width: 100%;
+            max-height: 280px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-remove-img {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        textarea:focus, select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--spidey-blue);
+        }
+
+        .btn-post {
+            background-color: var(--spidey-red);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+            transition: background 0.2s;
+        }
+
+        .btn-post:hover {
+            background-color: #be123c;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--spidey-blue);
+            color: white;
+            border-color: var(--spidey-blue);
+        }
+
+        .post-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .hero-info h3 {
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .verified {
+            color: #38bdf8;
+            font-size: 0.85rem;
+        }
+
+        .hero-info span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .post-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 360px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            background-color: #0b1120;
+        }
+
+        .post-tag {
+            display: inline-block;
+            color: #38bdf8;
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 20px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .action-btn:hover {
+            color: var(--text-main);
+        }
+
+        .action-btn.liked {
+            color: var(--spidey-red);
+            font-weight: bold;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <header>
+        <h1>🕸️ HeroFeed</h1>
+    </header>
+
+    <div class="container">
+        <div class="new-post-box clearfix">
+            <div class="new-post-header">
+                <select id="heroSelect">
+                    <option value="spidey">🕷️ Homem-Aranha (@spidey_ny)</option>
+                    <option value="ironman">🤖 Homem de Ferro (@tonystark)</option>
+                    <option value="batman">🦇 Batman (@cavaleiro_das_trevas)</option>
+                    <option value="wonderwoman">🛡️ Mulher-Maravilha (@diana_themyscira)</option>
+                </select>
+            </div>
+
+            <textarea id="postInput" placeholder="O que está acontecendo na sua patrulha hoje?"></textarea>
+
+            <div class="media-controls">
+                <input type="text" id="imageUrlInput" placeholder="Cole o link (URL) de uma imagem..." oninput="handleUrlPreview()">
+                <div class="file-row">
+                    <span>Ou envie uma foto do dispositivo:</span>
+                    <input type="file" id="imageFileInput" accept="image/*" onchange="handleFilePreview(event)">
+                </div>
+            </div>
+
+            <div class="preview-box" id="previewBox">
+                <img id="previewImg" src="" alt="Pré-visualização da foto">
+                <button type="button" class="btn-remove-img" onclick="clearImagePreview()">✕ Remover</button>
+            </div>
+
+            <button class="btn-post" onclick="addPost()">Publicar</button>
+        </div>
+
+        <div class="filters" id="filterContainer">
+            <button class="filter-btn active" onclick="filterPosts('all', this)">Todos</button>
+            <button class="filter-btn" onclick="filterPosts('spidey', this)">Homem-Aranha</button>
+            <button class="filter-btn" onclick="filterPosts('ironman', this)">Homem de Ferro</button>
+            <button class="filter-btn" onclick="filterPosts('batman', this)">Batman</button>
+            <button class="filter-btn" onclick="filterPosts('wonderwoman', this)">Mulher-Maravilha</button>
+        </div>
+
+        <div id="feed"></div>
+    </div>
+
+    <script>
+        const heroes = {
+            spidey: {
+                name: "Homem-Aranha",
+                handle: "@spidey_ny",
+                avatar: "🕷️",
+                bg: "#e11d48"
+            },
+            ironman: {
+                name: "Homem de Ferro",
+                handle: "@tonystark",
+                avatar: "🤖",
+                bg: "#d97706"
+            },
+            batman: {
+                name: "Batman",
+                handle: "@cavaleiro_das_trevas",
+                avatar: "🦇",
+                bg: "#334155"
+            },
+            wonderwoman: {
+                name: "Mulher-Maravilha",
+                handle: "@diana_themyscira",
+                avatar: "🛡️",
+                bg: "#2563eb"
+            }
+        };
+
+        // SVG ilustrativos embutidos para as fotos iniciais funcionarem offline sem depender de links externos
+        const imgSpidey = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="600" height="320" viewBox="0 0 600 320">
+                <defs>
+                    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#0f172a"/>
+                        <stop offset="100%" stop-color="#1e3a8a"/>
+                    </linearGradient>
+                </defs>
+                <rect width="600" height="320" fill="url(#sky)"/>
+                <rect x="40" y="130" width="90" height="190" fill="#1e293b"/>
+                <rect x="150" y="90" width="110" height="230" fill="#0f172a"/>
+                <rect x="360" y="110" width="100" height="210" fill="#1e293b"/>
+                <rect x="480" y="150" width="80" height="170" fill="#0f172a"/>
+                <path d="M0 0 Q300 180 600 0" stroke="#e2e8f0" stroke-width="2" fill="none" opacity="0.4"/>
+                <path d="M0 70 Q300 220 600 70" stroke="#e2e8f0" stroke-width="2" fill="none" opacity="0.3"/>
+                <circle cx="300" cy="145" r="26" fill="#e11d48"/>
+                <ellipse cx="290" cy="142" rx="6" ry="9" fill="#fff" transform="rotate(-15 290 142)"/>
+                <ellipse cx="310" cy="142" rx="6" ry="9" fill="#fff" transform="rotate(15 310 142)"/>
+                <text x="300" y="295" text-anchor="middle" fill="#f8fafc" font-family="sans-serif" font-size="18" font-weight="bold">Vista de Cima - Queens, NY</text>
+            </svg>
+        `);
+
+        const imgIronMan = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="600" height="320" viewBox="0 0 600 320">
+                <rect width="600" height="320" fill="#111827"/>
+                <circle cx="300" cy="150" r="70" fill="#b91c1c" stroke="#f59e0b" stroke-width="5"/>
+                <circle cx="300" cy="150" r="24" fill="#38bdf8"/>
+                <circle cx="300" cy="150" r="10" fill="#e0f2fe"/>
+                <text x="300" y="265" text-anchor="middle" fill="#fbbf24" font-family="sans-serif" font-size="18" font-weight="bold">Reator Arc &amp; Diagnóstico Mark LXXXV</text>
+            </svg>
+        `);
+
+        const imgBatman = "data:image/svg+xml;utf8," + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="600" height="320" viewBox="0 0 600 320">
+                <rect width="600" height="320" fill="#090d16"/>
+                <circle cx="300" cy="140" r="65" fill="#1e293b" opacity="0.8"/>
+                <path d="M240 165 L265 115 L280 140 L300 125 L320 140 L335 115 L360 165 L325 155 L300 170 L275 155 Z" fill="#f8fafc"/>
+                <text x="300" y="265" text-anchor="middle" fill="#94a3b8" font-family="sans-serif" font-size="18" font-weight="bold">Sinal na Neblina - Gotham City</text>
+            </svg>
+        `);
+
+        let posts = [
+            {
+                id: 1,
+                heroId: "spidey",
+                text: "Acabei de impedir um assalto no Queens e ainda deu tempo de pegar uma fatia de pizza antes de esfriar. O amigão da vizinhança nunca para! 🍕🕸️",
+                image: imgSpidey,
+                tag: "#Queens #AmigoDaVizinhanca",
+                time: "15 min atrás",
+                likes: 342,
+                liked: false
+            },
+            {
+                id: 2,
+                heroId: "ironman",
+                text: "Sexta-Feira acabou de atualizar o sistema da Mark LXXXV. Alguém aí precisando de carona supersônica ou de um café expresso? ☕🚀",
+                image: imgIronMan,
+                tag: "#StarkIndustries #Tecnologia",
+                time: "1 hora atrás",
+                likes: 890,
+                liked: true
+            },
+            {
+                id: 3,
+                heroId: "batman",
+                text: "A noite em Gotham está silenciosa demais. Estou observando do topo da torre Wayne.",
+                image: imgBatman,
+                tag: "#Gotham #Vigilante",
+                time: "3 horas atrás",
+                likes: 512,
+                liked: false
+            },
+            {
+                id: 4,
+                heroId: "spidey",
+                text: "Alguém sabe como tirar mancha de teia sintética de uniforme azul? Perguntando para um amigo... 😅",
+                image: "",
+                tag: "#PerrengueDeHeroi",
+                time: "5 horas atrás",
+                likes: 1204,
+                liked: false
+            },
+            {
+                id: 5,
+                heroId: "wonderwoman",
+                text: "Treinamento matinal concluído. A verdade e a justiça sempre prevalecerão.",
+                image: "",
+                tag: "#Themyscira #Justica",
+                time: "7 horas atrás",
+                likes: 765,
+                liked: false
+            }
+        ];
+
+        let currentFilter = 'all';
+        let currentImageData = '';
+
+        function showPreview(src) {
+            const box = document.getElementById('previewBox');
+            const img = document.getElementById('previewImg');
+            if (src) {
+                currentImageData = src;
+                img.src = src;
+                box.style.display = 'block';
+            } else {
+                clearImagePreview();
+            }
+        }
+
+        function handleUrlPreview() {
+            const url = document.getElementById('imageUrlInput').value.trim();
+            if (!url) {
+                if (!document.getElementById('imageFileInput').files.length) {
+                    clearImagePreview();
+                }
+                return;
+            }
+            document.getElementById('imageFileInput').value = '';
+            showPreview(url);
+        }
+
+        function handleFilePreview(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            document.getElementById('imageUrlInput').value = '';
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                showPreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function clearImagePreview() {
+            currentImageData = '';
+            document.getElementById('previewImg').src = '';
+            document.getElementById('previewBox').style.display = 'none';
+            document.getElementById('imageUrlInput').value = '';
+            document.getElementById('imageFileInput').value = '';
+        }
+
+        function renderFeed() {
+            const feedElement = document.getElementById('feed');
+            feedElement.innerHTML = '';
+
+            const filteredPosts = currentFilter === 'all'
+                ? posts
+                : posts.filter(post => post.heroId === currentFilter);
+
+            filteredPosts.forEach(post => {
+                const hero = heroes[post.heroId];
+                const imageHTML = post.image
+                    ? `<img class="post-image" src="${post.image}" alt="Foto de ${hero.name}" onerror="this.style.display='none'">`
+                    : '';
+
+                const postHTML = `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="avatar" style="background-color: ${hero.bg};">
+                                ${hero.avatar}
+                            </div>
+                            <div class="hero-info">
+                                <h3>${hero.name} <span class="verified">✔</span></h3>
+                                <span>${hero.handle} • ${post.time}</span>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            <p>${post.text}</p>
+                            ${imageHTML}
+                            ${post.tag ? `<span class="post-tag">${post.tag}</span>` : ''}
+                        </div>
+                        <div class="post-actions">
+                            <button class="action-btn ${post.liked ? 'liked' : ''}" onclick="toggleLike(${post.id})">
+                                ${post.liked ? '❤️' : '🤍'} ${post.likes}
+                            </button>
+                            <button class="action-btn" onclick="sharePost('${hero.name}')">
+                                🔁 Compartilhar
+                            </button>
+                        </div>
+                    </div>
+                `;
+                feedElement.innerHTML += postHTML;
+            });
+        }
+
+        function addPost() {
+            const heroId = document.getElementById('heroSelect').value;
+            const input = document.getElementById('postInput');
+            const text = input.value.trim();
+
+            if (!text && !currentImageData) {
+                alert("Escreva uma mensagem ou adicione uma foto antes de publicar!");
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                heroId: heroId,
+                text: text || "Confira esse registro da patrulha!",
+                image: currentImageData,
+                tag: "#HeroFeed #AoVivo",
+                time: "Agora mesmo",
+                likes: 1,
+                liked: true
+            };
+
+            posts.unshift(newPost);
+            input.value = '';
+            clearImagePreview();
+            renderFeed();
+        }
+
+        function toggleLike(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
+                post.liked = !post.liked;
+                post.likes += post.liked ? 1 : -1;
+                renderFeed();
+            }
+        }
+
+        function filterPosts(filter, btnElement) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            btnElement.classList.add('active');
+            renderFeed();
+        }
+
+        function sharePost(heroName) {
+            alert(`Você compartilhou a atualização de ${heroName}!`);
+        }
+
+        renderFeed();
+    </script>
+</body>
+</html>
