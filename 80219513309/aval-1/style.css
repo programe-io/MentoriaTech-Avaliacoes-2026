@@ -1,0 +1,24 @@
+btn.addEventListener("click", () => openModal(Number(btn.dataset.id)));
+});
+}
+function openModal(id) {
+const post = posts.find((p) => p.id === id);
+if (!post) return;
+document.getElementById("modal-title").textContent = post.titulo;
+document.getElementById("modal-meta").innerHTML = <span>${post.genero} • ${post.ano}</span> <span class="nota">★ ${post.nota}</span>;
+document.getElementById("modal-body").textContent = post.resenha;
+modal.classList.add("open");
+}
+function closeModal() {
+modal.classList.remove("open");
+}
+searchInput.addEventListener("input", renderPosts);
+closeModalBtn.addEventListener("click", closeModal);
+modal.addEventListener("click", (e) => {
+if (e.target === modal) closeModal();
+});
+document.addEventListener("keydown", (e) => {
+if (e.key === "Escape") closeModal();
+});
+renderFilters();
+renderPosts();
