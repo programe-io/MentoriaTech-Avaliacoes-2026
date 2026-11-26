@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas Organizadas</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="topo">
+            <div>
+                <h1>🗂️ Minhas Tarefas</h1>
+                <p id="progresso-texto">0 de 0 concluídas</p>
+            </div>
+            <button type="button" id="btn-limpar-concluidas" class="btn-limpar">
+                Limpar concluídas
+            </button>
+        </header>
+
+        <div class="barra-progresso">
+            <div id="barra-fill"></div>
+        </div>
+
+        <form id="form-task" class="form-task">
+            <input type="text" id="task-titulo" placeholder="Título da tarefa..." required>
+            <select id="task-prio">
+                <option value="baixa">Baixa</option>
+                <option value="media" selected>Média</option>
+                <option value="alta">Alta</option>
+            </select>
+            <input type="date" id="task-data">
+            <button type="submit" id="btn-task-submit">Criar</button>
+        </form>
+
+        <div class="barra-filtros">
+            <select id="filtro-status">
+                <option value="todas">Status: Todas</option>
+                <option value="abertas">Status: Em aberto</option>
+                <option value="feitas">Status: Concluídas</option>
+            </select>
+
+            <select id="ordenacao">
+                <option value="criacao">Ordenar: Mais recentes</option>
+                <option value="prioridade">Ordenar: Maior prioridade</option>
+                <option value="prazo">Ordenar: Prazo mais próximo</option>
+            </select>
+        </div>
+
+        <ul id="lista-task" class="lista-task"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: #f5f3ff;
+    color: #1e1b4b;
+    padding: 24px;
+}
+
+.wrapper {
+    max-width: 780px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(76, 29, 149, 0.08);
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.topo h1 {
+    font-size: 1.5rem;
+}
+
+.topo p {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.barra-progresso {
+    height: 8px;
+    background: #ede9fe;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+#barra-fill {
+    height: 100%;
+    width: 0%;
+    background: #7c3aed;
+    transition: width 0.25s ease;
+}
+
+.form-task {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+input, select {
+    padding: 10px;
+    border: 1px solid #d8b4fe;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    background: #fff;
+}
+
+#btn-task-submit {
+    background: #7c3aed;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-limpar {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.barra-filtros {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.lista-task {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: #fafafa;
+}
+
+.task-card.feita {
+    background: #f3f4f6;
+    opacity: 0.72;
+}
+
+.task-card.feita .titulo-task {
+    text-decoration: line-through;
+}
+
+.task-esq {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tag-p {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.p-alta { background: #fee2e2; color: #b91c1c; }
+.p-media { background: #fef3c7; color: #b45309; }
+.p-baixa { background: #dcfce7; color: #15803d; }
+
+.task-dir {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-mini {
+    border: none;
+    border-radius: 6px;
+    padding: 5px 9px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-edit-task { background: #e0e7ff; color: #3730a3; }
+.btn-del-task { background: #ef4444; color: #fff; }
+
+@media (max-width: 680px) {
+    .form-task {
+        grid-template-columns: 1fr;
+    }
+}let tasks = JSON.parse(localStorage.getItem('tarefas_v2')) || [];
+let editandoTaskId = null;
+
+const formTask = document.getElementById('form-task');
+const listaTask = document.getElementById('lista-task');
+const filtroStatus = document.getElementById('filtro-status');
+const ordenacaoEl = document.getElementById('ordenacao');
+
+const pesoPrioridade = { alta: 3, media: 2, baixa: 1 };
+
+function salvarTasks() {
+    localStorage.setItem('tarefas_v2', JSON.stringify(tasks));
+    renderTasks();
+}
+
+function atualizarProgresso() {
+    const feitas = tasks.filter(t => t.feita).length;
+    const total = tasks.length;
+    document.getElementById('progresso-texto').textContent = `${feitas} de ${total} concluídas`;
+    const pct = total > 0 ? Math.round((feitas / total) * 100) : 0;
+    document.getElementById('barra-fill').style.width = `${pct}%`;
+}
+
+function renderTasks() {
+    let lista = tasks.filter(t => {
+        if (filtroStatus.value === 'abertas') return !t.feita;
+        if (filtroStatus.value === 'feitas') return t.feita;
+        return true;
+    });
+
+    const ordem = ordenacaoEl.value;
+    if (ordem === 'prioridade') {
+        lista.sort((a, b) => pesoPrioridade[b.prioridade] - pesoPrioridade[a.prioridade]);
+    } else if (ordem === 'prazo') {
+        lista.sort((a, b) => {
+            if (!a.prazo) return 1;
+            if (!b.prazo) return -1;
+            return a.prazo.localeCompare(b.prazo);
+        });
+    } else {
+        lista.sort((a, b) => b.id - a.id);
+    }
+
+    listaTask.innerHTML = '';
+
+    if (lista.length === 0) {
+        listaTask.innerHTML = '<li style="color:#6b7280; text-align:center; padding:20px;">Nada por aqui.</li>';
+    } else {
+        lista.forEach(t => {
+            const li = document.createElement('li');
+            li.className = `task-card ${t.feita ? 'feita' : ''}`;
+            const prazoFmt = t.prazo ? t.prazo.split('-').reverse().join('/') : 'Sem prazo';
+
+            li.innerHTML = `
+                <div class="task-esq">
+                    <input type="checkbox" ${t.feita ? 'checked' : ''} onchange="toggleTask(${t.id})">
+                    <span class="titulo-task">${t.titulo}</span>
+                    <span class="tag-p p-${t.prioridade}">${t.prioridade}</span>
+                    <small style="color:#6b7280;">📅 ${prazoFmt}</small>
+                </div>
+                <div class="task-dir">
+                    <button class="btn-mini btn-edit-task" onclick="editarTask(${t.id})">Editar</button>
+                    <button class="btn-mini btn-del-task" onclick="excluirTask(${t.id})">Excluir</button>
+                </div>
+            `;
+            listaTask.appendChild(li);
+        });
+    }
+
+    atualizarProgresso();
+}
+
+formTask.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const titulo = document.getElementById('task-titulo').value.trim();
+    const prioridade = document.getElementById('task-prio').value;
+    const prazo = document.getElementById('task-data').value;
+    if (!titulo) return;
+
+    if (editandoTaskId) {
+        tasks = tasks.map(t => t.id === editandoTaskId ? { ...t, titulo, prioridade, prazo } : t);
+        editandoTaskId = null;
+        document.getElementById('btn-task-submit').textContent = 'Criar';
+    } else {
+        tasks.push({ id: Date.now(), titulo, prioridade, prazo, feita: false });
+    }
+
+    formTask.reset();
+    document.getElementById('task-prio').value = 'media';
+    salvarTasks();
+});
+
+function toggleTask(id) {
+    tasks = tasks.map(t => t.id === id ? { ...t, feita: !t.feita } : t);
+    salvarTasks();
+}
+
+function editarTask(id) {
+    const t = tasks.find(item => item.id === id);
+    if (!t) return;
+    editandoTaskId = id;
+    document.getElementById('task-titulo').value = t.titulo;
+    document.getElementById('task-prio').value = t.prioridade;
+    document.getElementById('task-data').value = t.prazo;
+    document.getElementById('btn-task-submit').textContent = 'Salvar';
+}
+
+function excluirTask(id) {
+    tasks = tasks.filter(t => t.id !== id);
+    salvarTasks();
+}
+
+document.getElementById('btn-limpar-concluidas').addEventListener('click', () => {
+    tasks = tasks.filter(t => !t.feita);
+    salvarTasks();
+});
+
+filtroStatus.addEventListener('change', renderTasks);
+ordenacaoEl.addEventListener('change', renderTasks);
+
+renderTasks();
