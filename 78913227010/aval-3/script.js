@@ -1,142 +1,159 @@
 
-const posts = [
-    {
-        user: "Clara",
-        avatar: "https://i.pravatar.cc/100?img=45",
-        text: "Boa tarde, pessoal! ❤️✨",
-        photo: "https://picsum.photos/id/1011/700/500",
-        likes: 120
-    },
-    {
-        user: "Isadora",
-        avatar: "https://i.pravatar.cc/100?img=32",
-        text: "Que Deus abençoe nosso dia! 🌸",
-        photo: "https://picsum.photos/id/1027/700/500",
-        likes: 245
-    },
-    {
-        user: "Marlos",
-        avatar: "https://i.pravatar.cc/100?img=12",
-        text: "Só progresso! 🚀🔥",
-        photo: "https://picsum.photos/id/1005/700/500",
-        likes: 89
-    },
-    {
-        user: "fielpzs",
-        avatar: "https://i.pravatar.cc/100?img=15",
-        text: "Foco nos objetivos! 💙",
-        photo: "https://picsum.photos/id/1012/700/500",
-        likes: 356
-    }
-];
+// CURTIR PUBLICAÇÃO
 
-const feed = document.getElementById("feed");
+function likePost(button) {
 
-function renderPosts() {
-    feed.innerHTML = "";
+    const icon = button.querySelector("i");
+    const post = button.closest(".post");
+    const likes = post.querySelector(".likes");
 
-    posts.forEach((post, index) => {
-        const div = document.createElement("article");
-        div.className = "post";
+    let count = Number(likes.dataset.count || 1250);
 
-        div.innerHTML = `
-            <div class="post-header">
-                <img src="${post.avatar}">
-                <div>
-                    <b>${post.user}</b><br>
-                    <small>Agora · 🌎</small>
-                </div>
-            </div>
+    if (icon.classList.contains("fa-regular")) {
 
-            <p class="post-text">${post.text}</p>
+        icon.classList.replace("fa-regular", "fa-solid");
+        button.classList.add("liked");
 
-            ${post.photo ? `
-                <img class="post-photo" src="${post.photo}">
-            ` : ""}
+        count++;
 
-            <p style="margin-top:12px">
-                👍 <span id="likes-${index}">${post.likes}</span> curtidas
-            </p>
-
-            <div class="post-actions">
-                <button onclick="likePost(${index}, this)">👍 Curtir</button>
-                <button onclick="focusComment(${index})">💬 Comentar</button>
-                <button onclick="sharePost(${index})">↗ Compartilhar</button>
-            </div>
-
-            <div class="comments" id="comments-${index}"></div>
-
-            <div class="comment-input">
-                <input id="input-${index}" placeholder="Escreva um comentário...">
-                <button onclick="addComment(${index})">Enviar</button>
-            </div>
-        `;
-
-        feed.appendChild(div);
-    });
-}
-
-function likePost(index, button) {
-    if (button.dataset.liked === "true") {
-        posts[index].likes--;
-        button.dataset.liked = "false";
-        button.style.color = "#65676b";
     } else {
-        posts[index].likes++;
-        button.dataset.liked = "true";
-        button.style.color = "#1877f2";
+
+        icon.classList.replace("fa-solid", "fa-regular");
+        button.classList.remove("liked");
+
+        count--;
+
     }
 
-    document.getElementById(`likes-${index}`).textContent =
-        posts[index].likes;
+    likes.dataset.count = count;
+    likes.innerText = count.toLocaleString("pt-BR") + " curtidas";
 }
 
-function focusComment(index) {
-    document.getElementById(`input-${index}`).focus();
+
+// FOCAR NO CAMPO DE COMENTÁRIO
+
+function focusComment(button) {
+
+    const post = button.closest(".post");
+
+    post.querySelector(".comment-area input").focus();
+
 }
 
-function addComment(index) {
-    const input = document.getElementById(`input-${index}`);
-    const comments = document.getElementById(`comments-${index}`);
 
-    if (!input.value.trim()) return;
+// ADICIONAR COMENTÁRIO
 
-    const comment = document.createElement("p");
-    comment.textContent = "👤 Você: " + input.value;
+function addComment(button) {
 
-    comments.appendChild(comment);
-    input.value = "";
-}
+    const area = button.closest(".comment-area");
+    const input = area.querySelector("input");
 
-function createPost() {
-    const input = document.getElementById("newPost");
+    const text = input.value.trim();
 
-    if (!input.value.trim()) {
-        alert("Digite alguma coisa antes de publicar!");
+    if (text === "") {
+        alert("Digite um comentário!");
         return;
     }
 
-    posts.unshift({
-        user: "Você",
-        avatar: "https://i.pravatar.cc/100?img=47",
-        text: input.value,
-        photo: "",
-        likes: 0
-    });
+    const post = button.closest(".post");
+
+    const comment = document.createElement("p");
+
+    comment.className = "caption";
+
+    const username = document.createElement("strong");
+    username.textContent = " clarabeatriz ";
+
+    comment.appendChild(username);
+    comment.appendChild(document.createTextNode(text));
+
+    post.insertBefore(comment, area);
 
     input.value = "";
-    renderPosts();
+
 }
 
-function sharePost(index) {
-    const text = posts[index].user + ": " + posts[index].text;
 
-    if (navigator.share) {
-        navigator.share({ title: "Facebook Clone", text });
-    } else {
-        navigator.clipboard.writeText(text);
-        alert("Publicação copiada!");
+// SALVAR PUBLICAÇÃO
+
+document.querySelectorAll(".save").forEach(button => {
+
+    button.addEventListener("click", function() {
+
+        const icon = this.querySelector("i");
+
+        icon.classList.toggle("fa-regular");
+        icon.classList.toggle("fa-solid");
+
+        alert("Publicação atualizada nos salvos! ♡");
+
+    });
+
+});
+
+
+// CRIAR PUBLICAÇÃO COM FOTO
+
+const photoInput = document.getElementById("photoInput");
+
+photoInput.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        alert("Selecione uma imagem válida!");
+        return;
     }
-}
 
-renderPosts();
+    const imageURL = URL.createObjectURL(file);
+
+    const post = document.createElement("article");
+
+    post.className = "post";
+
+    post.innerHTML = `
+        <div class="post-header">
+            <img src="https://i.pravatar.cc/100?img=47">
+            <strong>clarabeatriz</strong>
+            <span>• agora</span>
+        </div>
+
+        <img class="post-image" src="${imageURL}" alt="Nova publicação">
+
+        <div class="actions">
+            <button onclick="likePost(this)">
+                <i class="fa-regular fa-heart"></i>
+            </button>
+            <button onclick="focusComment(this)">
+                <i class="fa-regular fa-comment"></i>
+            </button>
+            <button>
+                <i class="fa-regular fa-paper-plane"></i>
+            </button>
+            <button class="save">
+                <i class="fa-regular fa-bookmark"></i>
+            </button>
+        </div>
+
+        <p class="likes" data-count="0">0 curtidas</p>
+
+        <p class="caption">
+            <strong>clarabeatriz</strong>
+            Minha nova publicação! 💗
+        </p>
+
+        <div class="comment-area">
+            <input type="text" placeholder="Adicione um comentário...">
+            <button onclick="addComment(this)">Publicar</button>
+        </div>
+    `;
+
+    document.getElementById("feed").prepend(post);
+
+    this.value = "";
+
+    alert("Sua publicação foi adicionada! 💗");
+
+});
