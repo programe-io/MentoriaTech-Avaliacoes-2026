@@ -1,131 +1,151 @@
 
-let artigos = [
+let publicacoes = [
     {
-        titulo: "Como criar seu primeiro personagem de RPG",
-        autor: "Mestre das Crônicas",
-        categoria: "Personagens",
-        imagem: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500",
-        conteudo: "Criar um personagem é uma das partes mais divertidas do RPG. Comece definindo sua personalidade, história, objetivos e habilidades. Pense no passado do personagem e em como ele chegou ao mundo da aventura. Um bom personagem não precisa ser poderoso, mas precisa ter uma história interessante."
+        usuario: "mariana",
+        avatar: "https://i.pravatar.cc/100?img=32",
+        imagem: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800",
+        legenda: "Um dia incrível! ❤️☀️",
+        curtidas: 125,
+        curtido: false,
+        comentarios: []
     },
     {
-        titulo: "O universo da fantasia medieval",
-        autor: "Lorde dos Dados",
-        categoria: "Fantasia",
-        imagem: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500",
-        conteudo: "Mundos medievais são cenários incríveis para aventuras. Castelos, florestas misteriosas, criaturas mágicas e reinos em conflito podem transformar uma campanha em uma experiência inesquecível."
+        usuario: "pedro",
+        avatar: "https://i.pravatar.cc/100?img=11",
+        imagem: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800",
+        legenda: "A vida é feita de momentos! 🌎",
+        curtidas: 89,
+        curtido: false,
+        comentarios: []
     },
     {
-        titulo: "Conhecendo os sistemas de RPG",
-        autor: "Guardião do Reino",
-        categoria: "Sistemas",
-        imagem: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500",
-        conteudo: "Existem diversos sistemas de RPG, cada um com suas próprias regras. Dungeons & Dragons, Tormenta20 e Pathfinder são exemplos de sistemas que oferecem diferentes experiências de jogo."
-    },
-    {
-        titulo: "Como criar uma aventura inesquecível",
-        autor: "Mestre dos Mundos",
-        categoria: "Aventuras",
-        imagem: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=500",
-        conteudo: "Uma boa aventura precisa de objetivos, desafios e personagens interessantes. Crie mistérios, apresente escolhas importantes e permita que os jogadores influenciem o desenvolvimento da história."
-    },
-    {
-        titulo: "Dicas para ser um bom mestre",
-        autor: "Dado de Ouro",
-        categoria: "Dicas",
-        imagem: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500",
-        conteudo: "Um bom mestre escuta seus jogadores, prepara situações interessantes e mantém a diversão como prioridade. Não tenha medo de improvisar e adaptar a história às escolhas da mesa."
+        usuario: "carolina",
+        avatar: "https://i.pravatar.cc/100?img=45",
+        imagem: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800",
+        legenda: "Flores para alegrar o dia! 🌸",
+        curtidas: 210,
+        curtido: false,
+        comentarios: []
     }
 ];
 
-let categoriaAtual = "Todos";
+const feed = document.getElementById("feed");
 
-function escapar(texto) {
-    return String(texto).replace(/[&<>"']/g, c => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[c]);
-}
+function mostrarPublicacoes() {
+    feed.innerHTML = "";
 
-function mostrarArtigos() {
-    const lista = document.getElementById("listaArtigos");
+    publicacoes.forEach((post, index) => {
 
-    const pesquisa = document.getElementById("pesquisa")
-        .value.toLowerCase();
+        const artigo = document.createElement("article");
+        artigo.className = "post";
 
-    lista.innerHTML = "";
+        const cabecalho = document.createElement("div");
+        cabecalho.className = "post-header";
 
-    const filtrados = artigos.filter(artigo => {
-        const categoriaCorreta =
-            categoriaAtual === "Todos" ||
-            artigo.categoria === categoriaAtual;
+        const avatar = document.createElement("img");
+        avatar.src = post.avatar;
+        avatar.alt = "Foto de perfil de " + post.usuario;
 
-        const pesquisaCorreta =
-            artigo.titulo.toLowerCase().includes(pesquisa) ||
-            artigo.autor.toLowerCase().includes(pesquisa) ||
-            artigo.conteudo.toLowerCase().includes(pesquisa);
+        const nome = document.createElement("strong");
+        nome.textContent = post.usuario;
 
-        return categoriaCorreta && pesquisaCorreta;
-    });
+        const opcoes = document.createElement("span");
+        opcoes.textContent = "•••";
 
-    if (filtrados.length === 0) {
-        lista.innerHTML = "<p>Nenhuma publicação encontrada.</p>";
-        return;
-    }
+        cabecalho.append(avatar, nome, opcoes);
 
-    filtrados.forEach((artigo, indice) => {
-        const card = document.createElement("article");
+        const imagem = document.createElement("img");
+        imagem.className = "post-image";
+        imagem.src = post.imagem;
+        imagem.alt = "Publicação de " + post.usuario;
 
-        card.className = "card";
+        const acoes = document.createElement("div");
+        acoes.className = "post-actions";
 
-        card.innerHTML = `
-            <img
-                src="${escapar(artigo.imagem)}"
-                alt="${escapar(artigo.titulo)}"
-                onerror="this.src='https://placehold.co/500x300?text=RPG'"
-            >
+        const curtir = document.createElement("button");
+        curtir.className = "like-button" +
+            (post.curtido ? " liked" : "");
 
-            <div class="card-info">
+        curtir.textContent = post.curtido ? "❤️" : "🤍";
 
-                <h3>${escapar(artigo.titulo)}</h3>
+        curtir.onclick = () => {
+            post.curtido = !post.curtido;
+            post.curtidas += post.curtido ? 1 : -1;
+            mostrarPublicacoes();
+        };
 
-                <p>Autor: ${escapar(artigo.autor)}</p>
+        const comentar = document.createElement("button");
+        comentar.textContent = "💬";
 
-                <p>Categoria: ${escapar(artigo.categoria)}</p>
+        const compartilhar = document.createElement("button");
+        compartilhar.textContent = "📤";
 
-                <button class="ler">Ler artigo</button>
+        acoes.append(curtir, comentar, compartilhar);
 
-            </div>
-        `;
+        const informacoes = document.createElement("div");
+        informacoes.className = "post-info";
 
-        card.querySelector(".ler").addEventListener("click", () => {
-            abrirModal(artigo);
+        const quantidade = document.createElement("strong");
+        quantidade.textContent = post.curtidas + " curtidas";
+
+        const legenda = document.createElement("p");
+        legenda.textContent = post.usuario + " " + post.legenda;
+
+        informacoes.append(quantidade, legenda);
+
+        const comentarios = document.createElement("div");
+        comentarios.className = "post-info";
+
+        post.comentarios.forEach(texto => {
+            const p = document.createElement("p");
+            p.textContent = texto;
+            comentarios.appendChild(p);
         });
 
-        lista.appendChild(card);
+        const areaComentario = document.createElement("div");
+        areaComentario.className = "comment-area";
+
+        const input = document.createElement("input");
+        input.placeholder = "Adicione um comentário...";
+
+        const enviar = document.createElement("button");
+        enviar.textContent = "Publicar";
+
+        const adicionarComentario = () => {
+            if (input.value.trim()) {
+                post.comentarios.push(
+                    "meu_usuario: " + input.value.trim()
+                );
+                mostrarPublicacoes();
+            }
+        };
+
+        enviar.onclick = adicionarComentario;
+
+        input.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+                adicionarComentario();
+            }
+        });
+
+        comentar.onclick = () => input.focus();
+
+        areaComentario.append(input, enviar);
+
+        artigo.append(
+            cabecalho,
+            imagem,
+            acoes,
+            informacoes,
+            comentarios,
+            areaComentario
+        );
+
+        feed.appendChild(artigo);
     });
 }
 
-function filtrar(categoria) {
-    categoriaAtual = categoria;
-    mostrarArtigos();
-}
-
-function abrirModal(artigo) {
-    document.getElementById("detalhesArtigo").innerHTML = `
-        <h2>${escapar(artigo.titulo)}</h2>
-
-        <p><strong>Autor:</strong> ${escapar(artigo.autor)}</p>
-
-        <p><strong>Categoria:</strong> ${escapar(artigo.categoria)}</p>
-
-        <hr>
-
-        <p>${escapar(artigo.conteudo)}</p>
-    `;
-
+function abrirModal() {
     document.getElementById("modal").style.display = "flex";
 }
 
@@ -133,47 +153,49 @@ function fecharModal() {
     document.getElementById("modal").style.display = "none";
 }
 
-document.getElementById("pesquisa")
-    .addEventListener("input", mostrarArtigos);
+function publicar() {
+    const legenda = document.getElementById("legenda").value.trim();
+    const foto = document.getElementById("foto").value.trim();
 
-document.getElementById("formArtigo")
-    .addEventListener("submit", function(event) {
+    if (!legenda || !foto) {
+        alert("Adicione uma foto e uma legenda!");
+        return;
+    }
 
-        event.preventDefault();
+    try {
+        const url = new URL(foto);
 
-        const novoArtigo = {
-            titulo: document.getElementById("titulo").value.trim(),
-
-            autor: document.getElementById("autor").value.trim(),
-
-            categoria: document.getElementById("categoria").value,
-
-            imagem: document.getElementById("imagem").value.trim() ||
-                "https://placehold.co/500x300?text=RPG",
-
-            conteudo: document.getElementById("conteudo").value.trim()
-        };
-
-        artigos.unshift(novoArtigo);
-
-        categoriaAtual = "Todos";
-
-        this.reset();
-
-        mostrarArtigos();
-
-        alert("Sua publicação foi adicionada com sucesso!");
-
-        document.getElementById("artigos")
-            .scrollIntoView({ behavior: "smooth" });
-    });
-
-document.getElementById("modal")
-    .addEventListener("click", function(event) {
-
-        if (event.target === this) {
-            fecharModal();
+        if (!["http:", "https:"].includes(url.protocol)) {
+            throw new Error("URL inválida");
         }
-    });
 
-mostrarArtigos();
+        publicacoes.unshift({
+            usuario: "meu_usuario",
+            avatar: "https://i.pravatar.cc/100?img=12",
+            imagem: url.href,
+            legenda: legenda,
+            curtidas: 0,
+            curtido: false,
+            comentarios: []
+        });
+
+        document.getElementById("legenda").value = "";
+        document.getElementById("foto").value = "";
+
+        fecharModal();
+        mostrarPublicacoes();
+
+    } catch {
+        alert("Digite um endereço de imagem válido!");
+    }
+}
+
+function seguir(botao) {
+    if (botao.textContent === "Seguir") {
+        botao.textContent = "Seguindo";
+    } else {
+        botao.textContent = "Seguir";
+    }
+}
+
+mostrarPublicacoes();
