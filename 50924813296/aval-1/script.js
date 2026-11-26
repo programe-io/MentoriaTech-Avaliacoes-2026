@@ -1,48 +1,24 @@
-// 1. Mensagem de boas-vindas personalizada
-function mensagemBoasVindas() {
-    const horaAtual = new Date().getHours();
-        let saudacao;
+// Mensagem de boas-vindas
+window.addEventListener("load", function() {
+    console.log("Bem-vindo ao meu blog!");
 
-            if (horaAtual < 12) {
-                    saudacao = "Bom dia!";
-                        } else if (horaAtual < 18) {
-                                saudacao = "Boa tarde!";
-                                    } else {
-                                            saudacao = "Boa noite!";
-                                                }
+        alert("Seja bem-vindo(a) ao meu blog! 💗");
+        });
 
-                                                    console.log(saudacao + " Seja bem-vindo(a) ao Meu Blog! 😊");
-                                                    }
+        // Botão para mudar a cor do fundo
+        function mudarCor() {
+            document.body.style.backgroundColor = "#ffe4ec";
+            }
 
-                                                    // 2. Botão para mostrar data e hora atual
-                                                    function mostrarDataHora() {
-                                                        const agora = new Date();
-                                                            const dataFormatada = agora.toLocaleDateString('pt-BR', {
-                                                                    weekday: 'long',
-                                                                            year: 'numeric',
-                                                                                    month: 'long',
-                                                                                            day: 'numeric'
-                                                                                                });
-                                                                                                    const horaFormatada = agora.toLocaleTimeString('pt-BR');
-                                                                                                        alert(`📅 Hoje é: ${dataFormatada}\n⏰ Agora são: ${horaFormatada}`);
-                                                                                                        }
+            // Mensagem ao clicar em uma publicação
+            function curtir() {
+                alert("Você curtiu esta publicação! 💕");
+                }
 
-                                                                                                        // 3. Efeito de clique nos artigos
-                                                                                                        document.addEventListener('DOMContentLoaded', function() {
-                                                                                                            mensagemBoasVindas();
+                // Mostrar a data atual
+                function mostrarData() {
+                    const data = new Date();
 
-                                                                                                                const artigos = document.querySelectorAll('article');
-                                                                                                                    artigos.forEach((artigo, indice) => {
-                                                                                                                            artigo.addEventListener('click', function() {
-                                                                                                                                        alert(`Você clicou no artigo ${indice + 1}! 📝`);
-                                                                                                                                                });
-                                                                                                                                                    });
-                                                                                                                                                    });
-
-                                                                                                                                                    // 4. Alterar cor do cabeçalho ao clicar
-                                                                                                                                                    function mudarCorCabecalho() {
-                                                                                                                                                        const cabecalho = document.querySelector('header');
-                                                                                                                                                            const corAleatoria = '#' + Math.floor(Math.random()*16777215).toString(16);
-                                                                                                                                                                cabecalho.style.background = corAleatoria;
-                                                                                                                                                                }
-                                                                                                                                                                
+                        document.getElementById("data").textContent =
+                                "Data de hoje: " + data.toLocaleDateString("pt-BR");
+                                }
