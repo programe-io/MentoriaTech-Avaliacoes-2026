@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Prático: Controle de IMC</title>
+    <style>
+        /* CSS - Estilização da página */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .campo {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-left: 5px solid #007bff;
+            border-radius: 5px;
+            display: none; /* Oculto até que o cálculo seja feito */
+        }
+        #resultado p {
+            margin: 5px 0;
+            color: #333;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+    <!-- HTML - Estrutura do formulário -->
+    <div class="container">
+        <h2>Controle de IMC</h2>
+        
+        <div class="campo">
+            <label for="nome">Nome do Paciente:</label>
+            <input type="text" id="nome" placeholder="Ex: Maria Silva">
+        </div>
+
+        <div class="campo">
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso" step="0.1" placeholder="Ex: 70.5">
+        </div>
+
+        <div class="campo">
+            <label for="altura">Altura (m):</label>
+            <input type="number" id="altura" step="0.01" placeholder="Ex: 1.75">
+        </div>
+
+        <button onclick="calcularIMC()">Calcular IMC</button>
+
+        <!-- Área onde as informações serão exibidas -->
+        <div id="resultado"></div>
+    </div>
+
+    <!-- JavaScript - Lógica e cálculos -->
+    <script>
+        function calcularIMC() {
+            // 1. Receber os dados do paciente
+            const nome = document.getElementById('nome').value.trim();
+            const peso = parseFloat(document.getElementById('peso').value);
+            const altura = parseFloat(document.getElementById('altura').value);
+            const divResultado = document.getElementById('resultado');
+
+            // Validação básica para evitar campos vazios
+            if (!nome || isNaN(peso) || isNaN(altura) || altura <= 0 || peso <= 0) {
+                alert("Por favor, preencha todos os campos com valores válidos!");
+                return;
+            }
+
+            // 2. Calcular o IMC
+            const imc = peso / (altura * altura);
+            let classificacao = "";
+
+            if (imc < 18.5) {
+                classificacao = "Abaixo do peso";
+            } else if (imc < 25.0) {
+                classificacao = "Peso normal";
+            } else if (imc < 30.0) {
+                classificacao = "Sobrepeso";
+            } else if (imc < 35.0) {
+                classificacao = "Obesidade Grau I";
+            } else if (imc < 40.0) {
+                classificacao = "Obesidade Grau II";
+            } else {
+                classificacao = "Obesidade Grau III (Mórbida)";
+            }
+
+            // 3. Exibir informações acerca do IMC do Paciente
+            divResultado.style.display = "block";
+            divResultado.innerHTML = `
+                <p><strong>Paciente:</strong> ${nome}</p>
+                <p><strong>Peso:</strong> ${peso.toFixed(1)} kg | <strong>Altura:</strong> ${altura.toFixed(2)} m</p>
+                <p><strong>IMC Calculado:</strong> ${imc.toFixed(2)}</p>
+                <p><strong>Classificação:</strong> ${classificacao}</p>
+            `;
+        }
+    </script>
+
+<script src="script.js"></script></body>
+</html>
