@@ -1,73 +1,32 @@
 
-document.getElementById("btAdd").onclick = Add;
-document.getElementById("btAtualizar").onclick = Atualizar;
-document.getElementById("btExcluir").onclick = Excluir;
+function CalcularIMC() {
 
-const descricao = document.getElementById("nomeP");
-const qtd = document.getElementById("qtdP");
-const valor = document.getElementById("precoP");
+    const nome = document.getElementById("nome").value;
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseFloat(document.getElementById("altura").value);
 
-let produtos = [];
-
-function Add(){
-
-    ValidarProdutos(descricao.value, Number(qtd.value), Number(valor.value));
-
-    let novoProduto = {
-        codigo: produtos.length + 1,
-        descricao: descricao.value,
-        quantidade: Number(qtd.value),
-        valor: Number(valor.value)
-    };
-
-    produtos.push(novoProduto);
-
-    limparCampos();
-    exibirProdutos();
-}
-
-function limparCampos(){
-    descricao.value = "";
-    qtd.value = "";
-    valor.value = "";
-    descricao.focus();
-}
-
-function exibirProdutos() {
-    const listaUl = document.getElementById("listaProdutos");
-
-    listaUl.innerHTML = produtos.map(item => `
-        <li class="item-produto">
-            <strong>Código:</strong> ${item.codigo} |
-            <strong>Produto:</strong> ${item.descricao} |
-            <strong>Qtd:</strong> ${item.quantidade} |
-            <strong>Valor:</strong> R$ ${item.valor.toFixed(2)}
-        </li>
-    `).join('');
-}
-
-function Atualizar(){
-    alert("Agora a função foi implementada!");
-}
-
-function Excluir(){
-    alert("Agora a função foi implementada!");
-}
-
-function ValidarProdutos(descricao, qtd, valorr){
-
-    if (descricao.trim().length < 5){
-        alert("A descrição deve ter pelo menos 5 caracteres");
-        throw new Error("Descrição inválida");
+    if (nome.trim() === "" || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+        alert("Preencha todos os campos corretamente!");
+        return;
     }
 
-    if(qtd < 1 || !Number.isFinite(qtd)){
-        alert("Quantidade deve ser maior que zero");
-        throw new Error("Quantidade inválida");
+    const imc = peso / (altura * altura);
+
+    let classificacao;
+
+    if (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+    } else if (imc < 25) {
+        classificacao = "Faixa de peso considerada adequada";
+    } else if (imc < 30) {
+        classificacao = "Acima da faixa de peso adequada";
+    } else {
+        classificacao = "IMC elevado";
     }
 
-    if(valorr <= 0 || !Number.isFinite(valorr)){
-        alert("Valor deve ser maior que zero");
-        throw new Error("Valor inválido");
-    }
+    document.getElementById("resultado").innerHTML =
+        "<h3>Informações do Paciente</h3>" +
+        "<p>Nome: " + nome + "</p>" +
+        "<p>IMC: " + imc.toFixed(2) + "</p>" +
+        "<p>Classificação: " + classificacao + "</p>";
 }
