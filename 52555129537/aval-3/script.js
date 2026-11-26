@@ -1,134 +1,170 @@
 
-// FUNÇÃO PARA PUBLICAR
-function publicarPost() {
+// SELECIONAR ELEMENTOS
+const formulario = document.getElementById("formPost");
+const publicacoes = document.getElementById("publicacoes");
 
-    const texto = document.getElementById("textoPost").value.trim();
-    const imagem = document.getElementById("imagemPost").value.trim();
+// CRIAR PUBLICAÇÃO
+formulario.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const texto = document.getElementById("mensagem").value.trim();
+    const foto = document.getElementById("foto").value.trim();
 
     if (texto === "") {
-        alert("Digite alguma coisa antes de publicar!");
+        alert("Digite uma mensagem!");
         return;
     }
 
-    const lista = document.getElementById("listaPosts");
+    // CRIAR CARD
+    const card = document.createElement("article");
+    card.classList.add("publicacao");
 
-    const post = document.createElement("article");
-    post.className = "post";
-
-    // CABEÇALHO
-    const cabecalho = document.createElement("div");
-    cabecalho.className = "post-header";
+    // CRIAR AUTOR
+    const autor = document.createElement("div");
+    autor.className = "autor";
 
     const avatar = document.createElement("div");
     avatar.className = "avatar";
     avatar.textContent = "U";
 
-    const usuario = document.createElement("div");
+    const dados = document.createElement("div");
 
-    const nome = document.createElement("strong");
+    const nome = document.createElement("h3");
     nome.textContent = "Usuário";
 
-    const horario = document.createElement("span");
+    const horario = document.createElement("small");
     horario.textContent = "Agora";
 
-    usuario.appendChild(nome);
-    usuario.appendChild(horario);
+    dados.append(nome, horario);
+    autor.append(avatar, dados);
 
-    cabecalho.appendChild(avatar);
-    cabecalho.appendChild(usuario);
-
-    // TEXTO
+    // CRIAR TEXTO
     const mensagem = document.createElement("p");
-    mensagem.className = "post-text";
+    mensagem.className = "mensagem";
     mensagem.textContent = texto;
 
-    post.appendChild(cabecalho);
-    post.appendChild(mensagem);
+    card.append(autor, mensagem);
 
-    // IMAGEM OPCIONAL
-    if (imagem !== "") {
-        const foto = document.createElement("img");
+    // ADICIONAR IMAGEM SE EXISTIR
+    if (foto !== "") {
+        const imagem = document.createElement("img");
 
-        foto.className = "post-image";
-        foto.src = imagem;
-        foto.alt = "Imagem da publicação";
+        imagem.className = "imagem-post";
+        imagem.src = foto;
+        imagem.alt = "Imagem da publicação";
 
-        post.appendChild(foto);
+        card.appendChild(imagem);
     }
 
-    // BOTÕES
+    // CRIAR AÇÕES
     const acoes = document.createElement("div");
-    acoes.className = "post-actions";
+    acoes.className = "acoes";
 
-    const botaoCurtir = document.createElement("button");
-    botaoCurtir.textContent = "♡ Curtir (0)";
-    botaoCurtir.onclick = function() {
-        curtir(botaoCurtir);
-    };
+    const curtir = document.createElement("button");
+    curtir.textContent = "♡ Curtir ";
 
-    const botaoComentar = document.createElement("button");
-    botaoComentar.textContent = "Comentar";
-    botaoComentar.onclick = function() {
-        comentar(botaoComentar);
-    };
+    const quantidade = document.createElement("span");
+    quantidade.textContent = "0";
 
-    acoes.appendChild(botaoCurtir);
-    acoes.appendChild(botaoComentar);
+    curtir.appendChild(quantidade);
 
-    post.appendChild(acoes);
+    curtir.addEventListener("click", function() {
+        let total = Number(quantidade.textContent);
+
+        if (curtir.dataset.ativo === "sim") {
+            total--;
+            curtir.dataset.ativo = "nao";
+            curtir.firstChild.textContent = "♡ Curtir ";
+        } else {
+            total++;
+            curtir.dataset.ativo = "sim";
+            curtir.firstChild.textContent = "♥ Curtir ";
+        }
+
+        quantidade.textContent = total;
+    });
+
+    const comentar = document.createElement("button");
+    comentar.textContent = "Comentar";
+
+    comentar.addEventListener("click", function() {
+        adicionarComentario(card);
+    });
+
+    acoes.append(curtir, comentar);
 
     // ÁREA DE COMENTÁRIOS
     const comentarios = document.createElement("div");
-    comentarios.className = "comentarios";
+    comentarios.className = "area-comentarios";
 
-    post.appendChild(comentarios);
+    card.append(acoes, comentarios);
 
-    // ADICIONAR AO FEED
-    lista.prepend(post);
+    // COLOCAR NOVO POST NO TOPO
+    publicacoes.prepend(card);
 
-    // LIMPAR CAMPOS
-    document.getElementById("textoPost").value = "";
-    document.getElementById("imagemPost").value = "";
+    // LIMPAR FORMULÁRIO
+    formulario.reset();
 
-    alert("Publicação realizada com sucesso!");
-}
+    alert("Publicação criada com sucesso!");
 
-
-// FUNÇÃO CURTIR
-function curtir(botao) {
-
-    let quantidade = Number(botao.dataset.curtidas || 0);
-
-    if (botao.dataset.curtido === "true") {
-        quantidade--;
-        botao.dataset.curtido = "false";
-    } else {
-        quantidade++;
-        botao.dataset.curtido = "true";
-    }
-
-    botao.dataset.curtidas = quantidade;
-
-    botao.textContent = "♡ Curtir (" + quantidade + ")";
-}
+});
 
 
-// FUNÇÃO COMENTAR
-function comentar(botao) {
+// FUNÇÃO DE COMENTÁRIOS
+function adicionarComentario(card) {
 
-    const comentario = prompt("Digite seu comentário:");
+    const texto = prompt("Escreva seu comentário:");
 
-    if (comentario === null || comentario.trim() === "") {
+    if (texto === null || texto.trim() === "") {
         return;
     }
 
-    const post = botao.closest(".post");
-    const area = post.querySelector(".comentarios");
+    const area = card.querySelector(".area-comentarios");
 
-    const novoComentario = document.createElement("div");
-    novoComentario.className = "comentario";
+    const comentario = document.createElement("div");
+    comentario.className = "comentario-item";
 
-    novoComentario.textContent = "Usuário: " + comentario;
+    comentario.textContent = "Usuário: " + texto.trim();
 
-    area.appendChild(novoComentario);
+    area.appendChild(comentario);
 }
+
+
+// CURTIR PUBLICAÇÕES INICIAIS
+document.querySelectorAll(".curtir").forEach(function(botao) {
+
+    botao.addEventListener("click", function() {
+
+        const contador = botao.querySelector("span");
+        let total = Number(contador.textContent);
+
+        if (botao.dataset.ativo === "sim") {
+            total--;
+            botao.dataset.ativo = "nao";
+            botao.firstChild.textContent = "♡ Curtir ";
+        } else {
+            total++;
+            botao.dataset.ativo = "sim";
+            botao.firstChild.textContent = "♥ Curtir ";
+        }
+
+        contador.textContent = total;
+
+    });
+
+});
+
+
+// COMENTAR PUBLICAÇÕES INICIAIS
+document.querySelectorAll(".comentar").forEach(function(botao) {
+
+    botao.addEventListener("click", function() {
+
+        const card = botao.closest(".publicacao");
+
+        adicionarComentario(card);
+
+    });
+
+});
