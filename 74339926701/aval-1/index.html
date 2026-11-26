@@ -1,126 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet">
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Estoque</title>
+    <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
 <body>
-  // Arrays paralelos ou array de objetos usando sintaxe clássica
-var estoque = [];
-var executando = true;
+    <div class="container">
+        <h1>Controle de Estoque</h1>
 
-while (executando) {
-  var opcao = prompt(
-    "CONTROLE DE ESTOQUE\n\n" +
-    "1 - Cadastrar novo produto\n" +
-    "2 - Listar produtos cadastrados\n" +
-    "3 - Alterar valor de um produto\n" +
-    "4 - Alterar quantidade de um produto\n" +
-    "5 - Sair\n\n" +
-    "Digite o número da opção:"
-  );
+        <!-- Formulário de Cadastro -->
+        <section class="card">
+            <h2>Cadastrar Novo Produto</h2>
+            <form id="form-cadastro">
+                <input type="text" id="codigo" placeholder="Código (ex: P01)" required>
+                <input type="text" id="descricao" placeholder="Descrição do produto" required>
+                <input type="number" id="quantidade" placeholder="Quantidade" min="0" required>
+                <input type="number" id="valor" placeholder="Valor (R$)" step="0.01" min="0" required>
+                <button type="submit">Cadastrar</button>
+            </form>
+        </section>
 
-  // 1 - CADASTRAR
-  if (opcao === "1") {
-    var codigo = prompt("Informe o código do produto:");
-    var existe = false;
+        <!-- Formulário de Alteração -->
+        <section class="card">
+            <h2>Alterar Produto</h2>
+            <div class="alterar-grid">
+                <input type="text" id="codigo-busca" placeholder="Código do produto">
+                
+                <div class="acao-grupo">
+                    <input type="number" id="novo-valor" placeholder="Novo Valor (R$)" step="0.01" min="0">
+                    <button type="button" id="btn-alterar-valor">Alterar Valor</button>
+                </div>
 
-    // Laço 'for' tradicional para verificar se o código já existe
-    for (var i = 0; i < estoque.length; i++) {
-      if (estoque[i].codigo === codigo) {
-        existe = true;
-        break;
-      }
-    }
+                <div class="acao-grupo">
+                    <input type="number" id="nova-quantidade" placeholder="Nova Quantidade" min="0">
+                    <button type="button" id="btn-alterar-qtd">Alterar Quantidade</button>
+                </div>
+            </div>
+        </section>
 
-    if (existe) {
-      alert("Erro: Código já cadastrado!");
-    } else {
-      var descricao = prompt("Informe a descrição do produto:");
-      var quantidade = Number(prompt("Informe a quantidade:"));
-      var valor = Number(prompt("Informe o valor unitário:"));
+        <!-- Listagem de Produtos -->
+        <section class="card">
+            <h2>Produtos Cadastrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Valor Unitário</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-produtos">
+                    <!-- Os produtos serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
+        </section>
+    </div>
 
-      var novoProduto = {
-        codigo: codigo,
-        descricao: descricao,
-        quantidade: quantidade,
-        valor: valor
-      };
-
-      estoque.push(novoProduto);
-      alert("Produto cadastrado com sucesso!");
-    }
-
-  // 2 - LISTAR
-  } else if (opcao === "2") {
-    if (estoque.length === 0) {
-      alert("Nenhum produto cadastrado.");
-    } else {
-      var relatorio = "PRODUTOS CADASTRADOS:\n\n";
-
-      for (var i = 0; i < estoque.length; i++) {
-        relatorio += 
-          "Código: " + estoque[i].codigo +
-          " | Desc: " + estoque[i].descricao +
-          " | Qtd: " + estoque[i].quantidade +
-          " | Valor: R$ " + estoque[i].valor.toFixed(2) + "\n";
-      }
-
-      alert(relatorio);
-    }
-
-  // 3 - ALTERAR VALOR
-  } else if (opcao === "3") {
-    var codBusca = prompt("Digite o código do produto para alterar o valor:");
-    var encontrado = false;
-
-    for (var i = 0; i < estoque.length; i++) {
-      if (estoque[i].codigo === codBusca) {
-        var novoValor = Number(prompt("Digite o novo valor para " + estoque[i].descricao + ":"));
-        estoque[i].valor = novoValor;
-        encontrado = true;
-        alert("Valor alterado com sucesso!");
-        break;
-      }
-    }
-
-    if (!encontrado) {
-      alert("Produto não encontrado.");
-    }
-
-  // 4 - ALTERAR QUANTIDADE
-  } else if (opcao === "4") {
-    var codBuscaQtd = prompt("Digite o código do produto para alterar a quantidade:");
-    var achou = false;
-
-    for (var i = 0; i < estoque.length; i++) {
-      if (estoque[i].codigo === codBuscaQtd) {
-        var novaQtd = Number(prompt("Digite a nova quantidade para " + estoque[i].descricao + ":"));
-        estoque[i].quantidade = novaQtd;
-        achou = true;
-        alert("Quantidade alterada com sucesso!");
-        break;
-      }
-    }
-
-    if (!achou) {
-      alert("Produto não encontrado.");
-    }
-
-  // 5 - SAIR
-  } else if (opcao === "5" || opcao === null) {
-    executando = false;
-    alert("Programa encerrado.");
-
-  // OPÇÃO INVÁLIDA
-  } else {
-    alert("Opção inválida! Escolha de 1 a 5.");
-  }
-}
-
-  <script src="script.js"></script>
-  
-</body>
+    <script src="script.js"></script>
+<script src="script.js"></script></body>
 </html>
