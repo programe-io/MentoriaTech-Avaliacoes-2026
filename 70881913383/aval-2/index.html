@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Tarefas</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #101827, #1e3a5f);
+            color: white;
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px #0005;
+        }
+
+        h1 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            color: #cbd5e1;
+            margin-bottom: 25px;
+        }
+
+        .entrada {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.04);
+            filter: brightness(1.1);
+        }
+
+        .adicionar {
+            background: #0284c7;
+            color: white;
+        }
+
+        .estatisticas {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .estatistica {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+        }
+
+        .estatistica strong {
+            display: block;
+            font-size: 25px;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            margin: 20px 0 15px;
+            font-size: 20px;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: #334155;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .texto {
+            flex: 1;
+            overflow-wrap: anywhere;
+        }
+
+        .concluida .texto {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .acoes {
+            display: flex;
+            gap: 5px;
+        }
+
+        .concluir {
+            background: #16a34a;
+            color: white;
+        }
+
+        .excluir {
+            background: #dc2626;
+            color: white;
+        }
+
+        .vazio {
+            text-align: center;
+            color: #94a3b8;
+            padding: 20px;
+        }
+
+        .limpar {
+            background: #475569;
+            color: white;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 450px) {
+            .entrada {
+                flex-direction: column;
+            }
+
+            .estatistica {
+                padding: 10px 5px;
+            }
+
+            li {
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📋 Minhas Tarefas</h1>
+
+        <p class="subtitulo">
+            Organize suas atividades e acompanhe seu progresso!
+        </p>
+
+        <div class="entrada">
+            <input
+                type="text"
+                id="tarefaInput"
+                placeholder="Digite uma nova tarefa..."
+                maxlength="100"
+            >
+
+            <button class="adicionar" onclick="adicionarTarefa()">
+                + Adicionar
+            </button>
+        </div>
+
+        <div class="estatisticas">
+
+            <div class="estatistica">
+                <strong id="total">0</strong>
+                Total
+            </div>
+
+            <div class="estatistica">
+                <strong id="pendentes">0</strong>
+                Pendentes
+            </div>
+
+            <div class="estatistica">
+                <strong id="concluidas">0</strong>
+                Concluídas
+            </div>
+
+        </div>
+
+        <h2>Minhas atividades</h2>
+
+        <ul id="listaTarefas"></ul>
+
+        <button class="limpar" onclick="limparConcluidas()">
+            Limpar tarefas concluídas
+        </button>
+
+    </div>
+
+    <script>
+
+        // Carregar tarefas salvas no navegador
+        let tarefas = JSON.parse(
+            localStorage.getItem("minhasTarefas")
+        ) || [];
+
+        // Adicionar uma nova tarefa
+        function adicionarTarefa() {
+
+            const input = document.getElementById("tarefaInput");
+            const texto = input.value.trim();
+
+            if (texto === "") {
+                alert("Digite uma tarefa primeiro!");
+                return;
+            }
+
+            const novaTarefa = {
+                id: Date.now(),
+                texto: texto,
+                concluida: false
+            };
+
+            tarefas.push(novaTarefa);
+
+            input.value = "";
+
+            salvarTarefas();
+            mostrarTarefas();
+        }
+
+        // Exibir todas as tarefas
+        function mostrarTarefas() {
+
+            const lista = document.getElementById("listaTarefas");
+
+            lista.innerHTML = "";
+
+            if (tarefas.length === 0) {
+                lista.innerHTML =
+                    '<p class="vazio">Nenhuma tarefa cadastrada.</p>';
+            }
+
+            // Estrutura de repetição FOR
+            for (let i = 0; i < tarefas.length; i++) {
+
+                const tarefa = tarefas[i];
+
+                const item = document.createElement("li");
+
+                if (tarefa.concluida) {
+                    item.classList.add("concluida");
+                }
+
+                const texto = document.createElement("span");
+                texto.className = "texto";
+                texto.textContent = tarefa.texto;
+
+                const acoes = document.createElement("div");
+                acoes.className = "acoes";
+
+                const botaoConcluir = document.createElement("button");
+                botaoConcluir.className = "concluir";
+                botaoConcluir.textContent =
+                    tarefa.concluida ? "Desfazer" : "Concluir";
+
+                botaoConcluir.onclick = function() {
+                    concluirTarefa(tarefa.id);
+                };
+
+                const botaoExcluir = document.createElement("button");
+                botaoExcluir.className = "excluir";
+                botaoExcluir.textContent = "Excluir";
+
+                botaoExcluir.onclick = function() {
+                    excluirTarefa(tarefa.id);
+                };
+
+                acoes.appendChild(botaoConcluir);
+                acoes.appendChild(botaoExcluir);
+
+                item.appendChild(texto);
+                item.appendChild(acoes);
+
+                lista.appendChild(item);
+            }
+
+            atualizarEstatisticas();
+        }
+
+        // Marcar tarefa como concluída
+        function concluirTarefa(id) {
+
+            const tarefa = tarefas.find(t => t.id === id);
+
+            if (tarefa) {
+                tarefa.concluida = !tarefa.concluida;
+            }
+
+            salvarTarefas();
+            mostrarTarefas();
+        }
+
+        // Excluir uma tarefa
+        function excluirTarefa(id) {
+
+            tarefas = tarefas.filter(t => t.id !== id);
+
+            salvarTarefas();
+            mostrarTarefas();
+        }
+
+        // Limpar tarefas concluídas
+        function limparConcluidas() {
+
+            tarefas = tarefas.filter(t => !t.concluida);
+
+            salvarTarefas();
+            mostrarTarefas();
+        }
+
+        // Atualizar os números do painel
+        function atualizarEstatisticas() {
+
+            const total = tarefas.length;
+
+            const concluidas = tarefas.filter(
+                t => t.concluida
+            ).length;
+
+            const pendentes = total - concluidas;
+
+            document.getElementById("total").textContent = total;
+
+            document.getElementById("pendentes").textContent =
+                pendentes;
+
+            document.getElementById("concluidas").textContent =
+                concluidas;
+        }
+
+        // Salvar informações no navegador
+        function salvarTarefas() {
+
+            localStorage.setItem(
+                "minhasTarefas",
+                JSON.stringify(tarefas)
+            );
+        }
+
+        // Adicionar tarefa apertando ENTER
+        document.getElementById("tarefaInput")
+            .addEventListener("keydown", function(event) {
+
+                if (event.key === "Enter") {
+                    adicionarTarefa();
+                }
+
+            });
+
+        // Mostrar tarefas ao abrir a página
+        mostrarTarefas();
+
+    </script>
+
+</body>
+</html>
