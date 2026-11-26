@@ -1,201 +1,165 @@
 
-let musicas = [
+let posts = [
     {
-        nome: "Blinding Lights",
         artista: "The Weeknd",
+        musica: "Blinding Lights",
         genero: "Pop",
-        capa: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500",
-        nota: 5,
-        link: "https://www.youtube.com/results?search_query=The+Weeknd+Blinding+Lights",
-        descricao: "Uma música envolvente, com uma sonoridade nostálgica e uma batida contagiante. Ideal para quem gosta de pop moderno."
+        descricao: "Uma das melhores músicas para ouvir no último volume! 🔥",
+        imagem: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800",
+        curtidas: 15,
+        curtido: false
     },
     {
-        nome: "Bohemian Rhapsody",
         artista: "Queen",
+        musica: "Bohemian Rhapsody",
         genero: "Rock",
-        capa: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",
-        nota: 5,
-        link: "https://www.youtube.com/results?search_query=Queen+Bohemian+Rhapsody",
-        descricao: "Uma obra-prima do rock, com mudanças de ritmo, vocais marcantes e uma composição inesquecível."
+        descricao: "Um verdadeiro clássico que nunca envelhece! 🎸",
+        imagem: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800",
+        curtidas: 28,
+        curtido: false
     },
     {
-        nome: "AmarElo",
         artista: "Emicida",
+        musica: "AmarElo",
         genero: "Rap",
-        capa: "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=500",
-        nota: 5,
-        link: "https://www.youtube.com/results?search_query=Emicida+AmarElo",
-        descricao: "Uma música inspiradora que transmite esperança, força e mensagens importantes sobre a vida."
-    },
-    {
-        nome: "Velha Infância",
-        artista: "Tribalistas",
-        genero: "MPB",
-        capa: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=500",
-        nota: 5,
-        link: "https://www.youtube.com/results?search_query=Tribalistas+Velha+Infancia",
-        descricao: "Uma canção delicada e romântica, com uma melodia agradável e uma letra cheia de sentimentos."
-    },
-    {
-        nome: "Sweater Weather",
-        artista: "The Neighbourhood",
-        genero: "Indie",
-        capa: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500",
-        nota: 4,
-        link: "https://www.youtube.com/results?search_query=The+Neighbourhood+Sweater+Weather",
-        descricao: "Uma faixa com atmosfera alternativa, instrumental marcante e uma identidade musical única."
+        descricao: "Uma música incrível, cheia de significado. ❤️",
+        imagem: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800",
+        curtidas: 20,
+        curtido: false
     }
 ];
 
-let categoriaAtual = "Todos";
+const listaPosts = document.getElementById("lista-posts");
 
-function escapar(texto) {
-    return String(texto).replace(/[&<>"']/g, c => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[c]);
-}
+function mostrarPosts(lista = posts) {
+    listaPosts.innerHTML = "";
 
-function mostrarMusicas() {
-    const lista = document.getElementById("listaMusicas");
-    const pesquisa = document.getElementById("pesquisa")
-        .value.toLowerCase();
-
-    lista.innerHTML = "";
-
-    const filtradas = musicas.filter(musica => {
-        const categoriaCorreta =
-            categoriaAtual === "Todos" ||
-            musica.genero === categoriaAtual;
-
-        const pesquisaCorreta =
-            musica.nome.toLowerCase().includes(pesquisa) ||
-            musica.artista.toLowerCase().includes(pesquisa);
-
-        return categoriaCorreta && pesquisaCorreta;
-    });
-
-    if (filtradas.length === 0) {
-        lista.innerHTML = "<p>Nenhuma música encontrada.</p>";
+    if (lista.length === 0) {
+        listaPosts.innerHTML = "<p>Nenhuma publicação encontrada.</p>";
         return;
     }
 
-    filtradas.forEach(musica => {
-        const card = document.createElement("article");
-        card.className = "card";
+    lista.forEach((post) => {
+        const index = posts.indexOf(post);
 
-        const estrelas = "★".repeat(musica.nota) +
-            "☆".repeat(5 - musica.nota);
+        const elemento = document.createElement("article");
+        elemento.className = "post";
 
-        card.innerHTML = `
-            <img
-                src="${escapar(musica.capa)}"
-                alt="Imagem de ${escapar(musica.nome)}"
-                onerror="this.src='https://placehold.co/500x300?text=Musica'"
-            >
+        const titulo = document.createElement("h3");
+        titulo.textContent = "🎤 " + post.artista;
 
-            <div class="card-info">
-                <h3>${escapar(musica.nome)}</h3>
+        const musica = document.createElement("p");
+        musica.textContent = "🎵 Música: " + post.musica;
 
-                <p>Artista: ${escapar(musica.artista)}</p>
+        const genero = document.createElement("p");
+        genero.textContent = "Gênero: " + post.genero;
 
-                <p>Gênero: ${escapar(musica.genero)}</p>
+        const descricao = document.createElement("p");
+        descricao.textContent = post.descricao;
 
-                <div class="estrelas">${estrelas}</div>
+        const info = document.createElement("div");
+        info.className = "post-info";
+        info.textContent = "Comunidade MusicFeed";
 
-                <button>Ver recomendação</button>
-            </div>
-        `;
+        elemento.append(titulo, musica, genero, descricao, info);
 
-        card.querySelector("button").addEventListener("click", () => {
-            abrirModal(musica);
-        });
+        if (post.imagem) {
+            const img = document.createElement("img");
+            img.src = post.imagem;
+            img.alt = "Imagem da publicação musical";
+            img.onerror = () => img.remove();
+            elemento.appendChild(img);
+        }
 
-        lista.appendChild(card);
-    });
-}
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
 
-function filtrar(categoria) {
-    categoriaAtual = categoria;
-    mostrarMusicas();
-}
+        const curtir = document.createElement("button");
+        curtir.textContent = (post.curtido ? "❤️ " : "🤍 ") +
+            "Curtir (" + post.curtidas + ")";
 
-function abrirModal(musica) {
-    const estrelas = "★".repeat(musica.nota) +
-        "☆".repeat(5 - musica.nota);
+        if (post.curtido) {
+            curtir.classList.add("curtido");
+        }
 
-    document.getElementById("detalhesMusica").innerHTML = `
-        <h2>${escapar(musica.nome)}</h2>
-
-        <p><strong>Artista:</strong> ${escapar(musica.artista)}</p>
-
-        <p><strong>Gênero:</strong> ${escapar(musica.genero)}</p>
-
-        <p class="estrelas">${estrelas}</p>
-
-        <hr>
-
-        <h3>Por que recomendamos?</h3>
-
-        <p>${escapar(musica.descricao)}</p>
-
-        <p>
-            <a href="${escapar(musica.link)}"
-               target="_blank"
-               rel="noopener noreferrer">
-               Ouvir música ↗
-            </a>
-        </p>
-    `;
-
-    document.getElementById("modal").style.display = "flex";
-}
-
-function fecharModal() {
-    document.getElementById("modal").style.display = "none";
-}
-
-document.getElementById("pesquisa")
-    .addEventListener("input", mostrarMusicas);
-
-document.getElementById("formMusica")
-    .addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        const novaMusica = {
-            nome: document.getElementById("nomeMusica").value.trim(),
-            artista: document.getElementById("artista").value.trim(),
-            genero: document.getElementById("genero").value,
-            capa: document.getElementById("capa").value.trim() ||
-                "https://placehold.co/500x300?text=Musica",
-            nota: Number(document.getElementById("nota").value),
-            link: document.getElementById("linkMusica").value.trim() ||
-                "https://www.youtube.com/",
-            descricao: document.getElementById("descricao").value.trim()
+        curtir.onclick = () => {
+            post.curtido = !post.curtido;
+            post.curtidas += post.curtido ? 1 : -1;
+            mostrarPosts(lista);
         };
 
-        musicas.unshift(novaMusica);
+        const comentar = document.createElement("button");
+        comentar.textContent = "💬 Comentar";
 
-        categoriaAtual = "Todos";
+        comentar.onclick = () => {
+            const comentario = prompt("Digite seu comentário:");
 
-        this.reset();
+            if (comentario && comentario.trim()) {
+                alert("Comentário registrado: " + comentario);
+            }
+        };
 
-        mostrarMusicas();
+        acoes.append(curtir, comentar);
+        elemento.appendChild(acoes);
 
-        alert("Sua recomendação musical foi publicada!");
+        listaPosts.appendChild(elemento);
+    });
+}
 
-        document.getElementById("recomendacoes")
-            .scrollIntoView({ behavior: "smooth" });
+function criarPost() {
+    const artista = document.getElementById("artista").value.trim();
+    const musica = document.getElementById("musica").value.trim();
+    const genero = document.getElementById("genero").value.trim();
+    const descricao = document.getElementById("descricao").value.trim();
+    const imagem = document.getElementById("imagem").value.trim();
+
+    if (!artista || !musica || !genero || !descricao) {
+        alert("Preencha todos os campos obrigatórios!");
+        return;
+    }
+
+    posts.unshift({
+        artista,
+        musica,
+        genero,
+        descricao,
+        imagem,
+        curtidas: 0,
+        curtido: false
     });
 
-document.getElementById("modal")
-    .addEventListener("click", function(event) {
-        if (event.target === this) {
-            fecharModal();
-        }
-    });
+    document.getElementById("artista").value = "";
+    document.getElementById("musica").value = "";
+    document.getElementById("genero").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("imagem").value = "";
 
-mostrarMusicas();
+    mostrarPosts();
+    alert("Publicação criada com sucesso! 🎵");
+}
+
+function filtrarGenero(genero) {
+    if (genero === "Todos") {
+        mostrarPosts();
+    } else {
+        const filtrados = posts.filter(post =>
+            post.genero.toLowerCase() === genero.toLowerCase()
+        );
+
+        mostrarPosts(filtrados);
+    }
+}
+
+document.getElementById("pesquisa").addEventListener("input", function() {
+    const termo = this.value.toLowerCase();
+
+    const resultados = posts.filter(post =>
+        post.artista.toLowerCase().includes(termo) ||
+        post.musica.toLowerCase().includes(termo) ||
+        post.genero.toLowerCase().includes(termo)
+    );
+
+    mostrarPosts(resultados);
+});
+
+mostrarPosts();
