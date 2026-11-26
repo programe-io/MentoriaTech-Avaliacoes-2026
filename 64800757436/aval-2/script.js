@@ -1,85 +1,96 @@
-3. JavaScript — script.js
 
-javascript
+// CURTIR PUBLICAÇÃO
+function likePost(button) {
+    button.classList.toggle("liked");
 
-function toggleMenu() {
-    document.getElementById("menu")
-        .classList.toggle("active");
+    button.textContent =
+        button.classList.contains("liked")
+        ? "👍 Curtido"
+        : "👍 Curtir";
 }
 
-function calcularIMC() {
+// ADICIONAR COMENTÁRIO
+function addComment(button) {
+    const box = button.parentElement;
+    const input = box.querySelector("input");
+    const texto = input.value.trim();
 
-    const peso = Number(
-        document.getElementById("peso").value
-    );
+    if (!texto) return;
 
-    const altura = Number(
-        document.getElementById("altura").value
-    );
+    const comments = box.previousElementSibling;
 
-    const resultado =
-        document.getElementById("resultado");
+    const comment = document.createElement("div");
+    comment.className = "comment";
+    comment.textContent = "👤 Você: " + texto;
 
-    if (
-        !Number.isFinite(peso) ||
-        !Number.isFinite(altura) ||
-        peso <= 0 ||
-        altura <= 0 ||
-        altura > 3
-    ) {
-        resultado.innerHTML =
-            "Por favor, informe valores válidos.";
+    comments.appendChild(comment);
+    input.value = "";
+}
+
+// ABRIR CAMPO DE COMENTÁRIO
+function focusComment(button) {
+    const post = button.closest(".card");
+    post.querySelector(".comment-box input").focus();
+}
+
+// CRIAR PUBLICAÇÃO
+function createPost() {
+    const input = document.getElementById("postInput");
+    const texto = input.value.trim();
+
+    if (!texto) {
+        alert("Escreva algo antes de publicar!");
         return;
     }
 
-    const imc = peso / (altura * altura);
+    const post = document.createElement("div");
+    post.className = "card";
 
-    let classificacao = "";
+    post.innerHTML = `
+        <div class="post-header">
+            <div class="avatar">EU</div>
+            <div>
+                <strong>Você</strong><br>
+                <small>Agora · 🌎</small>
+            </div>
+        </div>
 
-    if (imc < 18.5) {
-        classificacao = "Abaixo da faixa de referência";
-    } else if (imc < 25) {
-        classificacao = "Faixa de referência";
-    } else if (imc < 30) {
-        classificacao = "Sobrepeso";
-    } else {
-        classificacao = "Obesidade";
-    }
+        <div class="post-text"></div>
 
-    resultado.innerHTML = `
-        Seu IMC é: ${imc.toFixed(2)}<br>
-        Classificação: ${classificacao}
+        <div class="actions">
+            <button onclick="likePost(this)">👍 Curtir</button>
+            <button onclick="focusComment(this)">💬 Comentar</button>
+            <button onclick="sharePost()">↗ Compartilhar</button>
+        </div>
+
+        <div class="comments"></div>
+
+        <div class="comment-box">
+            <input placeholder="Escreva um comentário...">
+            <button onclick="addComment(this)">Enviar</button>
+        </div>
     `;
+
+    post.querySelector(".post-text").textContent = texto;
+
+    document.getElementById("feed").prepend(post);
+
+    input.value = "";
 }
 
-// Fechar menu ao clicar nos links
-document.querySelectorAll("#menu a").forEach(link => {
-    link.addEventListener("click", () => {
-        document.getElementById("menu")
-            .classList.remove("active");
+// COMPARTILHAR
+function sharePost() {
+    alert("Compartilhamento demonstrativo!");
+}
+
+// PESQUISAR
+document.querySelector(".search").addEventListener("input", function() {
+    const pesquisa = this.value.toLowerCase();
+
+    document.querySelectorAll("#feed .card").forEach(post => {
+        post.style.display =
+            post.textContent.toLowerCase().includes(pesquisa)
+            ? "block"
+            : "none";
     });
 });
-
-console.log("NutriLife carregado com sucesso!");
-4. Resultado esperado
-Healthy Food Landing Page UI — Restaurant Landing Page Design by Desizen Studio on Dribbble
- 
-Página inicial
-
-Apresentação do projeto.
-Meal prep pour sportifs : 60 minutes pour 3 jours (système premium)
- 
-Cardápio
-
-Sugestões de refeições.
-BMI Calculator by Dao Huynh on Dribbble
- 
-Calculadora
-
-Cálculo automático do IMC.
-Healthy eating and exercising concept.
- 
-Dicas
-
-Informações sobre alimentação.
-Observação: os cardápios são exemplos educativos, não prescrições nutricionais. O IMC também não determina sozinho o estado de saúde de uma pessoa.
