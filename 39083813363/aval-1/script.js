@@ -3,177 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aula 14 - Sistema de Estoque em JavaScript</title>
+<title>Aula 17 - Gerenciador de Tarefas</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
   body{background:#f4f4f4;color:#222;padding:20px}
-  header{background:#f7df1e;padding:24px;border-radius:12px;text-align:center;margin-bottom:20px}
-  header h1{font-size:24px}
-  header p{margin-top:5px}
   main{max-width:900px;margin:0 auto}
+  header{background:#2563eb;color:#fff;padding:26px;border-radius:12px;text-align:center;margin-bottom:20px}
+  header h1{font-size:24px}
+  header p{margin-top:6px;opacity:.9}
   .card{background:#fff;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
-  .card h2{border-left:5px solid #f7df1e;padding-left:10px;margin-bottom:14px;font-size:19px}
+  .card h2{border-left:5px solid #2563eb;padding-left:10px;margin-bottom:14px;font-size:19px}
   label{display:block;margin:10px 0 4px;font-weight:bold;font-size:14px}
-  input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;font-size:15px}
+  input,select{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px;font-size:15px}
   .linha{display:flex;gap:12px}
   .linha div{flex:1}
-  button{border:none;cursor:pointer;border-radius:8px;padding:12px 16px;font-size:15px;font-weight:bold;margin-top:14px}
-  .btn-cadastrar{background:#111;color:#f7df1e;width:100%}
-  .btn-cadastrar:hover{opacity:.9}
+  button{border:none;cursor:pointer;border-radius:8px;padding:12px 14px;font-size:14px;font-weight:bold}
+  .btn-add{background:#2563eb;color:#fff;width:100%;margin-top:14px}
   #mensagem{margin-top:12px;padding:10px;border-radius:8px;font-size:14px;display:none}
   .erro{background:#ffe0e0;color:#a00;display:block}
   .sucesso{background:#d9f7d9;color:#0a6b0a;display:block}
-  .busca{display:flex;gap:10px}
-  .busca input{flex:1}
-  .btn-buscar{background:#f7df1e;color:#111;margin-top:0}
-  table{width:100%;border-collapse:collapse;margin-top:14px;font-size:14px}
+  .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .filtros button{background:#eef2ff;color:#2563eb}
+  .filtros button.ativo{background:#2563eb;color:#fff}
+  table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{border-bottom:1px solid #eee;padding:10px;text-align:left}
   th{background:#f9f9f9}
-  .btn-remover{background:#ff4444;color:#fff;padding:6px 10px;font-size:13px;margin:0}
-  .total{margin-top:14px;font-weight:bold;text-align:right}
-  .vazio{text-align:center;color:#888;padding:20px}
+  .concluida td{color:#888;text-decoration:line-through}
+  .badge{padding:4px 9px;border-radius:20px;font-size:12px;font-weight:bold;color:#fff}
+  .p1{background:#dc2626}.p2{background:#f59e0b}.p3{background:#16a34a}
+  .st-exec{background:#2563eb}.st-conc{background:#16a34a}
+  .btn-mini{padding:6px 10px;font-size:12px;margin:2px}
+  .btn-concluir{background:#16a34a;color:#fff}
+  .btn-prior{background:#f59e0b;color:#fff}
+  .btn-remover{background:#ef4444;color:#fff}
+  .resumo{display:flex;gap:12px;flex-wrap:wrap}
+  .resumo div{flex:1;min-width:140px;background:#f8fafc;border-radius:10px;padding:14px;text-align:center}
+  .resumo b{font-size:22px;display:block}
   .code{background:#1e1e1e;color:#7ee787;padding:14px;border-radius:8px;font-family:monospace;overflow-x:auto;white-space:pre-wrap;font-size:13px}
   .code b{color:#f7df1e}
-  @media(max-width:600px){.linha{flex-direction:column}}
+  @media(max-width:600px){.linha{flex-direction:column}table{font-size:12px}}
 </style>
 </head>
 <body>
-
 <main>
   <header>
-    <h1>Sistema Simples de Estoque</h1>
-    <p>Aula 14 • JavaScript • Funções • Array • Objetos • Validação</p>
+    <h1>✅ Gerenciador de Tarefas</h1>
+    <p>Aula 17 • Array • Objetos • Funções • find • push • throw</p>
   </header>
 
-  <!-- CADASTRO -->
   <section class="card">
-    <h2>Cadastrar Produto</h2>
-    <label>Descrição (mínimo 5 caracteres)</label>
-    <input type="text" id="descricao" placeholder="Ex: Teclado Mecânico">
-
+    <h2>Cadastrar Tarefa</h2>
+    <label>Título (mínimo 5 caracteres)</label>
+    <input type="text" id="titulo" placeholder="Ex: Estudar JavaScript">
     <div class="linha">
       <div>
-        <label>Preço (R$)</label>
-        <input type="number" id="preco" placeholder="Ex: 250">
+        <label>Prioridade</label>
+        <select id="prioridade">
+          <option value="1">1 - Alta 🔴</option>
+          <option value="2" selected>2 - Média 🟡</option>
+          <option value="3">3 - Baixa 🟢</option>
+        </select>
       </div>
       <div>
-        <label>Quantidade</label>
-        <input type="number" id="quantidade" placeholder="Ex: 5">
+        <label>Buscar por título / código</label>
+        <input type="text" id="busca" placeholder="Ex: Estudar ou 1" oninput="renderizar()">
       </div>
     </div>
-
-    <button class="btn-cadastrar" onclick="cadastrarProduto()">Cadastrar Produto</button>
+    <button class="btn-add" onclick="cadastrarPelaTela()">+ Cadastrar Tarefa</button>
     <div id="mensagem"></div>
   </section>
 
-  <!-- BUSCA -->
   <section class="card">
-    <h2>Buscar / Listar</h2>
-    <div class="busca">
-      <input type="text" id="busca" placeholder="Digite parte da descrição ou código..." oninput="listarProdutos()">
-      <button class="btn-buscar" onclick="listarProdutos()">Buscar</button>
+    <h2>Resumo</h2>
+    <div class="resumo">
+      <div><b id="total">0</b>Total</div>
+      <div><b id="emExecucao">0</b>Em execução</div>
+      <div><b id="concluidas">0</b>Concluídas</div>
     </div>
-
-    <table>
-      <thead>
-        <tr><th>Código</th><th>Descrição</th><th>Preço</th><th>Qtd</th><th>Total</th><th></th></tr>
-      </thead>
-      <tbody id="tabela"></tbody>
-    </table>
-    <div id="totalGeral" class="total"></div>
   </section>
 
-  <!-- EXPLICAÇÃO -->
   <section class="card">
-    <h2>Como funciona o código JS</h2>
-    <p><b>1.</b> Produtos ficam em um <b>array</b> • <b>2.</b> Código = <b>produtos.length + 1</b> • <b>3.</b> <b>validarProduto()</b> verifica antes de cadastrar • <b>4.</b> Funções separam responsabilidades</p>
+    <h2>Tarefas Cadastradas</h2>
+    <div class="filtros">
+      <button id="f-todas" class="ativo" onclick="setFiltro('todas')">Todas</button>
+      <button id="f-exec" onclick="setFiltro('exec')">Em execução</button>
+      <button id="f-conc" onclick="setFiltro('conc')">Concluídas</button>
+    </div>
+    <table>
+      <thead><tr><th>Código</th><th>Título</th><th>Prioridade</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="tabela"></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Como funciona (igual à aula)</h2>
+    <p><b>1.</b> Título mínimo 5 caracteres • <b>2.</b> Prioridade 1 a 3 (1 = mais alta) • <b>3.</b> Código gerado por contador independente, não por length • <b>4.</b> Status nasce <b>true</b> (em execução), concluir muda para <b>false</b></p>
   </section>
 </main>
 
 <script>
-  // 1. ARRAY QUE ARMAZENA OS PRODUTOS
-  let produtos = [];
+  // ===== DADOS CENTRAIS DA AULA 17 =====
+  let tarefas = [];
+  let geradorCodigo = 0; // contador independente, não usa tarefas.length
+  let filtroAtual = 'todas';
 
-  // 2. FUNÇÃO DE VALIDAÇÃO - Aula 14
-  function validarProduto(descricao, preco, quantidade) {
-    if (descricao.length < 5) {
-      mostrarMensagem("Erro: descrição precisa ter no mínimo 5 caracteres!", "erro");
-      return false;
+  // 1. validarDadosDaTarefa(titulo, prioridade) - Aula 17
+  function validarDadosDaTarefa(titulo, prioridade) {
+    if (titulo.length < 5) {
+      throw new Error("O título deve ter no mínimo 5 caracteres!");
     }
-    if (isNaN(preco) || preco <= 0) {
-      mostrarMensagem("Erro: preço deve ser maior que zero!", "erro");
-      return false;
+    if (prioridade < 1 || prioridade > 3) {
+      throw new Error("Informe uma prioridade entre 1 e 3!");
     }
-    if (isNaN(quantidade) || quantidade < 0) {
-      mostrarMensagem("Erro: quantidade não pode ser negativa!", "erro");
-      return false;
-    }
-    return true;
   }
 
-  // 3. CADASTRAR - usa validarProduto + gera código com length + 1
-  function cadastrarProduto() {
-    let descricao = document.getElementById("descricao").value.trim();
-    let preco = Number(document.getElementById("preco").value);
-    let quantidade = Number(document.getElementById("quantidade").value);
+  // 2. buscarTarefa(codigo) - usa find
+  function buscarTarefa(codigo) {
+    let tarefa = tarefas.find(t => t.codigo === codigo);
+    if (!tarefa) {
+      throw new Error("Código não encontrado!");
+    }
+    return tarefa;
+  }
 
-    if (!validarProduto(descricao, preco, quantidade)) return;
-
-    let produto = {
-      codigo: produtos.length + 1,
-      descricao: descricao,
-      preco: preco,
-      quantidade: quantidade
+  // 3. cadastrarTarefa(titulo, prioridade)
+  function cadastrarTarefa(titulo, prioridade) {
+    validarDadosDaTarefa(titulo, prioridade);
+    geradorCodigo++; // incrementa ANTES de atribuir
+    let tarefa = {
+      codigo: geradorCodigo,
+      titulo: titulo,
+      prioridade: prioridade,
+      status: true // true = em execução
     };
-
-    produtos.push(produto);
-    mostrarMensagem("Produto cadastrado com sucesso! Código: " + produto.codigo, "sucesso");
-    limparCampos();
-    listarProdutos();
+    tarefas.push(tarefa);
+    return tarefa;
   }
 
-  // 4. LISTAR + BUSCAR
-  function listarProdutos() {
-    let termo = document.getElementById("busca").value.toLowerCase();
-    let tabela = document.getElementById("tabela");
-    let totalGeral = 0;
-    tabela.innerHTML = "";
+  // 4. listarTarefas() - retorna o array, não exibe
+  function listarTarefas() {
+    return tarefas;
+  }
 
-    let filtrados = produtos.filter(p =>
-      p.descricao.toLowerCase().includes(termo) ||
-      String(p.codigo) === termo
-    );
-
-    if (filtrados.length === 0) {
-      tabela.innerHTML = `<tr><td colspan="6" class="vazio">Nenhum produto encontrado. Cadastre o primeiro acima!</td></tr>`;
+  // 5. concluirTarefa(codigo) - reutiliza buscarTarefa
+  function concluirTarefa(codigo) {
+    let tarefa = buscarTarefa(codigo);
+    if (tarefa.status === false) {
+      throw new Error("A tarefa já estava concluída!");
     }
-
-    for (let p of filtrados) {
-      let total = p.preco * p.quantidade;
-      totalGeral += total;
-      tabela.innerHTML += `
-        <tr>
-          <td>${p.codigo}</td>
-          <td>${p.descricao}</td>
-          <td>R$ ${p.preco.toFixed(2)}</td>
-          <td>${p.quantidade}</td>
-          <td>R$ ${total.toFixed(2)}</td>
-          <td><button class="btn-remover" onclick="removerProduto(${p.codigo})">Remover</button></td>
-        </tr>`;
-    }
-
-    document.getElementById("totalGeral").innerText =
-      "Valor total em estoque: R$ " + totalGeral.toFixed(2);
+    tarefa.status = false; // true -> false
+    return tarefa;
   }
 
-  // 5. REMOVER
-  function removerProduto(codigo) {
-    produtos = produtos.filter(p => p.codigo !== codigo);
-    listarProdutos();
-    mostrarMensagem("Produto " + codigo + " removido!", "sucesso");
+  // 6. alterarPrioridade(codigo, novaPrioridade) - reutiliza buscar + validar
+  function alterarPrioridade(codigo, novaPrioridade) {
+    let tarefa = buscarTarefa(codigo);
+    // Reaproveita a validação passando o próprio título já validado
+    validarDadosDaTarefa(tarefa.titulo, novaPrioridade);
+    tarefa.prioridade = novaPrioridade;
+    return tarefa;
   }
 
-  // AUXILIARES
+  // ===== FUNÇÕES DA TELA (só ligam HTML com as funções da aula) =====
   function mostrarMensagem(texto, tipo) {
     let el = document.getElementById("mensagem");
     el.innerText = texto;
@@ -181,18 +172,98 @@
     el.style.display = "block";
   }
 
-  function limparCampos() {
-    document.getElementById("descricao").value = "";
-    document.getElementById("preco").value = "";
-    document.getElementById("quantidade").value = "";
-    document.getElementById("descricao").focus();
+  function cadastrarPelaTela() {
+    try {
+      let titulo = document.getElementById("titulo").value.trim();
+      let prioridade = Number(document.getElementById("prioridade").value);
+      let nova = cadastrarTarefa(titulo, prioridade);
+      mostrarMensagem(`Tarefa cadastrada! Código: ${nova.codigo}`, "sucesso");
+      document.getElementById("titulo").value = "";
+      document.getElementById("titulo").focus();
+      renderizar();
+    } catch (erro) {
+      mostrarMensagem("Erro: " + erro.message, "erro");
+    }
   }
 
-  // TESTE INICIAL - já vem com 2 produtos
-  produtos.push({ codigo: 1, descricao: "Mouse", preco: 80, quantidade: 10 });
-  produtos.push({ codigo: 2, descricao: "Teclado Mecânico", preco: 250, quantidade: 5 });
-  listarProdutos();
-</script>
+  function concluirPelaTela(codigo) {
+    try {
+      concluirTarefa(codigo);
+      mostrarMensagem(`Tarefa ${codigo} concluída!`, "sucesso");
+      renderizar();
+    } catch (erro) {
+      mostrarMensagem("Erro: " + erro.message, "erro");
+    }
+  }
 
+  function alterarPrioridadePelaTela(codigo) {
+    let nova = Number(prompt("Nova prioridade (1 a 3) - 1 Alta, 2 Média, 3 Baixa:"));
+    if (!nova) return;
+    try {
+      alterarPrioridade(codigo, nova);
+      mostrarMensagem(`Prioridade da tarefa ${codigo} alterada para ${nova}!`, "sucesso");
+      renderizar();
+    } catch (erro) {
+      mostrarMensagem("Erro: " + erro.message, "erro");
+    }
+  }
+
+  function setFiltro(f) {
+    filtroAtual = f;
+    document.querySelectorAll(".filtros button").forEach(b => b.classList.remove("ativo"));
+    document.getElementById(f === 'todas' ? 'f-todas' : f === 'exec' ? 'f-exec' : 'f-conc').classList.add("ativo");
+    renderizar();
+  }
+
+  function textoPrioridade(p) {
+    return p === 1 ? "1 - Alta" : p === 2 ? "2 - Média" : "3 - Baixa";
+  }
+
+  function renderizar() {
+    let termo = document.getElementById("busca").value.toLowerCase();
+    let lista = listarTarefas().filter(t => {
+      let passaBusca = t.titulo.toLowerCase().includes(termo) || String(t.codigo) === termo;
+      let passaFiltro = filtroAtual === 'todas' ? true : filtroAtual === 'exec' ? t.status === true : t.status === false;
+      return passaBusca && passaFiltro;
+    });
+
+    let tabela = document.getElementById("tabela");
+    tabela.innerHTML = "";
+
+    if (lista.length === 0) {
+      tabela.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#888;padding:20px">Nenhuma tarefa encontrada.</td></tr>`;
+    }
+
+    for (let t of lista) {
+      tabela.innerHTML += `
+        <tr class="${t.status === false ? 'concluida' : ''}">
+          <td>#${t.codigo}</td>
+          <td>${t.titulo}</td>
+          <td><span class="badge p${t.prioridade}">${textoPrioridade(t.prioridade)}</span></td>
+          <td><span class="badge ${t.status ? 'st-exec' : 'st-conc'}">${t.status ? 'Em execução' : 'Concluída'}</span></td>
+          <td>
+            ${t.status ? `<button class="btn-mini btn-concluir" onclick="concluirPelaTela(${t.codigo})">Concluir</button>` : ''}
+            <button class="btn-mini btn-prior" onclick="alterarPrioridadePelaTela(${t.codigo})">Prioridade</button>
+          </td>
+        </tr>`;
+    }
+
+    document.getElementById("total").innerText = tarefas.length;
+    document.getElementById("emExecucao").innerText = tarefas.filter(t => t.status === true).length;
+    document.getElementById("concluidas").innerText = tarefas.filter(t => t.status === false).length;
+  }
+
+  // ===== TESTES IGUAIS AOS DA AULA =====
+  try {
+    cadastrarTarefa("Estudar JavaScript", 1);
+    cadastrarTarefa("Fazer exercícios da aula", 2);
+    cadastrarTarefa("Revisar funções e arrays", 3);
+    concluirTarefa(2);
+    // Teste de erro (descomente para ver):
+    // cadastrarTarefa("JS", 1);
+    // alterarPrioridade(99, 2);
+  } catch (e) { console.log(e.message); }
+  renderizar();
+</script>
 </body>
 </html>
