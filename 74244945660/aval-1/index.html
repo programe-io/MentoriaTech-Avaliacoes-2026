@@ -4,183 +4,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Estoque</title>
+
+    <title>Gerenciador de Tarefas</title>
 
     <link rel="stylesheet" href="css/style.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
+
 <body>
 
-    <aside class="sidebar">
-        <h2>EstoquePro</h2>
+    <div class="container">
 
-        <nav>
-            <a href="#" class="active" onclick="mostrarPagina('dashboard', this)">Dashboard</a>
-            <a href="#" onclick="mostrarPagina('produtos', this)">Produtos</a>
-            <a href="#" onclick="mostrarPagina('movimentacoes', this)">Movimentações</a>
-        </nav>
-    </aside>
-
-    <main class="main-content">
-
-        <header>
-            <h1>Sistema de Controle de Estoque</h1>
-            <p>Bem-vindo ao painel administrativo</p>
+        <header class="header">
+            <div>
+                <h1>Gerenciador de Tarefas</h1>
+                <p>Organize suas atividades e acompanhe seu progresso.</p>
+            </div>
         </header>
 
-        <!-- DASHBOARD -->
-        <section id="dashboard" class="pagina">
+        <!-- RESUMO -->
 
-            <h2>Visão Geral</h2>
+        <section class="cards">
 
-            <div class="cards">
-
-                <div class="card">
-                    <h3>Total de Produtos</h3>
-                    <p id="totalProdutos">0</p>
-                </div>
-
-                <div class="card">
-                    <h3>Unidades em Estoque</h3>
-                    <p id="totalUnidades">0</p>
-                </div>
-
-                <div class="card">
-                    <h3>Estoque Baixo</h3>
-                    <p id="estoqueBaixo">0</p>
-                </div>
-
+            <div class="card">
+                <h3>Total de tarefas</h3>
+                <p id="totalTarefas">0</p>
             </div>
 
-            <h2>Produtos Recentes</h2>
+            <div class="card">
+                <h3>Pendentes</h3>
+                <p id="tarefasPendentes">0</p>
+            </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Categoria</th>
-                            <th>Quantidade</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabelaDashboard"></tbody>
-                </table>
+            <div class="card">
+                <h3>Concluídas</h3>
+                <p id="tarefasConcluidas">0</p>
             </div>
 
         </section>
 
-        <!-- PRODUTOS -->
-        <section id="produtos" class="pagina hidden">
+        <!-- CADASTRO -->
 
-            <h2>Cadastro de Produtos</h2>
+        <section class="form-section">
 
-            <form id="formProduto">
+            <h2>Adicionar nova tarefa</h2>
 
-                <input type="hidden" id="produtoId">
+            <form id="formTarefa">
+
+                <input type="hidden" id="tarefaId">
 
                 <div class="form-group">
-                    <label>Nome do Produto</label>
-                    <input type="text" id="nome" required>
+                    <label for="titulo">Título da tarefa</label>
+                    <input
+                        type="text"
+                        id="titulo"
+                        placeholder="Digite o título da tarefa"
+                        required
+                        maxlength="120"
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Categoria</label>
-                    <input type="text" id="categoria" required>
+                    <label for="descricao">Descrição</label>
+                    <textarea
+                        id="descricao"
+                        placeholder="Descreva sua tarefa..."
+                        rows="3"
+                    ></textarea>
                 </div>
 
-                <div class="form-group">
-                    <label>Quantidade</label>
-                    <input type="number" id="quantidade" min="0" required>
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="prioridade">Prioridade</label>
+
+                        <select id="prioridade">
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média" selected>Média</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prazo">Data de entrega</label>
+                        <input type="date" id="prazo">
+                    </div>
+
                 </div>
 
-                <div class="form-group">
-                    <label>Preço</label>
-                    <input type="number" id="preco" min="0" step="0.01" required>
-                </div>
+                <button type="submit" id="btnSalvar">
+                    Adicionar tarefa
+                </button>
 
-                <button type="submit" id="btnSalvar">Cadastrar Produto</button>
+                <button type="button" id="btnCancelar" class="btn-cancelar hidden">
+                    Cancelar edição
+                </button>
 
             </form>
 
-            <h2>Lista de Produtos</h2>
+        </section>
 
-            <input
-                type="text"
-                id="pesquisa"
-                placeholder="Pesquisar produto..."
-            >
+        <!-- LISTA DE TAREFAS -->
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Categoria</th>
-                            <th>Quantidade</th>
-                            <th>Preço</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
+        <section class="tasks-section">
 
-                    <tbody id="tabelaProdutos"></tbody>
-                </table>
+            <div class="tasks-header">
+                <h2>Minhas tarefas</h2>
+
+                <input
+                    type="text"
+                    id="pesquisa"
+                    placeholder="Pesquisar tarefa..."
+                >
             </div>
+
+            <!-- FILTROS -->
+
+            <div class="filtros">
+
+                <button class="filtro active" data-filtro="todas">
+                    Todas
+                </button>
+
+                <button class="filtro" data-filtro="pendentes">
+                    Pendentes
+                </button>
+
+                <button class="filtro" data-filtro="concluidas">
+                    Concluídas
+                </button>
+
+            </div>
+
+            <!-- TAREFAS -->
+
+            <div id="listaTarefas" class="lista-tarefas"></div>
+
+            <p id="mensagemVazia" class="mensagem-vazia hidden">
+                Nenhuma tarefa encontrada.
+            </p>
 
         </section>
 
-        <!-- MOVIMENTAÇÕES -->
-        <section id="movimentacoes" class="pagina hidden">
-
-            <h2>Movimentação de Estoque</h2>
-
-            <form id="formMovimentacao">
-
-                <div class="form-group">
-                    <label>Produto</label>
-                    <select id="produtoMovimentacao" required>
-                        <option value="">Selecione um produto</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Tipo de Movimentação</label>
-                    <select id="tipoMovimentacao" required>
-                        <option value="entrada">Entrada</option>
-                        <option value="saida">Saída</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Quantidade</label>
-                    <input type="number" id="quantidadeMovimentacao" min="1" required>
-                </div>
-
-                <button type="submit">Registrar Movimentação</button>
-
-            </form>
-
-            <h2>Histórico</h2>
-
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Tipo</th>
-                            <th>Quantidade</th>
-                            <th>Data</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="tabelaMovimentacoes"></tbody>
-                </table>
-            </div>
-
-        </section>
-
-    </main>
+    </div>
 
     <script src="js/script.js"></script>
 
-</body>
+<script src="script.js"></script></body>
 </html>
