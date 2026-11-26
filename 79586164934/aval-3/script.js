@@ -1,91 +1,109 @@
-const posts = [
+const stories = [
+  { user: "luisa.mar", avatar: "https://picsum.photos", story: "https://picsum.photos" },
+  { user: "pedro.trilhas", avatar: "https://picsum.photos", story: "https://picsum.photos" },
+  { user: "cafe.piaui", avatar: "https://picsum.photos", story: "https://picsum.photos" },
+  { user: "ana.arte", avatar: "https://picsum.photos", story: "https://picsum.photos" },
+  { user: "dev.br", avatar: "https://picsum.photos", story: "https://picsum.photos" }
+];
+
+const defaultPosts = [
   {
     id: 1,
-    title: "As raízes históricas das religiões abraâmicas",
-    category: "historia",
-    date: "26 de Novembro, 2026",
-    excerpt: "Entenda os pontos históricos em comum entre Judaísmo, Cristianismo e Islamismo no Oriente Médio.",
-    content: `
-      <p>O Judaísmo, o Cristianismo e o Islamismo são conhecidos como religiões abraâmicas por compartilharem a figura histórica e espiritual de Abraão como patriarca fundamental.</p>
-      <p>Embora cada tradição tenha desenvolvido escrituras, rituais e teologias próprias ao longo dos séculos, todas compartilham o monoteísmo ético e a importância histórica da cidade de Jerusalém.</p>
-    `
+    username: "luisa.mar",
+    avatar: "https://picsum.photos",
+    image: "https://picsum.photos",
+    caption: "Fim de tarde perfeito na costa! Nada supera essa brisa.",
+    likes: 142,
+    liked: false,
+    saved: false,
+    time: "HÁ 2 HORAS",
+    comments: [
+      { user: "pedro.trilhas", text: "Que lugar incrível!" }
+    ]
   },
   {
     id: 2,
-    title: "Filosofias do Oriente: Hinduísmo e Budismo em perspectiva",
-    category: "tradicoes",
-    date: "22 de Novembro, 2026",
-    excerpt: "Conceitos como darma, carma e meditação na formação cultural do sul e leste da Ásia.",
-    content: `
-      <p>Surgidos no subcontinente indiano, o Hinduísmo e o Budismo influenciaram profundamente a arte, a ética e o modo de vida de bilhões de pessoas ao longo de milênios.</p>
-      <p>Enquanto o Hinduísmo reúne uma vasta diversidade de textos védicos e tradições devocionais, o Budismo concentra-se nos ensinamentos de Sidarta Gautama sobre a superação do sofrimento por meio da atenção plena e da compaixão.</p>
-    `
-  },
-  {
-    id: 3,
-    title: "Arquitetura sacra: Simbolismo em catedrais, mesquitas e templos",
-    category: "arquitetura",
-    date: "18 de Novembro, 2026",
-    excerpt: "Como a geometria, a luz e a acústica são usadas para criar espaços de contemplação.",
-    content: `
-      <p>Ao redor do mundo, os edifícios religiosos traduzem conceitos espirituais em pedra, madeira e luz. Nas catedrais góticas, os vitrais altos simbolizam a iluminação divina.</p>
-      <p>Nas mesquitas históricas, os padrões geométricos e a caligrafia expressam a infinitude sem recorrer a imagens figurativas, enquanto os templos orientais buscam harmonia direta com os elementos da natureza.</p>
-    `
-  },
-  {
-    id: 4,
-    title: "Tradições de matriz africana e sincretismo cultural no Brasil",
-    category: "tradicoes",
-    date: "12 de Novembro, 2026",
-    excerpt: "A preservação da memória ancestral, música e oralidade no Candomblé e na Umbanda.",
-    content: `
-      <p>As religiões de matriz africana no Brasil desempenharam um papel central na preservação de línguas, ritmos musicais e valores comunitários trazidos por povos africanos.</p>
-      <p>Com forte base na tradição oral, no respeito à natureza e na ancestralidade, essas expressões fazem parte do patrimônio cultural imaterial brasileiro.</p>
-    `
+    username: "dev.br",
+    avatar: "https://picsum.photos",
+    image: "https://picsum.photos",
+    caption: "Construindo interfaces rápidas com HTML, CSS e JavaScript puro.",
+    likes: 89,
+    liked: true,
+    saved: true,
+    time: "HÁ 5 HORAS",
+    comments: []
   }
 ];
 
-const postsGrid = document.getElementById("postsGrid");
-const filterBtns = document.querySelectorAll(".filter-btn");
-const searchInput = document.getElementById("searchInput");
+let posts = JSON.parse(localStorage.getItem("instaClonePosts")) || defaultPosts;
 
-const modal = document.getElementById("articleModal");
-const closeModal = document.getElementById("closeModal");
-const modalCategory = document.getElementById("modalCategory");
-const modalTitle = document.getElementById("modalTitle");
-const modalDate = document.getElementById("modalDate");
-const modalBody = document.getElementById("modalBody");
+const storiesBar = document.getElementById("storiesBar");
+const feedContainer = document.getElementById("feedContainer");
 
-let currentCategory = "todos";
+// Renderizar Stories
+function renderStories() {
+  storiesBar.innerHTML = stories
+    .map(
+      (s, index) => `
+      <div class="story-item" onclick="openStory(${index})">
+        <div class="story-ring">
+          <img src="${s.avatar}" alt="${s.user}">
+        </div>
+        <span>${s.user}</span>
+      </div>
+    `
+    )
+    .join("");
+}
 
-function renderPosts() {
-  const query = searchInput.value.toLowerCase();
+// Renderizar Feed
+function renderFeed() {
+  localStorage.setItem("instaClonePosts", JSON.stringify(posts));
 
-  const filtered = posts.filter((post) => {
-    const matchesCategory = currentCategory === "todos" || post.category === currentCategory;
-    const matchesSearch =
-      post.title.toLowerCase().includes(query) ||
-      post.excerpt.toLowerCase().includes(query);
-    return matchesCategory && matchesSearch;
-  });
-
-  if (filtered.length === 0) {
-    postsGrid.innerHTML = `<p style="color: var(--text-muted);">Nenhum artigo encontrado para essa busca.</p>`;
-    return;
-  }
-
-  postsGrid.innerHTML = filtered
+  feedContainer.innerHTML = posts
     .map(
       (post) => `
-      <article class="card">
-        <div class="card-banner ${post.category}">
-          <span class="badge">${post.category}</span>
+      <article class="post">
+        <div class="post-header">
+          <div class="post-user">
+            <img src="${post.avatar}" alt="${post.username}">
+            <span>${post.username}</span>
+          </div>
         </div>
-        <div class="card-content">
-          <span class="date">${post.date}</span>
-          <h3>${post.title}</h3>
-          <p class="excerpt">${post.excerpt}</p>
-          <button class="read-btn" onclick="openArticle(${post.id})">Ler artigo completo &rarr;</button>
+
+        <div class="post-image-wrapper" ondblclick="doubleClickLike(${post.id}, this)">
+          <img src="${post.image}" alt="Post de ${post.username}">
+          <div class="heart-overlay">&#9829;</div>
+        </div>
+
+        <div class="post-body">
+          <div class="post-actions">
+            <div class="left-actions">
+              <button class="icon-btn ${post.liked ? "liked" : ""}" onclick="toggleLike(${post.id})">
+                ${post.liked ? "&#9829;" : "&#9825;"}
+              </button>
+              <button class="icon-btn" onclick="focusComment(${post.id})">&#128172;</button>
+            </div>
+            <button class="icon-btn ${post.saved ? "saved" : ""}" onclick="toggleSave(${post.id})">
+              ${post.saved ? "&#9733;" : "&#9734;"}
+            </button>
+          </div>
+
+          <div class="likes-count">${post.likes} curtidas</div>
+          <div class="caption"><strong>${post.username}</strong>${post.caption}</div>
+
+          <div class="comments-list">
+            ${post.comments
+              .map((c) => `<div class="comment-row"><strong>${c.user}</strong> ${c.text}</div>`)
+              .join("")}
+          </div>
+
+          <div class="post-time">${post.time}</div>
+
+          <form class="add-comment" onsubmit="addComment(event, ${post.id})">
+            <input id="comment-input-${post.id}" type="text" placeholder="Adicione um comentário..." required>
+            <button type="submit">Publicar</button>
+          </form>
         </div>
       </article>
     `
@@ -93,31 +111,105 @@ function renderPosts() {
     .join("");
 }
 
-function openArticle(id) {
-  const post = posts.find((item) => item.id === id);
+function toggleLike(id) {
+  const post = posts.find((p) => p.id === id);
   if (!post) return;
-
-  modalCategory.textContent = post.category;
-  modalTitle.textContent = post.title;
-  modalDate.textContent = post.date;
-  modalBody.innerHTML = post.content;
-  modal.classList.remove("hidden");
+  post.liked = !post.liked;
+  post.likes += post.liked ? 1 : -1;
+  renderFeed();
 }
 
-filterBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    filterBtns.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    currentCategory = btn.dataset.category;
-    renderPosts();
+function doubleClickLike(id, wrapper) {
+  const post = posts.find((p) => p.id === id);
+  if (!post) return;
+
+  if (!post.liked) {
+    post.liked = true;
+    post.likes += 1;
+  }
+
+  const heart = wrapper.querySelector(".heart-overlay");
+  heart.classList.add("show");
+  setTimeout(() => {
+    heart.classList.remove("show");
+    renderFeed();
+  }, 600);
+}
+
+function toggleSave(id) {
+  const post = posts.find((p) => p.id === id);
+  if (!post) return;
+  post.saved = !post.saved;
+  renderFeed();
+}
+
+function focusComment(id) {
+  const input = document.getElementById(`comment-input-${id}`);
+  if (input) input.focus();
+}
+
+function addComment(event, id) {
+  event.preventDefault();
+  const input = document.getElementById(`comment-input-${id}`);
+  const text = input.value.trim();
+  if (!text) return;
+
+  const post = posts.find((p) => p.id === id);
+  if (!post) return;
+
+  post.comments.push({ user: "voce", text });
+  renderFeed();
+}
+
+// Modal Nova Publicação
+const postModal = document.getElementById("postModal");
+const openModalBtn = document.getElementById("openModalBtn");
+const closeModalBtn = document.getElementById("closeModalBtn");
+const newPostForm = document.getElementById("newPostForm");
+
+openModalBtn.addEventListener("click", () => postModal.classList.remove("hidden"));
+closeModalBtn.addEventListener("click", () => postModal.classList.add("hidden"));
+
+newPostForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const username = document.getElementById("usernameInput").value.trim();
+  const image = document.getElementById("imageUrlInput").value.trim();
+  const caption = document.getElementById("captionInput").value.trim();
+
+  posts.unshift({
+    id: Date.now(),
+    username,
+    avatar: `https://picsum.photos{username}/100`,
+    image,
+    caption,
+    likes: 1,
+    liked: true,
+    saved: false,
+    time: "AGORA MESMO",
+    comments: []
   });
+
+  newPostForm.reset();
+  postModal.classList.add("hidden");
+  renderFeed();
 });
 
-searchInput.addEventListener("input", renderPosts);
+// Modal Story
+const storyModal = document.getElementById("storyModal");
+const closeStoryBtn = document.getElementById("closeStoryBtn");
 
-closeModal.addEventListener("click", () => modal.classList.add("hidden"));
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) modal.classList.add("hidden");
+function openStory(index) {
+  const story = stories[index];
+  document.getElementById("storyAvatar").src = story.avatar;
+  document.getElementById("storyUser").textContent = story.user;
+  document.getElementById("storyImage").src = story.story;
+  storyModal.classList.remove("hidden");
+}
+
+closeStoryBtn.addEventListener("click", () => storyModal.classList.add("hidden"));
+storyModal.addEventListener("click", (e) => {
+  if (e.target === storyModal) storyModal.classList.add("hidden");
 });
 
-renderPosts();
+renderStories();
+renderFeed();
