@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram | Renan Fiorini</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #fafafa;
+    font-family: Arial, sans-serif;
+    color: #262626;
+}
+
+header {
+    height: 65px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.search {
+    background: #efefef;
+    border: none;
+    padding: 11px;
+    border-radius: 8px;
+    width: 230px;
+}
+
+.menu {
+    display: flex;
+    gap: 22px;
+    font-size: 23px;
+}
+
+main {
+    max-width: 950px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 90px;
+    margin-bottom: 45px;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e1306c;
+    padding: 3px;
+}
+
+.info {
+    flex: 1;
+}
+
+.username {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.username h2 {
+    font-weight: 400;
+}
+
+button {
+    border: none;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.follow {
+    background: #0095f6;
+    color: white;
+}
+
+.message {
+    background: #efefef;
+}
+
+.stats {
+    display: flex;
+    gap: 35px;
+    margin-bottom: 20px;
+}
+
+.bio {
+    line-height: 1.6;
+}
+
+.stories {
+    display: flex;
+    gap: 35px;
+    margin-bottom: 50px;
+}
+
+.story {
+    text-align: center;
+    cursor: pointer;
+}
+
+.story img {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    padding: 3px;
+    object-fit: cover;
+}
+
+.story p {
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.tabs {
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    gap: 65px;
+    padding: 18px;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.tabs span {
+    cursor: pointer;
+}
+
+.posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.post {
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: .3s;
+}
+
+.post:hover img {
+    transform: scale(1.05);
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: #0007;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: .3s;
+    font-weight: bold;
+}
+
+.post:hover .overlay {
+    opacity: 1;
+}
+
+footer {
+    text-align: center;
+    padding: 35px;
+    color: #999;
+    font-size: 12px;
+}
+
+@media(max-width: 600px) {
+    header {
+        justify-content: space-between;
+        padding: 0 15px;
+    }
+
+    .search {
+        display: none;
+    }
+
+    main {
+        margin-top: 20px;
+        padding: 0 5px;
+    }
+
+    .profile {
+        gap: 20px;
+        align-items: flex-start;
+    }
+
+    .avatar {
+        width: 90px;
+        height: 90px;
+    }
+
+    .username {
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .username h2 {
+        font-size: 18px;
+    }
+
+    .stats {
+        gap: 12px;
+        font-size: 12px;
+    }
+
+    .bio {
+        font-size: 12px;
+    }
+
+    .stories {
+        gap: 18px;
+        overflow-x: auto;
+    }
+
+    .story img {
+        width: 65px;
+        height: 65px;
+    }
+
+    .tabs {
+        gap: 35px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">Instagram</div>
+    <input class="search" placeholder="Pesquisar">
+    <div class="menu">
+        <span>⌂</span>
+        <span>♡</span>
+        <span>✉</span>
+        <span>☻</span>
+    </div>
+</header>
+
+<main>
+
+<section class="profile">
+
+    <img class="avatar"
+    src="https://i.pravatar.cc/300?img=12"
+    alt="Foto de perfil">
+
+    <div class="info">
+
+        <div class="username">
+            <h2>renanfiorini</h2>
+            <button class="follow" id="follow">Seguir</button>
+            <button class="message">Mensagem</button>
+        </div>
+
+        <div class="stats">
+            <span><b>128</b> publicações</span>
+            <span><b id="followers">12,5 mil</b> seguidores</span>
+            <span><b>850</b> seguindo</span>
+        </div>
+
+        <div class="bio">
+            <b>Renan Fiorini</b><br>
+            ✨ Criando momentos e histórias.<br>
+            📍 Brasil 🇧🇷<br>
+            📸 Lifestyle | Personalidade
+        </div>
+
+    </div>
+</section>
+
+<section class="stories">
+
+    <div class="story">
+        <img src="https://picsum.photos/100?random=1">
+        <p>Viagens ✈️</p>
+    </div>
+
+    <div class="story">
+        <img src="https://picsum.photos/100?random=2">
+        <p>Momentos</p>
+    </div>
+
+    <div class="story">
+        <img src="https://picsum.photos/100?random=3">
+        <p>Amigos ❤️</p>
+    </div>
+
+    <div class="story">
+        <img src="https://picsum.photos/100?random=4">
+        <p>Rolês</p>
+    </div>
+
+</section>
+
+<div class="tabs">
+    <span>▦ PUBLICAÇÕES</span>
+    <span>▣ REELS</span>
+    <span>♙ MARCADOS</span>
+</div>
+
+<section class="posts">
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=11">
+        <div class="overlay">♡ 1.250</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=12">
+        <div class="overlay">♡ 980</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=13">
+        <div class="overlay">♡ 2.100</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=14">
+        <div class="overlay">♡ 870</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=15">
+        <div class="overlay">♡ 1.540</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=16">
+        <div class="overlay">♡ 760</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=17">
+        <div class="overlay">♡ 2.300</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=18">
+        <div class="overlay">♡ 1.100</div>
+    </div>
+
+    <div class="post">
+        <img src="https://picsum.photos/500?random=19">
+        <div class="overlay">♡ 920</div>
+    </div>
+
+</section>
+
+</main>
+
+<footer>
+    Projeto demonstrativo inspirado no Instagram<br>
+    Página de fã / demonstração — não oficial.
+</footer>
+
+<script>
+const follow = document.getElementById("follow");
+
+follow.addEventListener("click", function() {
+    if (follow.innerText === "Seguir") {
+        follow.innerText = "Seguindo";
+        follow.style.background = "#efefef";
+        follow.style.color = "#262626";
+    } else {
+        follow.innerText = "Seguir";
+        follow.style.background = "#0095f6";
+        follow.style.color = "white";
+    }
+});
+</script>
+
+</body>
+</html>
