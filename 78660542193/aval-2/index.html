@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SériesFeed - Mini Rede Social de Séries</title>
+    <style>
+        :root {
+            --bg-color: #121214;
+            --card-bg: #202024;
+            --primary: #8257e5;
+            --primary-hover: #996dff;
+            --text-main: #e1e1e6;
+            --text-muted: #a8a8b3;
+            --border: #323238;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        header {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Formulário de Postagem */
+        .post-form {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input, select, textarea {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .form-row input {
+            flex: 2;
+        }
+
+        .form-row select {
+            flex: 1;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button.btn-submit {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button.btn-submit:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Lista de Posts */
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .post-card {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .series-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .badge {
+            background-color: rgba(130, 87, 229, 0.2);
+            color: var(--primary-hover);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .post-content {
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        .like-btn.liked {
+            color: #f75a68;
+            font-weight: bold;
+        }
+
+        .like-btn:hover {
+            color: #f75a68;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎬 SériesFeed</h1>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Compartilhe o que você está maratonando</p>
+    </header>
+
+    <main class="container">
+        <!-- Formulário para novo post -->
+        <form class="post-form" id="postForm">
+            <div class="form-row">
+                <input type="text" id="seriesName" placeholder="Nome da série (ex: Severance)" required>
+                <select id="seriesGenre" required>
+                    <option value="Ficção Científica">Ficção Científica</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Comédia">Comédia</option>
+                    <option value="Suspense">Suspense</option>
+                </select>
+            </div>
+            <input type="text" id="userName" placeholder="Seu nome ou @usuario" required>
+            <textarea id="postText" placeholder="O que achou do último episódio? (Sem spoilers!)" required></textarea>
+            <button type="submit" class="btn-submit">Publicar no Feed</button>
+        </form>
+
+        <!-- Botões de Filtro -->
+        <div class="filters" id="filterContainer">
+            <button class="filter-btn active" data-genre="Todos">Todos</button>
+            <button class="filter-btn" data-genre="Ficção Científica">Ficção Científica</button>
+            <button class="filter-btn" data-genre="Drama">Drama</button>
+            <button class="filter-btn" data-genre="Comédia">Comédia</button>
+            <button class="filter-btn" data-genre="Suspense">Suspense</button>
+        </div>
+
+        <!-- Onde os posts vão aparecer -->
+        <section class="feed" id="feedContainer"></section>
+    </main>
+
+    <script>
+        // Dados iniciais simulando um banco de dados
+        let posts = [
+            {
+                id: 1,
+                user: "@mari_series",
+                series: "Severance (Ruptura)",
+                genre: "Ficção Científica",
+                content: "Acabei de terminar a primeira temporada e minha cabeça explodiu! A fotografia e a tensão desse final são absurdas.",
+                likes: 14,
+                liked: false,
+                time: "Há 2 horas"
+            },
+            {
+                id: 2,
+                user: "@lucas_dev",
+                series: "The Bear",
+                genre: "Drama",
+                content: "O episódio do Natal na 2ª temporada é uma obra-prima de atuação, mas me deu ansiedade só de assistir.",
+                likes: 29,
+                liked: true,
+                time: "Há 5 horas"
+            },
+            {
+                id: 3,
+                user: "@ana_pipoca",
+                series: "Brooklyn Nine-Nine",
+                genre: "Comédia",
+                content: "Reassistindo pela quarta vez. Continua sendo a melhor série de conforto para ver almoçando.",
+                likes: 42,
+                liked: false,
+                time: "Ontem"
+            }
+        ];
+
+        let currentFilter = "Todos";
+
+        const feedContainer = document.getElementById("feedContainer");
+        const postForm = document.getElementById("postForm");
+        const filterButtons = document.querySelectorAll(".filter-btn");
+
+        // Função para renderizar os posts na tela
+        function renderFeed() {
+            feedContainer.innerHTML = "";
+
+            const filteredPosts = currentFilter === "Todos" 
+                ? posts 
+                : posts.filter(post => post.genre === currentFilter);
+
+            if (filteredPosts.length === 0) {
+                feedContainer.innerHTML = `<p style="text-align:center; color: var(--text-muted); padding: 20px;">Nenhuma publicação encontrada neste gênero.</p>`;
+                return;
+            }
+
+            filteredPosts.forEach(post => {
+                const card = document.createElement("article");
+                card.className = "post-card";
+
+                card.innerHTML = `
+                    <div class="post-header">
+                        <span class="series-title">${post.series}</span>
+                        <span class="badge">${post.genre}</span>
+                    </div>
+                    <div class="post-meta">
+                        Publicado por <strong>${post.user}</strong> • ${post.time}
+                    </div>
+                    <p class="post-content">${post.content}</p>
+                    <div class="post-footer">
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
