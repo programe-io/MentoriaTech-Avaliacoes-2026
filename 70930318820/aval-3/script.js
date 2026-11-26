@@ -1,55 +1,58 @@
-function publicar() {
-        let nome = document.getElementById("nome").value.trim();
-            let mensagem = document.getElementById("mensagem").value.trim();
+function curtir(botao) {
+        if (botao.dataset.curtido === "sim") {
+                botao.innerHTML = "🤍 Curtir";
+                        botao.dataset.curtido = "nao";
+                            } else {
+                                    botao.innerHTML = "❤️ Curtido";
+                                            botao.dataset.curtido = "sim";
+                                                }
+                                                }
 
-                if (nome === "" || mensagem === "") {
-                        alert("Preencha seu nome e sua publicação!");
-                                return;
-                                    }
+                                                function publicar() {
+                                                    const usuario = document.getElementById("usuario").value.trim();
+                                                        const legenda = document.getElementById("legenda").value.trim();
 
-                                        let feed = document.getElementById("publicacoes");
+                                                            if (usuario === "" || legenda === "") {
+                                                                    alert("Preencha seu nome e sua legenda!");
+                                                                            return;
+                                                                                }
 
-                                            let post = document.createElement("div");
-                                                post.className = "post";
+                                                                                    const feed = document.getElementById("feed");
 
-                                                    let titulo = document.createElement("h3");
-                                                        titulo.textContent = nome;
+                                                                                        const post = document.createElement("article");
+                                                                                            post.className = "publicacao";
 
-                                                            let texto = document.createElement("p");
-                                                                texto.textContent = mensagem;
+                                                                                                const nome = document.createElement("div");
+                                                                                                    nome.className = "p-3 font-bold";
+                                                                                                        nome.textContent = "@" + usuario;
 
-                                                                    let acoes = document.createElement("div");
-                                                                        acoes.className = "acoes";
+                                                                                                            const imagem = document.createElement("div");
+                                                                                                                imagem.className = "imagem";
+                                                                                                                    imagem.textContent = "📸";
 
-                                                                            let curtidas = 0;
+                                                                                                                        const conteudo = document.createElement("div");
+                                                                                                                            conteudo.className = "conteudo";
 
-                                                                                let botaoCurtir = document.createElement("button");
-                                                                                    botaoCurtir.className = "curtir";
-                                                                                        botaoCurtir.textContent = "Curtir (0)";
+                                                                                                                                const botao = document.createElement("button");
+                                                                                                                                    botao.innerHTML = "🤍 Curtir";
+                                                                                                                                        botao.onclick = function() {
+                                                                                                                                                curtir(botao);
+                                                                                                                                                    };
 
-                                                                                            botaoCurtir.onclick = function() {
-                                                                                                    curtidas++;
-                                                                                                            botaoCurtir.textContent = "Curtir (" + curtidas + ")";
-                                                                                                                };
+                                                                                                                                                        const texto = document.createElement("p");
+                                                                                                                                                            texto.className = "mt-2";
+                                                                                                                                                                texto.textContent = "@" + usuario + " " + legenda;
 
-                                                                                                                    let botaoExcluir = document.createElement("button");
-                                                                                                                        botaoExcluir.className = "excluir";
-                                                                                                                            botaoExcluir.textContent = "Excluir";
+                                                                                                                                                                    conteudo.appendChild(botao);
+                                                                                                                                                                        conteudo.appendChild(texto);
 
-                                                                                                                                botaoExcluir.onclick = function() {
-                                                                                                                                        post.remove();
-                                                                                                                                            };
+                                                                                                                                                                            post.appendChild(nome);
+                                                                                                                                                                                post.appendChild(imagem);
+                                                                                                                                                                                    post.appendChild(conteudo);
 
-                                                                                                                                                acoes.appendChild(botaoCurtir);
-                                                                                                                                                    acoes.appendChild(botaoExcluir);
+                                                                                                                                                                                        feed.prepend(post);
 
-                                                                                                                                                        post.appendChild(titulo);
-                                                                                                                                                            post.appendChild(texto);
-                                                                                                                                                                post.appendChild(acoes);
-
-                                                                                                                                                                    feed.prepend(post);
-
-                                                                                                                                                                        document.getElementById("nome").value = "";
-                                                                                                                                                                            document.getElementById("mensagem").value = "";
-                                                                                                                                                                            }ŵ
+                                                                                                                                                                                            document.getElementById("usuario").value = "";
+                                                                                                                                                                                                document.getElementById("legenda").value = "";
+                                                                                                                                                                                                }
 }
