@@ -1,98 +1,35 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Meu Perfil</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+// MENSAGEM DE BOAS-VINDAS
+function boasVindas() {
+    alert("Seja bem-vindo ao meu projeto!");
+}
 
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-        }
+// ALTERAR TEXTO
+function alterarTexto() {
+    document.getElementById("titulo").innerHTML =
+        "Aprendendo JavaScript!";
+}
 
-        header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            text-align: center;
-            padding: 50px 20px;
-        }
+// MUDAR COR DE FUNDO
+function mudarCor() {
+    document.body.style.backgroundColor = "#e0f2f1";
+}
 
-        header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
+// MOSTRAR DATA ATUAL
+function mostrarData() {
+    let data = new Date();
 
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
+    alert("Data atual: " + data.toLocaleDateString("pt-BR"));
+}
 
-        section {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+// SOMAR DOIS NÚMEROS
+function somar() {
+    let numero1 = 10;
+    let numero2 = 20;
 
-        h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 8px;
-        }
+    let resultado = numero1 + numero2;
 
-        .habilidades {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }
+    alert("O resultado da soma é: " + resultado);
+}
 
-        .tag {
-            background: #667eea;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        footer {
-            background: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>🎓 Olá, eu sou Ana!</h1>
-        <p>Estudante de Tecnologia | Desenvolvedora em formação</p>
-    </header>
-
-    <section>
-        <h2>Sobre Mim</h2>
-        <p>Sou apaixonada por tecnologia e estou aprendendo desenvolvimento web. Gosto de resolver problemas e criar coisas novas. Estou sempre em busca de novos conhecimentos!</p>
-    </section>
-
-    <section>
-        <h2>Minhas Habilidades</h2>
-        <div class="habilidades">
-            <span class="tag">HTML5</span>
-            <span class="tag">CSS3</span>
-            <span class="tag">JavaScript</span>
-            <span class="tag">Lógica de Programação</span>
-        </div>
-    </section>
-
-    <footer>
-        <p>📧 ana@email.com | 📱 (89) 99999-0000</p>
-    </footer>
-</body>
-</html>
+// EXECUTAR MENSAGEM AO ABRIR
+console.log("Projeto de Desenvolvimento de Sistemas iniciado!");
