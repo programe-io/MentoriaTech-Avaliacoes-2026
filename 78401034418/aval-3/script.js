@@ -1,97 +1,71 @@
 
-document.addEventListener("DOMContentLoaded", () => {
+// Botão seguir
+const seguir = document.getElementById("seguir");
 
-    // CURTIR PUBLICAÇÕES
-        document.querySelectorAll(".curtir").forEach(botao => {
+seguir.addEventListener("click", () => {
+  if (seguir.textContent === "Seguir") {
+      seguir.textContent = "Seguindo";
+          seguir.style.background = "#363636";
+            } else {
+                seguir.textContent = "Seguir";
+                    seguir.style.background = "#0095f6";
+                      }
+                      });
 
-                botao.addEventListener("click", () => {
+                      // Curtidas
+                      document.querySelectorAll(".like").forEach((botao) => {
+                        botao.addEventListener("click", () => {
+                            botao.classList.toggle("liked");
 
-                            const curtiu = botao.classList.toggle("curtiu");
+                                if (botao.classList.contains("liked")) {
+                                      botao.textContent = "♥";
+                                          } else {
+                                                botao.textContent = "♡";
+                                                    }
+                                                      });
+                                                      });
 
-                                        botao.textContent = curtiu ? "♥" : "♡";
+                                                      // Publicar comentários
+                                                      document.querySelectorAll(".post").forEach((post) => {
+                                                        const input = post.querySelector("input");
+                                                          const publicar = post.querySelector(".publicar");
 
-                                                });
+                                                            publicar.addEventListener("click", () => {
+                                                                const texto = input.value.trim();
 
-                                                    });
+                                                                    if (texto === "") {
+                                                                          return;
+                                                                              }
 
-                                                        // SEGUIR PERFIL
-                                                            const seguir = document.getElementById("seguir");
+                                                                                  const novoComentario = document.createElement("p");
+                                                                                      novoComentario.style.padding = "5px 12px";
+                                                                                          novoComentario.style.fontSize = "14px";
 
-                                                                seguir.addEventListener("click", () => {
+                                                                                              const usuario = document.createElement("strong");
+                                                                                                  usuario.textContent = "Você ";
 
-                                                                        const seguindo = seguir.classList.toggle("seguindo");
+                                                                                                      novoComentario.appendChild(usuario);
+                                                                                                          novoComentario.appendChild(
+                                                                                                                document.createTextNode(texto)
+                                                                                                                    );
 
-                                                                                seguir.textContent = seguindo ? "Seguindo" : "Seguir";
+                                                                                                                        post.querySelector(".comentario-area").before(novoComentario);
 
-                                                                                    });
+                                                                                                                            input.value = "";
+                                                                                                                              });
 
-                                                                                        // COMENTÁRIOS
-                                                                                            document.querySelectorAll(".comentar").forEach(botao => {
+                                                                                                                                input.addEventListener("keydown", (evento) => {
+                                                                                                                                    if (evento.key === "Enter") {
+                                                                                                                                          publicar.click();
+                                                                                                                                              }
+                                                                                                                                                });
+                                                                                                                                                });
 
-                                                                                                    botao.addEventListener("click", () => {
-
-                                                                                                                const texto = prompt("Escreva seu comentário:");
-
-                                                                                                                            if (texto && texto.trim() !== "") {
-
-                                                                                                                                            const post = botao.closest(".post");
-
-                                                                                                                                                            const comentario = document.createElement("p");
-
-                                                                                                                                                                            comentario.className = "comentario-novo";
-
-                                                                                                                                                                                            const nome = document.createElement("strong");
-                                                                                                                                                                                                            nome.textContent = "Você: ";
-
-                                                                                                                                                                                                                            comentario.appendChild(nome);
-
-                                                                                                                                                                                                                                            comentario.appendChild(
-                                                                                                                                                                                                                                                                document.createTextNode(texto)
-                                                                                                                                                                                                                                                                                );
-
-                                                                                                                                                                                                                                                                                                post.appendChild(comentario);
-
-                                                                                                                                                                                                                                                                                                            }
-
-                                                                                                                                                                                                                                                                                                                    });
-
-                                                                                                                                                                                                                                                                                                                        });
-
-                                                                                                                                                                                                                                                                                                                            // STORIES
-                                                                                                                                                                                                                                                                                                                                document.querySelectorAll(".story").forEach(story => {
-
-                                                                                                                                                                                                                                                                                                                                        story.addEventListener("click", () => {
-
-                                                                                                                                                                                                                                                                                                                                                    const imagem = story.querySelector("img").src;
-
-                                                                                                                                                                                                                                                                                                                                                                const visualizador = document.createElement("div");
-
-                                                                                                                                                                                                                                                                                                                                                                            visualizador.className = "visualizador";
-
-                                                                                                                                                                                                                                                                                                                                                                                        const foto = document.createElement("img");
-                                                                                                                                                                                                                                                                                                                                                                                                    foto.src = imagem;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                const fechar = document.createElement("button");
-                                                                                                                                                                                                                                                                                                                                                                                                                            fechar.textContent = "×";
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                        fechar.addEventListener("click", () => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        visualizador.remove();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                    });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                visualizador.appendChild(foto);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            visualizador.appendChild(fechar);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        visualizador.addEventListener("click", event => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        if (event.target === visualizador) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            visualizador.remove();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    document.body.appendChild(visualizador);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                                // Salvar publicações
+                                                                                                                                                document.querySelectorAll(".salvar").forEach((botao) => {
+                                                                                                                                                  botao.addEventListener("click", () => {
+                                                                                                                                                      botao.textContent =
+                                                                                                                                                            botao.textContent === "♧" ? "🔖" : "♧";
+                                                                                                                                                              });
+                                                                                                                                                              });
+                                                                                                                                                              
