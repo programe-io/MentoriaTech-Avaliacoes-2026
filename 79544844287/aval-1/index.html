@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  
+import random
+import time
+
+class Lutador:
+    def __init__(self, nome, vida, energia, dano):
+        self.nome = nome
+        self.vida = vida
+        self.energia = energia
+        self.dano = dano
+        self.defendendo = False
+
+    def atacar(self, inimigo):
+        golpe = random.randint(5, self.dano)
+
+        if inimigo.defendendo:
+            golpe //= 2
+
+        inimigo.vida -= golpe
+        self.energia += 10
+
+        print(f"\n{self.nome} atacou!")
+        print(f"Causou {golpe} de dano!")
+
+    def especial(self, inimigo):
+        if self.energia >= 30:
+            golpe = random.randint(25, 45)
+
+            if inimigo.defendendo:
+                golpe //= 2
+
+            inimigo.vida -= golpe
+            self.energia -= 30
+
+            print(f"\n🔥 GOLPE ESPECIAL!")
+            print(f"{self.nome} causou {golpe} de dano!")
+        else:
+            print("Energia insuficiente!")
+
+    def defender(self):
+        self.defendendo = True
+        print(f"{self.nome} está defendendo!")
+
+def mostrar_status(jogador, inimigo):
+    print("\n" + "=" * 35)
+    print(f"{jogador.nome}: ❤️ {max(0, jogador.vida)} HP")
+    print(f"Energia: ⚡ {jogador.energia}")
+    print("-" * 35)
+    print(f"{inimigo.nome}: ❤️ {max(0, inimigo.vida)} HP")
+    print("=" * 35)
+
+def batalha():
+    jogador = Lutador("Jogador", 100, 50, 25)
+    inimigo = Lutador("Rival", 100, 40, 20)
+
+    print("🥊 BEM-VINDO À ARENA DE LUTA!")
+
+    while jogador.vida > 0 and inimigo.vida > 0:
+
+        inimigo.defendendo = False
+        jogador.defendendo = False
+
+        mostrar_status(jogador, inimigo)
+
+        print("\n1 - Soco")
+        print("2 - Golpe especial")
+        print("3 - Defender")
+
+        escolha = input("\nEscolha seu movimento: ")
+
+        if escolha == "1":
+            jogador.atacar(inimigo)
+
+        elif escolha == "2":
+            jogador.especial(inimigo)
+
+        elif escolha == "3":
+            jogador.defender()
+
+        else:
+            print("Movimento inválido!")
+            continue
+
+        if inimigo.vida <= 0:
+            break
+
+        time.sleep(1)
+
+        movimento = random.choice(["atacar", "atacar", "defender"])
+
+        if movimento == "atacar":
+            inimigo.atacar(jogador)
+        else:
+            inimigo.defender()
+
+    print("\n🏆 FIM DA LUTA!")
+
+    if jogador.vida > 0:
+        print("🎉 VOCÊ VENCEU!")
+    else:
+        print("💀 VOCÊ PERDEU!")
+
+batalha()
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
