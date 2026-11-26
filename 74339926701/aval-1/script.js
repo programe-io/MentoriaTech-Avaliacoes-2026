@@ -1,0 +1,112 @@
+// Arrays paralelos ou array de objetos usando sintaxe clássica
+var estoque = [];
+var executando = true;
+
+while (executando) {
+  var opcao = prompt(
+    "CONTROLE DE ESTOQUE\n\n" +
+    "1 - Cadastrar novo produto\n" +
+    "2 - Listar produtos cadastrados\n" +
+    "3 - Alterar valor de um produto\n" +
+    "4 - Alterar quantidade de um produto\n" +
+    "5 - Sair\n\n" +
+    "Digite o número da opção:"
+  );
+
+  // 1 - CADASTRAR
+  if (opcao === "1") {
+    var codigo = prompt("Informe o código do produto:");
+    var existe = false;
+
+    // Laço 'for' tradicional para verificar se o código já existe
+    for (var i = 0; i < estoque.length; i++) {
+      if (estoque[i].codigo === codigo) {
+        existe = true;
+        break;
+      }
+    }
+
+    if (existe) {
+      alert("Erro: Código já cadastrado!");
+    } else {
+      var descricao = prompt("Informe a descrição do produto:");
+      var quantidade = Number(prompt("Informe a quantidade:"));
+      var valor = Number(prompt("Informe o valor unitário:"));
+
+      var novoProduto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: quantidade,
+        valor: valor
+      };
+
+      estoque.push(novoProduto);
+      alert("Produto cadastrado com sucesso!");
+    }
+
+  // 2 - LISTAR
+  } else if (opcao === "2") {
+    if (estoque.length === 0) {
+      alert("Nenhum produto cadastrado.");
+    } else {
+      var relatorio = "PRODUTOS CADASTRADOS:\n\n";
+
+      for (var i = 0; i < estoque.length; i++) {
+        relatorio += 
+          "Código: " + estoque[i].codigo +
+          " | Desc: " + estoque[i].descricao +
+          " | Qtd: " + estoque[i].quantidade +
+          " | Valor: R$ " + estoque[i].valor.toFixed(2) + "\n";
+      }
+
+      alert(relatorio);
+    }
+
+  // 3 - ALTERAR VALOR
+  } else if (opcao === "3") {
+    var codBusca = prompt("Digite o código do produto para alterar o valor:");
+    var encontrado = false;
+
+    for (var i = 0; i < estoque.length; i++) {
+      if (estoque[i].codigo === codBusca) {
+        var novoValor = Number(prompt("Digite o novo valor para " + estoque[i].descricao + ":"));
+        estoque[i].valor = novoValor;
+        encontrado = true;
+        alert("Valor alterado com sucesso!");
+        break;
+      }
+    }
+
+    if (!encontrado) {
+      alert("Produto não encontrado.");
+    }
+
+  // 4 - ALTERAR QUANTIDADE
+  } else if (opcao === "4") {
+    var codBuscaQtd = prompt("Digite o código do produto para alterar a quantidade:");
+    var achou = false;
+
+    for (var i = 0; i < estoque.length; i++) {
+      if (estoque[i].codigo === codBuscaQtd) {
+        var novaQtd = Number(prompt("Digite a nova quantidade para " + estoque[i].descricao + ":"));
+        estoque[i].quantidade = novaQtd;
+        achou = true;
+        alert("Quantidade alterada com sucesso!");
+        break;
+      }
+    }
+
+    if (!achou) {
+      alert("Produto não encontrado.");
+    }
+
+  // 5 - SAIR
+  } else if (opcao === "5" || opcao === null) {
+    executando = false;
+    alert("Programa encerrado.");
+
+  // OPÇÃO INVÁLIDA
+  } else {
+    alert("Opção inválida! Escolha de 1 a 5.");
+  }
+}
