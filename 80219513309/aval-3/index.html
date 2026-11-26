@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GameGram — Clone do Instagram de Jogos</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #262626;
+      --muted: #737373;
+      --border: #dbdbdb;
+      --accent: #0095f6;
+      --like: #ed4956;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-container {
+      max-width: 935px;
+      margin: 0 auto;
+      height: 60px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .filter-btn.active {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+    }
+
+    /* Main Layout */
+    main {
+      max-width: 620px;
+      margin: 20px auto 48px;
+      padding: 0 12px;
+    }
+
+    /* Stories */
+    .stories {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+    }
+
+    .story {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      min-width: 68px;
+    }
+
+    .story-ring {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      padding: 2px;
+      background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .story-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--card);
+    }
+
+    .story span {
+      font-size: 0.75rem;
+      max-width: 72px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Post Card */
+    .post {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+    }
+
+    .post-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .post-user img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .post-user .username {
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: block;
+    }
+
+    .post-user .genre {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .post-media {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      display: block;
+      background: #111;
+      cursor: pointer;
+    }
+
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px 6px;
+    }
+
+    .actions-left {
+      display: flex;
+      gap: 14px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      font-size: 1.35rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .icon-btn.liked {
+      color: var(--like);
+    }
+
+    .post-body {
+      padding: 0 14px 12px;
+      font-size: 0.88rem;
+    }
+
+    .likes-count {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .caption span.author {
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .comments-list {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: var(--text);
+      font-size: 0.84rem;
+    }
+
+    .comment-form {
+      display: flex;
+      border-top: 1px solid var(--border);
+      padding: 10px 14px;
+      gap: 8px;
+    }
+
+    .comment-form input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 0.86rem;
+      background: transparent;
+    }
+
+    .comment-form button {
+      border: none;
+      background: none;
+      color: var(--accent);
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.86rem;
+    }
+
+    .comment-form button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <div class="logo">GameGram</div>
+      <div class="filters" id="filters">
+        <button class="filter-btn active" data-genre="Todos">Todos</button>
+        <button class="filter-btn" data-genre="RPG">RPG</button>
+        <button class="filter-btn" data-genre="Ação">Ação</button>
+        <button class="filter-btn" data-genre="Indie">Indie</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="stories" id="stories"></section>
+    <section id="feed"></section>
+  </main>
+
+  <script>
+    const storiesData = [
+      { user: "zelda_fan", img: "https://unsplash.com" },
+      { user: "cyber_pixel", img: "https://unsplash.com" },
+      { user: "indie_vault", img: "https://unsplash.com" },
+      { user: "boss_rush", img: "https://unsplash.com" },
+      { user: "speedrun_br", img: "https://unsplash.com" }
+    ];
+
+    const postsData = [
+      {
+        id: 1,
+        user: "pixel_quest",
+        avatar: "https://unsplash.com",
+        genre: "RPG",
+        image: "https://unsplash.com",
+        caption: "Explorando as ruínas antigas depois de 60 horas de campanha. Que trilha sonora!",
+        likes: 128,
+        liked: false,
+        saved: false,
+        comments: ["Melhor boss da campanha!", "Qual build você está usando?"]
+      },
+      {
+        id: 2,
+        user: "arena_fps",
+        avatar: "https://unsplash.com",
+        genre: "Ação",
+        image: "https://unsplash.com",
+        caption: "Clutch no último segundo da partida ranqueada. Setup pronto para o fim de semana.",
+        likes: 245,
+        liked: false,
+        saved: false,
+        comments: ["Jogou demais!"]
+      },
+      {
+        id: 3,
+        user: "cozy_indie",
+        avatar: "https://unsplash.com",
+        genre: "Indie",
+        image: "https://unsplash.com",
+        caption: "Descobri esse jogo indie ontem à noite e não consegui parar de jogar.",
+        likes: 89,
+        liked: false,
+        saved: false,
+        comments: []
+      }
+    ];
+
+    let selectedGenre = "Todos";
+
+    const storiesEl = document.getElementById("stories");
+    const feedEl = document.getElementById("feed");
+    const filtersEl = document.getElementById("filters");
+
+    function renderStories() {
+      storiesEl.innerHTML = storiesData.map(s => `
+        <div class="story" title="Story de ${s.user}">
+          <div class="story-ring">
+            <img src="${s.img}" alt="${s.user}" />
+          </div>
+          <span>${s.user}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderFeed() {
+      const filtered = selectedGenre === "Todos"
+        ? postsData
+        : postsData.filter(p => p.genre === selectedGenre);
+
+      feedEl.innerHTML = filtered.map(post => `
+        <article class="post" data-id="${post.id}">
+          <div class="post-header">
+            <div class="post-user">
+              <img src="${post.avatar}" alt="${post.user}" />
+              <div>
+                <span class="username">${post.user}</span>
+                <span class="genre">${post.genre}</span>
+              </div>
+            </div>
+          </div>
+
+          <img class="post-media" src="${post.image}" alt="Post de ${post.user}" ondblclick="toggleLike(${post.id})" />
+
+          <div class="post-actions">
+            <div class="actions-left">
+              <button class="icon-btn ${post.liked ? "liked" : ""}" onclick="toggleLike(${post.id})" aria-label="Curtir">
+                ${post.liked ? "♥" : "♡"}
+              </button>
+              <button class="icon-btn" onclick="focusComment(${post.id})" aria-label="Comentar">💬</button>
+            </div>
+            <button class="icon-btn" onclick="toggleSave(${post.id})" aria-label="Salvar">
+              ${post.saved ? "🔖" : "📑"}
+            </button>
+          </div>
+
+          <div class="post-body">
+            <div class="likes-count">${post.likes} curtidas</div>
+            <p class="caption"><span class="author">${post.user}</span>${post.caption}</p>
+            <div class="comments-list">
+              ${post.comments.map(c => `<div><strong>jogador</strong> ${c}</div>`).join("")}
+            </div>
+          </div>
+
+
+  <script src="script.js"></script>
+  
+</body>
+</html>

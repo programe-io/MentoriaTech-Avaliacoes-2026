@@ -1,0 +1,41 @@
+`).join("");
+}
+function toggleLike(id) {
+const post = postsData.find(p => p.id === id);
+if (!post) return;
+post.liked = !post.liked;
+post.likes += post.liked ? 1 : -1;
+renderFeed();
+}
+function toggleSave(id) {
+const post = postsData.find(p => p.id === id);
+if (!post) return;
+post.saved = !post.saved;
+renderFeed();
+}
+function focusComment(id) {
+const input = document.querySelector(.post[data-id="${id}"] .comment-form input);
+if (input) input.focus();
+}
+function toggleSubmit(input) {
+const btn = input.nextElementSibling;
+btn.disabled = input.value.trim().length === 0;
+}
+function addComment(event, id) {
+event.preventDefault();
+const input = event.target.querySelector("input");
+const text = input.value.trim();
+if (!text) return;
+const post = postsData.find(p => p.id === id);
+post.comments.push(text);
+renderFeed();
+}
+filtersEl.addEventListener("click", (e) => {
+if (!e.target.matches(".filter-btn")) return;
+document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+e.target.classList.add("active");
+selectedGenre = e.target.dataset.genre;
+renderFeed();
+});
+renderStories();
+renderFeed();
