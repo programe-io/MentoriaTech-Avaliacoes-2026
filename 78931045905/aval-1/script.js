@@ -1,23 +1,38 @@
 
-function mostrar(nome, descricao) {
-    alert(nome + "\n\n" + descricao);
-}
+// Seleciona todos os personagens
+const cards = document.querySelectorAll('.personagem');
 
-// Efeito de entrada dos cards
-const cards = document.querySelectorAll(".card");
+// Cria o efeito de animação ao aparecer na tela
+const observer = new IntersectionObserver((entradas) => {
 
-const observador = new IntersectionObserver((elementos) => {
-    elementos.forEach(elemento => {
-        if (elemento.isIntersecting) {
-            elemento.target.style.opacity = "1";
-            elemento.target.style.transform = "translateY(0)";
+    entradas.forEach((entrada) => {
+
+        if (entrada.isIntersecting) {
+
+            entrada.target.style.opacity = '1';
+
+            entrada.target.style.transform = 'translateY(0)';
+
         }
+
     });
+
+}, {
+    threshold: 0.15
 });
 
-cards.forEach(card => {
-    card.style.opacity = "0";
-    card.style.transform = "translateY(40px)";
-    card.style.transition = "all 0.7s ease";
-    observador.observe(card);
+// Aplica a animação em cada personagem
+cards.forEach((card) => {
+
+    card.style.opacity = '0';
+
+    card.style.transform = 'translateY(30px)';
+
+    card.style.transition = 'opacity .7s, transform .7s';
+
+    observer.observe(card);
+
 });
+
+// Mensagem no console
+console.log("Avengers Blog - Criado por Francisquim!");
