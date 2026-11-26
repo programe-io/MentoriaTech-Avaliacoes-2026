@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaClone</title>
+  <link rel="stylesheet" href="style.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+  <!-- Barra de Navegação Superior -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo" onclick="mostrarTela('feed')">InstaClone</div>
+
+      <input type="text" id="busca" class="campo-busca" placeholder="Pesquisar...">
+
+      <nav class="nav-acoes">
+        <button class="btn-icone" onclick="mostrarTela('feed')" title="Início">🏠</button>
+        <button class="btn-icone" id="btn-abrir-criar" title="Nova publicação">➕</button>
+        <button class="btn-icone" id="btn-tema" title="Alternar Tema">🌙</button>
+        <img 
+          src="https://unsplash.com" 
+          alt="Seu Perfil" 
+          class="avatar-nav"
+          onclick="mostrarTela('perfil')"
+          title="Meu Perfil"
+        >
+      </nav>
+    </div>
+  </header>
+
+  <!-- TELA 1: FEED PRINCIPAL -->
+  <main id="tela-feed" class="main-container">
+    <section class="coluna-feed">
+      <!-- Stories -->
+      <div class="stories-box" id="lista-stories"></div>
+
+      <!-- Lista de Posts -->
+      <div id="feed-posts"></div>
+    </section>
+
+    <!-- Lateral Desktop -->
+    <aside class="coluna-lateral">
+      <div class="perfil-resumo" onclick="mostrarTela('perfil')" style="cursor:pointer">
+        <img src="https://unsplash.com" alt="Perfil">
+        <div>
+          <strong>voce_oficial</strong>
+          <span>Ver meu perfil</span>
+        </div>
+      </div>
+
+      <div class="sugestoes">
+        <p class="sugestoes-titulo">Sugestões para você</p>
+        <div class="sugestao-item">
+          <div>
+            <strong>teresina.fotos</strong>
+            <small>Sugerido para você</small>
+          </div>
+          <button class="btn-seguir" onclick="alternarSeguir(this)">Seguir</button>
+        </div>
+        <div class="sugestao-item">
+          <div>
+            <strong>cafe.artesanal</strong>
+            <small>Seguido por ana.clara</small>
+          </div>
+          <button class="btn-seguir" onclick="alternarSeguir(this)">Seguir</button>
+        </div>
+        <div class="sugestao-item">
+          <div>
+            <strong>dev.frontend</strong>
+            <small>Novo no InstaClone</small>
+          </div>
+          <button class="btn-seguir" onclick="alternarSeguir(this)">Seguir</button>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- TELA 2: PÁGINA DE PERFIL -->
+  <section id="tela-perfil" class="perfil-container oculto">
+    <div class="perfil-cabecalho">
+      <img src="https://unsplash.com" alt="Avatar" class="perfil-foto-grande">
+      <div class="perfil-detalhes">
+        <div class="perfil-linha-topo">
+          <h2>voce_oficial</h2>
+          <button class="btn-secundario" onclick="mostrarTela('feed')">Voltar ao Feed</button>
+        </div>
+        <div class="perfil-metricas">
+          <span><strong id="total-posts">0</strong> publicações</span>
+          <span><strong id="total-seguidores">1.240</strong> seguidores</span>
+          <span><strong>318</strong> seguindo</span>
+        </div>
+        <p class="perfil-bio">
+          <strong>Seu Nome</strong><br>
+          Fotografia, código e café ☕💻
+        </p>
+      </div>
+    </div>
+
+    <div class="perfil-abas">
+      <button class="aba-btn ativa" id="aba-posts" onclick="alternarAbaPerfil('posts')">▦ PUBLICAÇÕES</button>
+      <button class="aba-btn" id="aba-salvos" onclick="alternarAbaPerfil('salvos')">🔖 SALVOS</button>
+    </div>
+
+    <div class="grade-perfil" id="grade-perfil"></div>
+  </section>
+
+  <!-- MODAL: CRIAR NOVA PUBLICAÇÃO -->
+  <div class="modal-fundo" id="modal-criar">
+    <div class="modal-caixa">
+      <div class="modal-topo">
+        <h3>Criar nova publicação</h3>
+        <button class="btn-fechar" id="fechar-criar">&times;</button>
+      </div>
+      <form id="form-novo-post" class="form-modal">
+        <label class="label-upload">
+          📁 Escolher foto do dispositivo
+          <input type="file" id="arquivo-imagem" accept="image/*" hidden>
+        </label>
+        <input type="url" id="nova-imagem-url" placeholder="Ou cole a URL da imagem (https://...)">
+        <img id="preview-upload" class="preview-img oculto" alt="Pré-visualização">
+        <input type="text" id="nova-localizacao" placeholder="Adicionar localização (opcional)">
+        <textarea id="nova-legenda" rows="3" placeholder="Escreva uma legenda..." required></textarea>
+        <button type="submit" class="btn-primario">Compartilhar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: VISUALIZADOR DE STORY -->
+  <div class="modal-fundo" id="modal-story">
+    <div class="story-viewer">
+      <div class="story-progresso"><div class="story-barra" id="story-barra"></div></div>
+      <div class="story-header">
+        <div class="story-user-info">
+          <img id="story-avatar" src="" alt="">
+          <strong id="story-usuario"></strong>
+        </div>
+        <button class="btn-fechar branco" id="fechar-story">&times;</button>
+      </div>
+      <img id="story-foto" src="" alt="Story" class="story-img">
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
