@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clone instagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+</head>
+    <body class="min-h-screen bg-gray-100 text-slate-900"> 
+
+        <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+            <div class="max-w-5x1 mx-auto px-4">
+                <div class="flex items-center justify-between h-14 md:h-16">
+
+                    <h1 class="text-xl font-semibold">Instagram</h1>
+
+                    <button>
+                        <i class="bx bx-menu"></i>
+                    </button>
+
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-5x1 mx-auto px-4 py-4 pb-20">
+            <div class="flex gap-8">
+                
+                <div class="flex-1 max-w-lg mx-auto">
+
+                    <section class="bg-white border border-gray-200 
+                    rounded-lg p-4 mb-4">
+
+                       <div class="flex gap-4 overflow-x-auto">
+
+                           <div class="flex flex-col items-center flex-shrink-0">
+
+                            <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                                <div class="w-full h-full rounded-full p-0.5 bg-white">
+                                    <div class="w-full h-full rounded-full bg-gray-100 
+                                    flex items-center justify-center">
+
+                                        <span class="text-2xl text-gray-500">
+                                            +
+                                        </span>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span class="text-xs mt-1 w-16 text-center">você</span>
+
+                        </div>
+
+                            <div class="flex flex-col items-center flex-shrink-0">
+                                <div class="w-16 h-16 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full p-0.5 bg-gradient-to-br 
+                                        from-pink-500 via-red-500 to-yellow-500">
+                                        <div class="w-full h-full rounded-full bg-white-100 
+                                        flex items-center justify-center">
+
+                                            <img class="w-full h-full object-cover rounded-full" 
+                                            src="https://tse4.mm.bing.net/th/id/OIP.UKIkD2_Nt4eaob1oxA7PgQHaJF?r=0&rs=1&pid=ImgDetMain&o=7&rm=3">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-xs mt-1 w-16 text-center">Gustavo</span>
+                            </div>
+
+
+                       </div>
+
+
+                    </section>
+
+                    <article class="bg-white border border-gray-200 rounded-lg mb-4">
+
+                        <header class="flex items-center justify-between p-3">
+
+                            <div class="flex items-center gap-3">
+
+                                <div>
+
+                                    <div class="w-10 h-10 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full p-0.5 bg-gradient-to-br 
+                                        from-pink-500 via-red-500 to-yellow-500">
+                                        <div class="w-full h-full rounded-full bg-white-100 
+                                        flex items-center justify-center">
+
+                                            <img class="w-full h-full object-cover rounded-full" 
+                                            src="https://tse4.mm.bing.net/th/id/OIP.UKIkD2_Nt4eaob1oxA7PgQHaJF?r=0&rs=1&pid=ImgDetMain&o=7&rm=3">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <P class="text-sm font-semibold">@gustavo_gk_2010</P>
+                                    <P class="text-xs text-gray-500">Itainopolis Pi</P>
+                                </div>
+
+                                </div>
+
+                                <button>
+                                    <i class="bx bx-dots-horizontal-rounded"> </i>
+                                </button>
+
+                            </div>
+
+                        </header>
+
+                        <div class="bg-gray-100 relative">
+
+                            <img class="w-full h-full object-cover" src="https://wallpaperaccess.com/full/2647822.jpg" 
+                            alt="Imagem do meu projeto">
+                        </div>
+
+                        <div class="p-3">
+
+                            <div class="flex items-center justify-between mb-4">
+
+                                <div class="flex items-center gap-4">
+
+                                    <button>
+                                        <i class="bx bx-heart text-2xl" ></i>
+                                    </button>
+
+                                    <button>
+                                        <i class="bx bx-message-bubble-reply  text-2xl" ></i>
+                                    </button>
+
+                                    <button>
+                                         <i class="bx bx-send-alt-2 text-2xl" ></i>
+                                    </button>
+
+                                </div>
+
+                                <button>
+                                        <i class="bx bx-bookmark text-2xl" ></i>
+                                    </button>
+
+
+                            </div>
+
+                            <p class="font-semibold text-sm mb-2">
+                                9.863 curtidas
+                            </p>
+
+                            <p class="text-sm">
+                                <span class="font-semibold">@gustavo_gk_2010</span>
+                                <span class="text-slate-900/90">
+                                    👑💀♟️
+                                </span>
+
+                            </p>
+
+                            <button class="text-sm text-gray-500 mt-1">
+                                Ver todos os 5897 comentários
+                            </button>
+
+                            <p class="text-xs text-gray-500 mt-2 uppercase">
+                                há 5 horas
+                            </p>
+
+
+                        </div>
+
+                    </article>
+
+                    <article class="bg-white border border-gray-200 rounded-lg mb-4">
+
+                        <header class="flex items-center justify-between p-3">
+
+                            <div class="flex items-center gap-3">
+
+                                <div>
+
+                                    <div class="w-10 h-10 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full p-0.5 bg-gradient-to-br 
+                                        from-pink-500 via-red-500 to-yellow-500">
+                                        <div class="w-full h-full rounded-full bg-white-100 
+                                        flex items-center justify-center">
+
+                                            <img class="w-full h-full object-cover rounded-full" 
+                                            src="https://tse4.mm.bing.net/th/id/OIP.UKIkD2_Nt4eaob1oxA7PgQHaJF?r=0&rs=1&pid=ImgDetMain&o=7&rm=3">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <P class="text-sm font-semibold">@gustavo_gk_2010</P>
+                                    <P class="text-xs text-gray-500">Itainopolis Pi</P>
+                                </div>
+
+                                </div>
+
+                                <button>
+                                    <i class="bx bx-dots-horizontal-rounded"> </i>
+                                </button>
+
+                            </div>
+
+                        </header>
+
+                        <div class="bg-gray-100 relative">
+
+                            <img class="w-full h-full object-cover" src="https://i.pinimg.com/736x/88/3e/a7/883ea7d72d255aa3b9cb1d755f420711.jpg" 
+                            alt="Imagem do meu projeto">
+                        </div>
+
+                        <div class="p-3">
+
+                            <div class="flex items-center justify-between mb-4">
+
+                                <div class="flex items-center gap-4">
+
+                                    <button>
+                                        <i class="bx bx-heart text-2xl" ></i>
+                                    </button>
+
+                                    <button>
+                                        <i class="bx bx-message-bubble-reply  text-2xl" ></i>
+                                    </button>
+
+                                    <button>
+                                         <i class="bx bx-send-alt-2 text-2xl" ></i>
+                                    </button>
+
+                                </div>
+
+                                <button>
+                                        <i class="bx bx-bookmark text-2xl" ></i>
+                                    </button>
+
+
+                            </div>
+
+                            <p class="font-semibold text-sm mb-2">
+                                15.863 curtidas
+                            </p>
+
+                            <p class="text-sm">
+                                <span class="font-semibold">@gustavo_gk_2010</span>
+                                <span class="text-slate-900/90">
+                                    ⛪🤍✝️
+                                </span>
+
+                            </p>
+
+                            <button class="text-sm text-gray-500 mt-1">
+                                Ver todos os 8963 comentários
+                            </button>
+
+                            <p class="text-xs text-gray-500 mt-2 uppercase">
+                                há 8 horas
+                            </p>
+
+
+                        </div>
+
+                    </article>
+
+                    <article class="bg-white border border-gray-200 rounded-lg mb-4">
+
+                        <header class="flex items-center justify-between p-3">
+
+                            <div class="flex items-center gap-3">
+
+                                <div>
+
+                                    <div class="w-10 h-10 rounded-full p-0.5 bg-gray-100">
+                                    <div class="w-full h-full rounded-full p-0.5 bg-gradient-to-br 
+                                        from-pink-500 via-red-500 to-yellow-500">
+                                        <div class="w-full h-full rounded-full bg-white-100 
+                                        flex items-center justify-center">
+
+                                            <img class="w-full h-full object-cover rounded-full" 
+                                            src="https://tse4.mm.bing.net/th/id/OIP.UKIkD2_Nt4eaob1oxA7PgQHaJF?r=0&rs=1&pid=ImgDetMain&o=7&rm=3">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <P class="text-sm font-semibold">@gustavo_gk_2010</P>
+                                    <P class="text-xs text-gray-500">Itainopolis Pi</P>
+                                </div>
+
+                                </div>
+
+                                <button>
+                                    <i class="bx bx-dots-horizontal-rounded"> </i>
+                                </button>
+
+                            </div>
+
+                        </header>
+
+                        <div class="bg-gray-100 relative">
+
+                            <img class="w-full h-full object-cover" src="https://i.pinimg.com/736x/0f/b1/a9/0fb1a947199e5fe044244c9f619e0697.jpg" 
+                            alt="Imagem do meu projeto">
+                        </div>
+
+                        <div class="p-3">
+
+                            <div class="flex items-center justify-between mb-4">
+
+                                <div class="flex items-center gap-4">
+
+                                    <button>
+                                        <i class="bx bx-heart text-2xl" ></i>
+                                    </button>
+
+                                    <button>
+                                        <i class="bx bx-message-bubble-reply  text-2xl" ></i>
+                                    </button>
+
+                                    <button>
+                                         <i class="bx bx-send-alt-2 text-2xl" ></i>
+                                    </button>
+
+                                </div>
+
+                                <button>
+                                        <i class="bx bx-bookmark text-2xl" ></i>
+                                    </button>
+
+
+                            </div>
+
+                            <p class="font-semibold text-sm mb-2">
+                                89.911 curtidas
+                            </p>
+
+                            <p class="text-sm">
+                                <span class="font-semibold">@gustavo_gk_2010</span>
+                                <span class="text-slate-900/90">
+                                ⏳🕛🌍
+                                </span>
+
+                            </p>
+
+                            <button class="text-sm text-gray-500 mt-1">
+                                Ver todos os 60423 comentários
+                            </button>
+
+                            <p class="text-xs text-gray-500 mt-2 uppercase">
+                                há 15 horas
+                            </p>
+
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+                <nav class="fixed bottom-0 left-0 right-0 bg-white 
+                border-t border-gray-100 z-50">
+
+                    <div class="flex items-center justify-around px-4">
+
+                        <button class="p-2">
+                            <i class="bx bx-home text-2xl"></i>
+                        </button>
+
+                        <button class="p-2">
+                            <i class="bx bx-search text-2xl"></i>
+                        </button>
+
+                        <button class="p-2">
+                            <i class="bx bx-plus text-2xl"></i>
+                        </button>
+
+                        <button class="p-2">
+                            <i class="bx bx-heart text-2xl"></i>
+                        </button>
+
+                        <button class="p-2">
+                            <i class="bx bx-user text-2xl"></i>
+                        </button>
+
+                    </div>
+
+                </nav>
+
+            </div>
+        </main>
+
+    </body>
+</html>
+
+
+
+
+
