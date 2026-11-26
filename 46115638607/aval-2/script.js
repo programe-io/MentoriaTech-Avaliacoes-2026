@@ -1,13 +1,14 @@
 
-const links = document.querySelectorAll(".link");
+const links = document.querySelectorAll(".links a");
 
-links.forEach((link) => {
-  link.addEventListener("click", () => {
-      link.style.transform = "scale(0.96)";
+links.forEach((link, index) => {
+  link.style.opacity = "0";
+    link.style.transform = "translateY(15px)";
 
-          setTimeout(() => {
-                link.style.transform = "";
-                    }, 150);
-                      });
-                      });
-                      
+      setTimeout(() => {
+          link.style.transition = "0.5s ease";
+              link.style.opacity = "1";
+                  link.style.transform = "translateY(0)";
+                    }, 150 * (index + 1));
+                    });
+                    
