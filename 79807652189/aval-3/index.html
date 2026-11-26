@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>F1 Racing</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #101010;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    margin: 0;
+}
+
+h1 {
+    color: #ff2020;
+    font-size: 35px;
+}
+
+.painel {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 15px;
+    font-size: 18px;
+}
+
+#pista {
+    width: 320px;
+    height: 500px;
+    background: #444;
+    margin: auto;
+    position: relative;
+    overflow: hidden;
+    border-left: 12px solid white;
+    border-right: 12px solid white;
+}
+
+.linha {
+    position: absolute;
+    left: 148px;
+    width: 8px;
+    height: 70px;
+    background: white;
+}
+
+#carro {
+    position: absolute;
+    bottom: 25px;
+    left: 130px;
+    width: 38px;
+    height: 65px;
+    background: #e60000;
+    border-radius: 12px 12px 6px 6px;
+    border: 3px solid white;
+    z-index: 2;
+}
+
+#carro::before {
+    content: "";
+    position: absolute;
+    background: #222;
+    width: 22px;
+    height: 25px;
+    top: 15px;
+    left: 5px;
+    border-radius: 5px;
+}
+
+#carro::after {
+    content: "";
+    position: absolute;
+    width: 46px;
+    height: 7px;
+    background: black;
+    bottom: 4px;
+    left: -7px;
+}
+
+.roda {
+    position: absolute;
+    background: black;
+    width: 8px;
+    height: 18px;
+    border-radius: 3px;
+}
+
+.r1 { top: 8px; left: -7px; }
+.r2 { top: 8px; right: -7px; }
+.r3 { bottom: 8px; left: -7px; }
+.r4 { bottom: 8px; right: -7px; }
+
+.inimigo {
+    position: absolute;
+    width: 38px;
+    height: 65px;
+    background: #1678ff;
+    border: 3px solid white;
+    border-radius: 12px 12px 6px 6px;
+}
+
+.inimigo::before {
+    content: "";
+    position: absolute;
+    background: #222;
+    width: 22px;
+    height: 25px;
+    top: 15px;
+    left: 5px;
+    border-radius: 5px;
+}
+
+#mensagem {
+    position: absolute;
+    background: #000d;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#mensagem h2 {
+    color: #ff2929;
+    font-size: 30px;
+}
+
+button {
+    background: #e60000;
+    color: white;
+    border: none;
+    padding: 13px 22px;
+    border-radius: 8px;
+    margin: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #a80000;
+}
+
+.controles {
+    margin: 15px;
+}
+
+.controles button {
+    font-size: 25px;
+    width: 80px;
+}
+
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+<h1>🏎️ F1 RACING</h1>
+
+<div class="painel">
+    <div>🏆 Pontos: <span id="pontos">0</span></div>
+    <div>⚡ Velocidade: <span id="velocidade">1</span></div>
+</div>
+
+<div id="pista">
+
+    <div id="mensagem">
+        <h2>F1 RACING</h2>
+        <p>Prepare-se para a corrida!</p>
+        <button onclick="iniciar()">INICIAR CORRIDA</button>
+    </div>
+
+    <div class="linha" style="top: 0px"></div>
+    <div class="linha" style="top: 120px"></div>
+    <div class="linha" style="top: 240px"></div>
+    <div class="linha" style="top: 360px"></div>
+
+    <div id="carro">
+        <div class="roda r1"></div>
+        <div class="roda r2"></div>
+        <div class="roda r3"></div>
+        <div class="roda r4"></div>
+    </div>
+
+</div>
+
+<div class="controles">
+    <button onclick="mover(-1)">⬅️</button>
+    <button onclick="mover(1)">➡️</button>
+</div>
+
+<button onclick="reiniciar()">🔄 Reiniciar</button>
+
+<p>Use as setas do teclado para desviar dos adversários!</p>
+
+<script>
+
+const pista = document.getElementById("pista");
+const carro = document.getElementById("carro");
+const mensagem = document.getElementById("mensagem");
+
+let posicao = 130;
+let pontos = 0;
+let velocidade = 4;
+let inimigos = [];
+let linhas = document.querySelectorAll(".linha");
+
+let jogando = false;
+let ultimoInimigo = 0;
+let ultimoTempo = 0;
+let animacao;
+
+function mover(direcao) {
+    if (!jogando) return;
+
+    posicao += direcao * 50;
+
+    if (posicao < 20) posicao = 20;
+    if (posicao > 250) posicao = 250;
+
+    carro.style.left = posicao + "px";
+}
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "ArrowLeft" || e.key === "a") {
+        mover(-1);
+    }
+
+    if (e.key === "ArrowRight" || e.key === "d") {
+        mover(1);
+    }
+});
+
+function criarInimigo() {
+    let inimigo = document.createElement("div");
+
+    inimigo.className = "inimigo";
+
+    let faixa = Math.floor(Math.random() * 5);
+
+    inimigo.style.left = (20 + faixa * 50) + "px";
+    inimigo.style.top = "-80px";
+
+    pista.appendChild(inimigo);
+
+    inimigos.push({
+        elemento: inimigo,
+        y: -80
+    });
+}
+
+function colisao(a, b) {
+    return (
+        a.left < b.right &&
+        a.right > b.left &&
+        a.top < b.bottom &&
+        a.bottom > b.top
+    );
+}
+
+function atualizar(tempo) {
+    if (!jogando) return;
+
+    let delta = Math.min((tempo - ultimoTempo) / 16.67 || 1, 2);
+    ultimoTempo = tempo;
+
+    // Movimento da pista
+    linhas.forEach(linha => {
+        let y = parseFloat(linha.style.top);
+
+        y += velocidade * delta;
+
+        if (y > 500) y = -70;
+
+        linha.style.top = y + "px";
+    });
+
+    // Criar carros rivais
+    if (tempo - ultimoInimigo > Math.max(450, 1200 - pontos * 3)) {
+        criarInimigo();
+        ultimoInimigo = tempo;
+    }
+
+    // Movimentar adversários
+    let jogador = carro.getBoundingClientRect();
+
+    inimigos.forEach((item, index) => {
+        item.y += velocidade * delta;
+
+        item.elemento.style.top = item.y + "px";
+
+        if (colisao(jogador, item.elemento.getBoundingClientRect())) {
+            fimDeJogo();
+        }
+
+        if (item.y > 510) {
+            item.elemento.remove();
+            inimigos.splice(index, 1);
+
+            pontos += 10;
+
+            velocidade = Math.min(12, 4 + pontos / 100);
+
+            document.getElementById("pontos").innerText = pontos;
+            document.getElementById("velocidade").innerText =
+                Math.floor(velocidade / 4);
+        }
+    });
+
+    animacao = requestAnimationFrame(atualizar);
+}
+
+function iniciar() {
+    mensagem.style.display = "none";
+
+    jogando = true;
+    ultimoTempo = performance.now();
+    ultimoInimigo = ultimoTempo;
+
+    animacao = requestAnimationFrame(atualizar);
+}
+
+function fimDeJogo() {
+    jogando = false;
+    cancelAnimationFrame(animacao);
+
+    mensagem.style.display = "flex";
+
+    mensagem.innerHTML = `
+        <h2>🏁 FIM DE CORRIDA!</h2>
+        <p>Sua pontuação: ${pontos}</p>
+        <button onclick="reiniciar()">JOGAR NOVAMENTE</button>
+    `;
+}
+
+function reiniciar() {
+    cancelAnimationFrame(animacao);
+
+    inimigos.forEach(item => item.elemento.remove());
+    inimigos = [];
+
+    pontos = 0;
+    velocidade = 4;
+    posicao = 130;
+    ultimoTempo = 0;
+
+    carro.style.left = posicao + "px";
+
+    document.getElementById("pontos").innerText = 0;
+    document.getElementById("velocidade").innerText = 1;
+
+    mensagem.innerHTML = `
+        <h2>F1 RACING</h2>
+        <p>Prepare-se para a corrida!</p>
+        <button onclick="iniciar()">INICIAR CORRIDA</button>
+    `;
+
+    mensagem.style.display = "flex";
+    jogando = false;
+}
+
+</script>
+
+</body>
+</html>
