@@ -41,5 +41,4 @@ document.addEventListener('click', async event => {
                                               "devDependencies": {
                                                   "tailwindcss": "3.4.17"
                                                     }
-                                                    }
-                                                    
+                                                    }                                                
