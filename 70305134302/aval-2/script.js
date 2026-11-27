@@ -1,0 +1,111 @@
+* {
+        margin: 0;
+            padding: 0;
+                box-sizing: border-box;
+                }
+
+                body {
+                    font-family: Arial, sans-serif;
+                        background: #f1f5f9;
+                            color: #333;
+                            }
+
+                            header {
+                                background: #4f46e5;
+                                    color: white;
+                                        text-align: center;
+                                            padding: 30px;
+                                            }
+
+                                            main {
+                                                max-width: 800px;
+                                                    width: 90%;
+                                                        margin: 30px auto;
+                                                        }
+
+                                                        section {
+                                                            background: white;
+                                                                padding: 25px;
+                                                                    margin-bottom: 25px;
+                                                                        border-radius: 10px;
+                                                                            box-shadow: 0 3px 10px #0001;
+                                                                            }
+
+                                                                            h2 {
+                                                                                margin-bottom: 20px;
+                                                                                    color: #4f46e5;
+                                                                                    }
+
+                                                                                    form {
+                                                                                        display: flex;
+                                                                                            flex-direction: column;
+                                                                                                gap: 12px;
+                                                                                                }
+
+                                                                                                input, select {
+                                                                                                    padding: 12px;
+                                                                                                        border: 1px solid #ccc;
+                                                                                                            border-radius: 6px;
+                                                                                                            }
+
+                                                                                                            button {
+                                                                                                                background: #4f46e5;
+                                                                                                                    color: white;
+                                                                                                                        padding: 12px;
+                                                                                                                            border: none;
+                                                                                                                                border-radius: 6px;
+                                                                                                                                    cursor: pointer;
+                                                                                                                                        margin-top: 10px;
+                                                                                                                                        }
+
+                                                                                                                                        button:hover {
+                                                                                                                                            opacity: .8;
+                                                                                                                                            }
+
+                                                                                                                                            .tarefa {
+                                                                                                                                                border: 1px solid #ddd;
+                                                                                                                                                    padding: 15px;
+                                                                                                                                                        margin-bottom: 12px;
+                                                                                                                                                            border-radius: 8px;
+                                                                                                                                                                display: flex;
+                                                                                                                                                                    justify-content: space-between;
+                                                                                                                                                                        align-items: center;
+                                                                                                                                                                            gap: 10px;
+                                                                                                                                                                            }
+
+                                                                                                                                                                            .concluida {
+                                                                                                                                                                                background: #dcfce7;
+                                                                                                                                                                                    text-decoration: line-through;
+                                                                                                                                                                                    }
+
+                                                                                                                                                                                    .alta {
+                                                                                                                                                                                        color: #dc2626;
+                                                                                                                                                                                            font-weight: bold;
+                                                                                                                                                                                            }
+
+                                                                                                                                                                                            .media {
+                                                                                                                                                                                                color: #d97706;
+                                                                                                                                                                                                    font-weight: bold;
+                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                    .baixa {
+                                                                                                                                                                                                        color: #16a34a;
+                                                                                                                                                                                                            font-weight: bold;
+                                                                                                                                                                                                            }
+
+                                                                                                                                                                                                            .erro {
+                                                                                                                                                                                                                color: #dc2626;
+                                                                                                                                                                                                                }
+
+                                                                                                                                                                                                                .excluir {
+                                                                                                                                                                                                                    background: #dc2626;
+                                                                                                                                                                                                                    }
+
+                                                                                                                                                                                                                    @media(max-width: 600px) {
+                                                                                                                                                                                                                        .tarefa {
+                                                                                                                                                                                                                                flex-direction: column;
+                                                                                                                                                                                                                                        align-items: flex-start;
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                            
+}
