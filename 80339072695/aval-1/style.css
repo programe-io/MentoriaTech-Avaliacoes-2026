@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEU BLOG DE JOGOS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>🎮 MEU BLOG DE JOGOS</h1>
+        <p>O seu universo gamer começa aqui!</p>
+    </header>
+
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#jogos">Jogos</a>
+        <a href="#novidades">Novidades</a>
+        <a href="#sobre">Sobre</a>
+    </nav>
+
+    <main id="inicio">
+
+        <section class="banner">
+            <h2>Bem-vindo ao mundo dos games!</h2>
+            <p>Descubra jogos incríveis, novidades e dicas para gamers.</p>
+        </section>
+
+        <section id="jogos">
+            <h2 class="titulo">🔥 Jogos em Destaque</h2>
+
+            <input
+                type="text"
+                id="pesquisa"
+                placeholder="Pesquisar jogo..."
+            >
+
+            <div class="container-jogos">
+
+                <div class="card" data-nome="minecraft">
+                    <img src="https://images.unsplash.com/photo-1607513746994-51f730a44832?w=600"
+                         alt="Imagem de Minecraft">
+                    <h3>Minecraft</h3>
+                    <p>Explore mundos, construa casas e viva grandes aventuras.</p>
+                    <button onclick="verMais('Minecraft')">Ver mais</button>
+                </div>
+
+                <div class="card" data-nome="free fire">
+                    <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600"
+                         alt="Jogo de ação">
+                    <h3>Free Fire</h3>
+                    <p>Entre em batalhas emocionantes e lute pela vitória.</p>
+                    <button onclick="verMais('Free Fire')">Ver mais</button>
+                </div>
+
+                <div class="card" data-nome="fortnite">
+                    <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600"
+                         alt="Jogos eletrônicos">
+                    <h3>Fortnite</h3>
+                    <p>Explore, construa e enfrente desafios com seus amigos.</p>
+                    <button onclick="verMais('Fortnite')">Ver mais</button>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="novidades" class="novidades">
+            <h2>🚀 Novidades dos Games</h2>
+            <p>
+                Fique ligado nas tendências do mundo dos jogos,
+                lançamentos, atualizações e competições.
+            </p>
+        </section>
+
+        <section id="sobre" class="sobre">
+            <h2>Sobre o Blog</h2>
+            <p>
+                O MEU BLOG DE JOGOS foi criado para compartilhar
+                informações, curiosidades e novidades sobre o
+                universo dos games.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>©️ 2026 - MEU BLOG DE JOGOS</p>
+        <p>Desenvolvido com HTML, CSS e JavaScript 🎮</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
