@@ -1,16 +1,33 @@
 
-function mostrarInfo(filme) {
+const botoesCurtir = document.querySelectorAll(".like");
 
-    let mensagens = {
-        "Culpa Minha":
-        "Culpa Minha (2023): Noah e Nick vivem uma paixão intensa e proibida. O primeiro filme da trilogia!",
+botoesCurtir.forEach((botao) => {
+    botao.addEventListener("click", function() {
 
-        "Culpa Tua":
-        "Culpa Tua (2024): Noah e Nick enfrentam novos desafios e precisam lutar pelo relacionamento.",
+        const post = botao.closest(".post");
+        const curtidas = post.querySelector(".likes");
 
-        "Nossa Culpa":
-        "Nossa Culpa (2025): O capítulo final da história de Noah e Nick. Um romance cheio de emoções!"
-    };
+        let quantidade = parseInt(curtidas.textContent);
 
-    alert(mensagens[filme]);
-}
+        if (botao.classList.contains("curtido")) {
+            botao.classList.remove("curtido");
+            botao.textContent = "♡";
+            quantidade--;
+        } else {
+            botao.classList.add("curtido");
+            botao.textContent = "♥";
+            quantidade++;
+        }
+
+        curtidas.textContent = quantidade + " curtidas";
+    });
+});
+
+const salvar = document.querySelectorAll(".save");
+
+salvar.forEach((botao) => {
+    botao.addEventListener("click", function() {
+        botao.classList.toggle("salvo");
+        botao.textContent = botao.classList.contains("salvo") ? "✔" : "♧";
+    });
+});
