@@ -1,35 +1,41 @@
-function jogar(nome) {
-    alert("🎮 Você escolheu: " + nome);
-}
 
-function filtrar(categoria) {
-    const cards = document.querySelectorAll(".card");
+// Sistema de curtidas
+const botoesCurtir = document.querySelectorAll(".curtir");
 
-    cards.forEach(card => {
-        if (
-            categoria === "todos" ||
-            card.dataset.categoria === categoria
-        ) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
-    });
-}
+botoesCurtir.forEach((botao) => {
+    botao.addEventListener("click", function() {
 
-const pesquisa = document.getElementById("pesquisa");
+            const post = botao.closest(".post");
+                    const likes = post.querySelector(".likes");
 
-pesquisa.addEventListener("input", function () {
-    const texto = pesquisa.value.toLowerCase();
-    const cards = document.querySelectorAll(".card");
+                            let quantidade = parseInt(likes.textContent);
 
-    cards.forEach(card => {
-        const nome = card.dataset.nome;
+                                    if (botao.classList.contains("ativo")) {
+                                                botao.classList.remove("ativo");
+                                                            botao.textContent = "♡";
+                                                                        quantidade--;
+                                                                                } else {
+                                                                                            botao.classList.add("ativo");
+                                                                                                        botao.textContent = "♥";
+                                                                                                                    quantidade++;
+                                                                                                                            }
 
-        if (nome.includes(texto)) {
-            card.style.display = "block";
-        } else {
-            card.style.display = "none";
-        }
-    });
-});
+                                                                                                                                    likes.textContent = quantidade + " curtidas";
+                                                                                                                                        });
+                                                                                                                                        });
+
+                                                                                                                                        // Sistema de seguir
+                                                                                                                                        const botaoSeguir = document.getElementById("seguir");
+
+                                                                                                                                        botaoSeguir.addEventListener("click", function() {
+
+                                                                                                                                            if (botaoSeguir.classList.contains("seguindo")) {
+                                                                                                                                                    botaoSeguir.textContent = "Seguir";
+                                                                                                                                                            botaoSeguir.classList.remove("seguindo");
+                                                                                                                                                                } else {
+                                                                                                                                                                        botaoSeguir.textContent = "Seguindo";
+                                                                                                                                                                                botaoSeguir.classList.add("seguindo");
+                                                                                                                                                                                    }
+
+                                                                                                                                                                                    });
+                                                                                                                                                                                    
