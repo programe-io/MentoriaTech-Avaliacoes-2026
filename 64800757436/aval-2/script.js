@@ -1,135 +1,140 @@
 
-function publicar() {
-    const campo = document.getElementById("textoPost");
-    const texto = campo.value.trim();
+/* CURTIR PUBLICAÇÃO */
 
-    if (texto === "") {
-        alert("Escreva alguma coisa antes de publicar!");
-        return;
-    }
+function likePost(button) {
+    const post = button.closest(".post");
+    const count = post.querySelector(".like-count");
 
-    const publicacoes = document.getElementById("publicacoes");
-
-    const novoPost = document.createElement("article");
-    novoPost.className = "post";
-
-    const usuario = document.createElement("div");
-    usuario.className = "usuario";
-
-    const foto = document.createElement("img");
-    foto.src = "https://i.pravatar.cc/100?img=12";
-    foto.alt = "Meu perfil";
-
-    const identificacao = document.createElement("div");
-
-    const nome = document.createElement("strong");
-    nome.textContent = "Meu Perfil";
-
-    const horario = document.createElement("small");
-    horario.textContent = "Agora";
-
-    identificacao.append(nome, horario);
-    usuario.append(foto, identificacao);
-
-    const mensagem = document.createElement("p");
-    mensagem.textContent = texto;
-
-    const acoes = document.createElement("div");
-    acoes.className = "acoes";
-
-    const botaoCurtir = document.createElement("button");
-    botaoCurtir.textContent = "👍 Curtir ";
-
-    const contador = document.createElement("span");
-    contador.textContent = "0";
-    botaoCurtir.append(contador);
-
-    botaoCurtir.onclick = function () {
-        curtir(botaoCurtir);
-    };
-
-    const botaoComentar = document.createElement("button");
-    botaoComentar.textContent = "💬 Comentar";
-    botaoComentar.onclick = function () {
-        comentar(botaoComentar);
-    };
-
-    const botaoCompartilhar = document.createElement("button");
-    botaoCompartilhar.textContent = "↗ Compartilhar";
-    botaoCompartilhar.onclick = compartilhar;
-
-    acoes.append(botaoCurtir, botaoComentar, botaoCompartilhar);
-
-    const comentarios = document.createElement("div");
-    comentarios.className = "comentarios";
-
-    novoPost.append(
-        usuario,
-        mensagem,
-        acoes,
-        comentarios
-    );
-
-    publicacoes.prepend(novoPost);
-    campo.value = "";
-}
-
-function curtir(botao) {
-    const contador = botao.querySelector("span");
-    let total = Number(contador.textContent);
-
-    if (botao.classList.contains("curtido")) {
-        total--;
-        botao.classList.remove("curtido");
+    if (button.classList.contains("liked")) {
+        button.classList.remove("liked");
+        count.textContent = Number(count.textContent) - 1;
+        button.textContent = "👍 Curtir";
     } else {
-        total++;
-        botao.classList.add("curtido");
+        button.classList.add("liked");
+        count.textContent = Number(count.textContent) + 1;
+        button.textContent = "👍 Curtido";
     }
-
-    contador.textContent = total;
 }
 
-function comentar(botao) {
-    const post = botao.closest(".post");
-    const area = post.querySelector(".comentarios");
+/* CRIAR PUBLICAÇÃO */
 
-    if (area.querySelector("input")) {
-        area.querySelector("input").focus();
+function createPost() {
+    const input = document.getElementById("postText");
+    const text = input.value.trim();
+
+    if (!text) {
+        alert("Digite alguma coisa antes de publicar!");
         return;
     }
 
-    const campo = document.createElement("input");
-    campo.placeholder = "Escreva um comentário...";
+    const post = document.createElement("article");
+    post.className = "post";
 
-    campo.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            const texto = campo.value.trim();
+    const header = document.createElement("div");
+    header.className = "post-header";
 
-            if (texto !== "") {
-                const comentario = document.createElement("p");
-                comentario.textContent = "👤 Você: " + texto;
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "P";
 
-                area.insertBefore(comentario, campo);
-                campo.value = "";
-            }
-        }
-    });
+    const info = document.createElement("div");
 
-    area.appendChild(campo);
-    campo.focus();
+    const name = document.createElement("strong");
+    name.textContent = "Pedro";
+
+    const date = document.createElement("small");
+    date.textContent = "Agora mesmo · 🌎";
+
+    info.append(name, date);
+    header.append(avatar, info);
+
+    const content = document.createElement("div");
+    content.className = "post-content";
+    content.textContent = text;
+
+    const stats = document.createElement("div");
+    stats.className = "post-stats";
+    stats.innerHTML = `
+        <span>👍 <span class="like-count">0</span> curtidas</span>
+        <span>0 comentários</span>
+    `;
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    actions.innerHTML = `
+        <button onclick="likePost(this)">👍 Curtir</button>
+        <button onclick="toggleComments(this)">💬 Comentar</button>
+        <button onclick="sharePost()">↗ Compartilhar</button>
+    `;
+
+    const comments = document.createElement("div");
+    comments.className = "comments";
+
+    comments.innerHTML = `
+        <div class="comment-list"></div>
+        <input
+            type="text"
+            placeholder="Escreva um comentário..."
+            onkeydown="if(event.key==='Enter') addComment(this)"
+        >
+    `;
+
+    post.append(header, content, stats, actions, comments);
+
+    document.getElementById("feed").prepend(post);
+
+    input.value = "";
 }
 
-function compartilhar() {
-    alert("Você compartilhou esta publicação! 🚀");
+/* ABRIR COMENTÁRIOS */
+
+function toggleComments(button) {
+    const post = button.closest(".post");
+    const comments = post.querySelector(".comments");
+
+    comments.style.display =
+        comments.style.display === "block" ? "none" : "block";
 }
 
-// Pesquisa de publicações
-document.getElementById("pesquisa").addEventListener("input", function() {
-    const termo = this.value.toLowerCase();
+/* ADICIONAR COMENTÁRIO */
 
-    document.querySelectorAll(".post").forEach(post => {
-        post.style.display = post.textContent
-            .toLowerCase()
-            .includes(termo) ? "block" : "none";
-    });
-});
+function addComment(input) {
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    const post = input.closest(".post");
+    const list = post.querySelector(".comment-list");
+
+    const comment = document.createElement("div");
+    comment.className = "comment";
+    comment.textContent = "Pedro: " + text;
+
+    list.appendChild(comment);
+
+    input.value = "";
+
+    const stats = post.querySelector(".post-stats span:last-child");
+    stats.textContent = list.children.length + " comentários";
+}
+
+/* COMPARTILHAR PUBLICAÇÃO */
+
+function sharePost() {
+    const url = window.location.href;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "FaceConnect",
+            text: "Confira esta publicação!",
+            url: url
+        }).catch(() => {});
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(url)
+            .then(() => alert("Link copiado!"))
+            .catch(() => alert("Não foi possível copiar o link."));
+    } else {
+        alert("Compartilhamento não disponível.");
+    }
+}

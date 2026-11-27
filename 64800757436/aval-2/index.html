@@ -1,179 +1,691 @@
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitSocial - Rede Social</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FaceConnect - Rede Social</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1c1e21;
+}
+
+/* CABEÇALHO */
+
+header {
+    height: 60px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: 0 1px 5px #ccc;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    color: #1877f2;
+    font-size: 27px;
+    font-weight: bold;
+}
+
+.search {
+    background: #f0f2f5;
+    border-radius: 25px;
+    padding: 12px;
+    width: 250px;
+    border: none;
+    outline: none;
+}
+
+nav {
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    text-decoration: none;
+    font-size: 23px;
+    color: #606770;
+}
+
+nav a:hover {
+    color: #1877f2;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #1877f2;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+/* ESTRUTURA */
+
+.container {
+    display: grid;
+    grid-template-columns: 250px minmax(300px, 650px) 250px;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: 1250px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+/* MENU LATERAL */
+
+.sidebar, .contacts {
+    background: white;
+    padding: 18px;
+    border-radius: 10px;
+    height: fit-content;
+}
+
+.sidebar h3, .contacts h3 {
+    margin-bottom: 18px;
+    color: #65676b;
+}
+
+.menu-item {
+    padding: 13px 5px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.menu-item:hover {
+    background: #f0f2f5;
+}
+
+.menu-item span {
+    margin-right: 10px;
+}
+
+/* STORIES */
+
+.stories {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.story {
+    min-width: 110px;
+    height: 170px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1877f2, #9333ea);
+    color: white;
+    display: flex;
+    align-items: end;
+    padding: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* PUBLICAR */
+
+.create-post {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.post-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.post-input input {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: #f0f2f5;
+    border-radius: 25px;
+    outline: none;
+}
+
+.post-buttons {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ddd;
+    padding-top: 12px;
+}
+
+.post-buttons button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #65676b;
+}
+
+/* POSTS */
+
+.post {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.post-header small {
+    display: block;
+    color: #65676b;
+    margin-top: 4px;
+}
+
+.post-content {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.post-stats {
+    display: flex;
+    justify-content: space-between;
+    color: #65676b;
+    font-size: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+}
+
+.actions button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #65676b;
+    font-size: 15px;
+}
+
+.actions button:hover {
+    color: #1877f2;
+}
+
+.liked {
+    color: #1877f2 !important;
+}
+
+/* COMENTÁRIOS */
+
+.comments {
+    display: none;
+    margin-top: 10px;
+}
+
+.comments input {
+    width: 100%;
+    border: none;
+    background: #f0f2f5;
+    padding: 12px;
+    border-radius: 20px;
+    outline: none;
+}
+
+.comment {
+    background: #f0f2f5;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 12px;
+}
+
+/* CONTATOS */
+
+.contact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.online {
+    width: 10px;
+    height: 10px;
+    background: #31a24c;
+    border-radius: 50%;
+}
+
+/* BOTÕES */
+
+.publish {
+    width: 100%;
+    padding: 12px;
+    background: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.publish:hover {
+    background: #166fe5;
+}
+
+@media(max-width: 950px) {
+    .container {
+        grid-template-columns: 190px minmax(300px, 1fr);
+    }
+
+    .contacts {
+        display: none;
+    }
+}
+
+@media(max-width: 650px) {
+    header {
+        padding: 0 10px;
+    }
+
+    .search {
+        width: 110px;
+    }
+
+    nav {
+        display: none;
+    }
+
+    .container {
+        display: block;
+        padding: 0 8px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .story {
+        min-width: 90px;
+        height: 140px;
+    }
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" rel="stylesheet"></head>
 
 <body>
 
-<header class="topo">
-    <div class="logo">Fit<span>Social</span></div>
+<header>
+    <div class="logo">FaceConnect</div>
 
-    <input type="text" id="pesquisa" placeholder="Pesquisar pessoas, esportes...">
+    <input class="search"
+           type="text"
+           placeholder="Pesquisar...">
 
-    <div class="perfil-topo">
-        <img src="https://i.pravatar.cc/100?img=12" alt="Perfil">
-        <span>Meu Perfil</span>
+    <nav>
+        <a href="#">🏠</a>
+        <a href="#">👥</a>
+        <a href="#">🎬</a>
+        <a href="#">🔔</a>
+        <a href="#">💬</a>
+    </nav>
+
+    <div class="profile">
+        <div class="avatar">P</div>
+        <span>Pedro</span>
     </div>
 </header>
 
 <div class="container">
 
-    <aside class="menu">
-        <h3>Menu principal</h3>
+    <!-- MENU LATERAL -->
 
-        <a href="#">🏠 Início</a>
-        <a href="#">👤 Amigos</a>
-        <a href="#">🏋️ Academia</a>
-        <a href="#">⚽ Esportes</a>
-        <a href="#">📸 Fotos</a>
-        <a href="#">🎮 Grupos</a>
-        <a href="#">⚙️ Configurações</a>
+    <aside class="sidebar">
+        <h3>Menu</h3>
 
-        <div class="destaque">
-            <h3>💪 Motivação</h3>
-            <p>Não desista! Cada treino é um passo para sua melhor versão.</p>
-        </div>
+        <div class="menu-item"><span>👤</span> Meu perfil</div>
+        <div class="menu-item"><span>👥</span> Amigos</div>
+        <div class="menu-item"><span>📰</span> Notícias</div>
+        <div class="menu-item"><span>🎬</span> Vídeos</div>
+        <div class="menu-item"><span>📷</span> Fotos</div>
+        <div class="menu-item"><span>💬</span> Mensagens</div>
+        <div class="menu-item"><span>⚙️</span> Configurações</div>
+        <div class="menu-item"><span>⭐</span> Favoritos</div>
     </aside>
 
-    <main class="feed">
+    <!-- FEED -->
+
+    <main>
+
+        <!-- STORIES -->
 
         <section class="stories">
-            <div class="story">
-                <img src="https://i.pravatar.cc/100?img=11" alt="">
-                <p>Lucas</p>
-            </div>
-
-            <div class="story">
-                <img src="https://i.pravatar.cc/100?img=22" alt="">
-                <p>Mariana</p>
-            </div>
-
-            <div class="story">
-                <img src="https://i.pravatar.cc/100?img=33" alt="">
-                <p>Pedro</p>
-            </div>
-
-            <div class="story">
-                <img src="https://i.pravatar.cc/100?img=44" alt="">
-                <p>Ana</p>
-            </div>
+            <div class="story">+ Criar story</div>
+            <div class="story">Ana</div>
+            <div class="story">Lucas</div>
+            <div class="story">Mariana</div>
+            <div class="story">João</div>
         </section>
 
-        <section class="criar-post">
-            <h3>Compartilhe seu momento!</h3>
+        <!-- CRIAR PUBLICAÇÃO -->
 
-            <textarea id="textoPost"
-            placeholder="O que você está fazendo hoje?"></textarea>
+        <section class="create-post">
 
-            <button onclick="publicar()">Publicar</button>
+            <div class="post-input">
+                <div class="avatar">P</div>
+
+                <input
+                    type="text"
+                    id="postText"
+                    placeholder="No que você está pensando?"
+                >
+            </div>
+
+            <button class="publish" onclick="createPost()">
+                Publicar
+            </button>
+
         </section>
 
-        <section id="publicacoes">
+        <!-- PUBLICAÇÕES -->
+
+        <section id="feed">
 
             <article class="post">
-                <div class="usuario">
-                    <img src="https://i.pravatar.cc/100?img=12" alt="">
+
+                <div class="post-header">
+                    <div class="avatar">A</div>
+
                     <div>
-                        <strong>Gabriel Silva</strong>
-                        <small>Hoje às 08:30</small>
+                        <strong>Ana Oliveira</strong>
+                        <small>Há 10 minutos · 🌎</small>
                     </div>
                 </div>
 
-                <p>Treino de hoje concluído! 💪🔥
-                Foco, força e determinação!</p>
-
-                <img class="foto-post"
-                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=900"
-                alt="Academia">
-
-                <div class="acoes">
-                    <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
-                    <button onclick="comentar(this)">💬 Comentar</button>
-                    <button onclick="compartilhar()">↗ Compartilhar</button>
+                <div class="post-content">
+                    Bom dia, pessoal! Que todos tenham uma ótima semana! ❤️
                 </div>
 
-                <div class="comentarios"></div>
+                <div class="post-stats">
+                    <span>👍 <span class="like-count">15</span> curtidas</span>
+                    <span>3 comentários</span>
+                </div>
+
+                <div class="actions">
+                    <button onclick="likePost(this)">👍 Curtir</button>
+                    <button onclick="toggleComments(this)">💬 Comentar</button>
+                    <button onclick="sharePost()">↗ Compartilhar</button>
+                </div>
+
+                <div class="comments">
+                    <div class="comment-list"></div>
+                    <input type="text" placeholder="Escreva um comentário..."
+                           onkeydown="if(event.key==='Enter') addComment(this)">
+                </div>
+
             </article>
 
             <article class="post">
-                <div class="usuario">
-                    <img src="https://i.pravatar.cc/100?img=25" alt="">
+
+                <div class="post-header">
+                    <div class="avatar">L</div>
+
                     <div>
-                        <strong>Mariana Costa</strong>
-                        <small>Hoje às 09:15</small>
+                        <strong>Lucas Santos</strong>
+                        <small>Há 30 minutos · 🌎</small>
                     </div>
                 </div>
 
-                <p>Uma corrida pela manhã para começar
-                o dia com energia! 🏃‍♀️🌞</p>
-
-                <img class="foto-post"
-                src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900"
-                alt="Corrida">
-
-                <div class="acoes">
-                    <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
-                    <button onclick="comentar(this)">💬 Comentar</button>
-                    <button onclick="compartilhar()">↗ Compartilhar</button>
+                <div class="post-content">
+                    Hoje é dia de aproveitar com os amigos! 😎🔥
                 </div>
 
-                <div class="comentarios"></div>
-            </article>
+                <img
+                    class="post-image"
+                    src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900"
+                    alt="Atletas correndo em uma pista">
 
-            <article class="post">
-                <div class="usuario">
-                    <img src="https://i.pravatar.cc/100?img=15" alt="">
-                    <div>
-                        <strong>Pedro Henrique</strong>
-                        <small>Ontem às 18:40</small>
-                    </div>
+                <div class="post-stats">
+                    <span>👍 <span class="like-count">32</span> curtidas</span>
+                    <span>8 comentários</span>
                 </div>
 
-                <p>Domingo de futebol com os amigos! ⚽🔥</p>
-
-                <img class="foto-post"
-                src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900"
-                alt="Futebol">
-
-                <div class="acoes">
-                    <button onclick="curtir(this)">👍 Curtir <span>0</span></button>
-                    <button onclick="comentar(this)">💬 Comentar</button>
-                    <button onclick="compartilhar()">↗ Compartilhar</button>
+                <div class="actions">
+                    <button onclick="likePost(this)">👍 Curtir</button>
+                    <button onclick="toggleComments(this)">💬 Comentar</button>
+                    <button onclick="sharePost()">↗ Compartilhar</button>
                 </div>
 
-                <div class="comentarios"></div>
+                <div class="comments">
+                    <div class="comment-list"></div>
+                    <input type="text" placeholder="Escreva um comentário..."
+                           onkeydown="if(event.key==='Enter') addComment(this)">
+                </div>
+
             </article>
 
         </section>
+
     </main>
 
-    <aside class="direita">
-        <h3>🔥 Tendências</h3>
-        <p>#VidaFitness</p>
-        <p>#Academia</p>
-        <p>#Futebol</p>
-        <p>#Corrida</p>
-        <p>#Motivação</p>
+    <!-- CONTATOS -->
 
-        <div class="amigos">
-            <h3>🟢 Amigos online</h3>
-            <p>Lucas Oliveira</p>
-            <p>Mariana Costa</p>
-            <p>Pedro Henrique</p>
-            <p>Ana Souza</p>
+    <aside class="contacts">
+        <h3>Contatos</h3>
+
+        <div class="contact">
+            <div class="avatar">A</div>
+            Ana Oliveira
+            <div class="online"></div>
         </div>
+
+        <div class="contact">
+            <div class="avatar">L</div>
+            Lucas Santos
+            <div class="online"></div>
+        </div>
+
+        <div class="contact">
+            <div class="avatar">M</div>
+            Mariana Costa
+            <div class="online"></div>
+        </div>
+
+        <div class="contact">
+            <div class="avatar">J</div>
+            João Pedro
+            <div class="online"></div>
+        </div>
+
     </aside>
 
 </div>
 
-<script src="script.js"></script>
+<script>
+
+// CURTIR PUBLICAÇÃO
+
+function likePost(button) {
+
+    const post = button.closest(".post");
+    const count = post.querySelector(".like-count");
+
+    if (button.classList.contains("liked")) {
+        button.classList.remove("liked");
+        count.textContent = Number(count.textContent) - 1;
+        button.textContent = "👍 Curtir";
+    } else {
+        button.classList.add("liked");
+        count.textContent = Number(count.textContent) + 1;
+        button.textContent = "👍 Curtido";
+    }
+}
+
+// CRIAR PUBLICAÇÃO
+
+function createPost() {
+
+    const input = document.getElementById("postText");
+    const text = input.value.trim();
+
+    if (text === "") {
+        alert("Digite alguma coisa antes de publicar!");
+        return;
+    }
+
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const header = document.createElement("div");
+    header.className = "post-header";
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "P";
+
+    const info = document.createElement("div");
+    const name = document.createElement("strong");
+    name.textContent = "Pedro";
+
+    const date = document.createElement("small");
+    date.textContent = "Agora mesmo · 🌎";
+
+    info.append(name, date);
+    header.append(avatar, info);
+
+    const content = document.createElement("div");
+    content.className = "post-content";
+    content.textContent = text;
+
+    const stats = document.createElement("div");
+    stats.className = "post-stats";
+    stats.innerHTML =
+        '<span>👍 <span class="like-count">0</span> curtidas</span>' +
+        '<span>0 comentários</span>';
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    actions.innerHTML = `
+        <button onclick="likePost(this)">👍 Curtir</button>
+        <button onclick="toggleComments(this)">💬 Comentar</button>
+        <button onclick="sharePost()">↗ Compartilhar</button>
+    `;
+
+    const comments = document.createElement("div");
+    comments.className = "comments";
+
+    comments.innerHTML = `
+        <div class="comment-list"></div>
+        <input type="text"
+        placeholder="Escreva um comentário..."
+        onkeydown="if(event.key==='Enter') addComment(this)">
+    `;
+
+    post.append(header, content, stats, actions, comments);
+
+    document.getElementById("feed").prepend(post);
+
+    input.value = "";
+}
+
+// ABRIR COMENTÁRIOS
+
+function toggleComments(button) {
+
+    const post = button.closest(".post");
+    const comments = post.querySelector(".comments");
+
+    comments.style.display =
+        comments.style.display === "block" ? "none" : "block";
+}
+
+// ADICIONAR COMENTÁRIO
+
+function addComment(input) {
+
+    const text = input.value.trim();
+
+    if (!text) return;
+
+    const post = input.closest(".post");
+    const list = post.querySelector(".comment-list");
+
+    const comment = document.createElement("div");
+    comment.className = "comment";
+    comment.textContent = "Pedro: " + text;
+
+    list.appendChild(comment);
+
+    input.value = "";
+
+    const stats = post.querySelector(".post-stats span:last-child");
+    const total = list.children.length;
+
+    stats.textContent = total + " comentários";
+}
+
+// COMPARTILHAR
+
+function sharePost() {
+
+    const url = window.location.href;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "FaceConnect",
+            text: "Confira esta publicação!",
+            url: url
+        }).catch(() => {});
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(url)
+            .then(() => alert("Link copiado!"));
+    } else {
+        alert("Compartilhamento não disponível neste navegador.");
+    }
+}
+
+</script>
 
 <script src="script.js"></script></body>
 </html>
