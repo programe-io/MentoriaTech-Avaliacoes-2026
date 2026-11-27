@@ -1,69 +1,86 @@
 
-// FACEBOOK
- - REDE SOCIAL ESPORTIVA
+// =================================
+// FUTBOOK - REDE SOCIAL DE FUTEBOL
+// =================================
 
-// CURTIR PUBLICAÇÕES
+// FUNÇÃO PARA CURTIR PUBLICAÇÕES
 function curtir(botao) {
-    if (botao.innerHTML === "👍 Curtir") {
-        botao.innerHTML = "❤️ Curtido";
+    if (botao.innerText === "👍 Curtir") {
+        botao.innerText = "❤️ Curtido";
         botao.style.background = "#e91e63";
     } else {
-        botao.innerHTML = "👍 Curtir";
+        botao.innerText = "👍 Curtir";
         botao.style.background = "#1877f2";
     }
 }
 
-// PUBLICAR CONTEÚDO
+// FUNÇÃO PARA PUBLICAR
 function publicar() {
-    let texto = document.getElementById("publicacao").value;
+    let campo = document.getElementById("publicacao");
+    let texto = campo.value.trim();
 
-    if (texto.trim() === "") {
-        alert("Digite alguma coisa antes de publicar!");
+    if (texto === "") {
+        alert("Escreva algo sobre futebol!");
         return;
     }
 
-    let novaPublicacao = document.createElement("article");
+    let post = document.createElement("article");
+    post.className = "post";
 
-    novaPublicacao.className = "post";
+    let titulo = document.createElement("h3");
+    titulo.textContent = "⚽ Torcedor FutBook";
 
-    novaPublicacao.innerHTML = `
-        <h3>👤 Usuário SportBook</h3>
-        <p>${texto.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-        <button onclick="curtir(this)">👍 Curtir</button>
-        <button onclick="comentar(this)">💬 Comentar</button>
-    `;
+    let mensagem = document.createElement("p");
+    mensagem.textContent = texto;
 
-    document.getElementById("feed").prepend(novaPublicacao);
+    let botaoCurtir = document.createElement("button");
+    botaoCurtir.textContent = "👍 Curtir";
+    botaoCurtir.onclick = function() {
+        curtir(botaoCurtir);
+    };
 
-    document.getElementById("publicacao").value = "";
+    let botaoComentar = document.createElement("button");
+    botaoComentar.textContent = "💬 Comentar";
+    botaoComentar.onclick = function() {
+        comentar(botaoComentar);
+    };
 
-    alert("Publicação realizada com sucesso!");
+    post.appendChild(titulo);
+    post.appendChild(mensagem);
+    post.appendChild(botaoCurtir);
+    post.appendChild(botaoComentar);
+
+    document.getElementById("feed").prepend(post);
+
+    campo.value = "";
+
+    alert("Sua publicação foi compartilhada!");
 }
 
-// COMENTAR PUBLICAÇÕES
+// FUNÇÃO PARA COMENTAR
 function comentar(botao) {
-    let comentario = prompt("Escreva seu comentário:");
+    let texto = prompt("Escreva seu comentário:");
 
-    if (comentario && comentario.trim() !== "") {
-        let novoComentario = document.createElement("p");
+    if (texto && texto.trim() !== "") {
+        let comentario = document.createElement("p");
 
-        novoComentario.textContent = "💬 " + comentario;
+        comentario.textContent = "💬 " + texto;
 
-        botao.parentElement.appendChild(novoComentario);
+        botao.parentElement.appendChild(comentario);
     }
 }
 
-// PESQUISAR ESPORTES
+// FUNÇÃO PARA PESQUISAR
 function pesquisar() {
-    let pesquisa = document.getElementById("pesquisa")
-        .value.toLowerCase();
+    let campo = document.getElementById("pesquisa");
+    let busca = campo.value.toLowerCase();
 
     let publicacoes = document.querySelectorAll(".post");
 
     publicacoes.forEach(function(post) {
         let conteudo = post.innerText.toLowerCase();
 
-        if (conteudo.includes(pesquisa)) {
+        if (conteudo.includes(busca)) {
             post.style.display = "block";
         } else {
             post.style.display = "none";
@@ -72,7 +89,7 @@ function pesquisar() {
 }
 
 // MENSAGEM DE BOAS-VINDAS
-window.addEventListener("load", function() {
-    console.log("Bem-vindo ao SportBook!");
-    console.log("Sua rede social esportiva está funcionando!");
-});
+window.onload = function() {
+    console.log("⚽ Bem-vindo ao FutBook!");
+    console.log("Sua rede social de futebol está funcionando!");
+};
