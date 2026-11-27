@@ -1,7 +1,8 @@
-// Seleciona o botão de curtir
-const btnLike = document.querySelector('button');
+let curtidas = 0;
 
-// Adiciona o evento de clique para alternar o coração
-btnLike.addEventListener('click', () => {
-  btnLike.textContent = btnLike.textContent === '🤍' ? '❤️' : '🤍';
-});
+function curtir() {
+    curtidas++;
+
+    document.getElementById("likes").innerHTML =
+        curtidas + " curtidas";
+}
