@@ -1,105 +1,138 @@
 
-// LISTA DOS MELHORES JOGOS
-const jogos = [
-    {
-        nome: "Minecraft",
-        nota: 10,
-        categoria: "Aventura",
-        descricao: "Explore mundos, construa casas e sobreviva!"
-    },
-    {
-        nome: "Fortnite",
-        nota: 9.5,
-        categoria: "Battle Royale",
-        descricao: "Participe de batalhas e seja o último sobrevivente!"
-    },
-    {
-        nome: "GTA V",
-        nota: 9.8,
-        categoria: "Ação",
-        descricao: "Explore uma cidade cheia de missões e aventuras!"
-    },
-    {
-        nome: "Free Fire",
-        nota: 9,
-        categoria: "Battle Royale",
-        descricao: "Entre em partidas emocionantes de sobrevivência!"
-    },
-    {
-        nome: "God of War",
-        nota: 10,
-        categoria: "Aventura",
-        descricao: "Acompanhe Kratos em uma jornada épica!"
-    },
-    {
-        nome: "Roblox",
-        nota: 9.5,
-        categoria: "Diversão",
-        descricao: "Explore milhares de jogos criados pela comunidade!"
+// GAMEBOOK - REDE SOCIAL DOS MELHORES JOGOS
+
+// FUNÇÃO DE CURTIR PUBLICAÇÃO
+function curtir(botao) {
+
+    if (botao.classList.contains("curtido")) {
+        botao.innerHTML = "👍 Curtir";
+        botao.classList.remove("curtido");
+
+    } else {
+        botao.innerHTML = "❤️ Curtido!";
+        botao.classList.add("curtido");
     }
-];
-
-// MOSTRAR JOGOS NO CONSOLE
-console.log("🎮 OS MELHORES JOGOS DO MUNDO");
-
-jogos.forEach((jogo, indice) => {
-    console.log(
-        `${indice + 1}. ${jogo.nome} - Nota: ${jogo.nota}`
-    );
-});
-
-// FUNÇÃO DE PESQUISA
-function pesquisarJogo() {
-    const pesquisa = document
-        .getElementById("pesquisa")
-        .value.toLowerCase();
-
-    const resultados = jogos.filter(jogo =>
-        jogo.nome.toLowerCase().includes(pesquisa)
-    );
-
-    mostrarJogos(resultados);
 }
 
-// MOSTRAR JOGOS NA TELA
-function mostrarJogos(lista) {
-    const area = document.getElementById("resultado");
+// FUNÇÃO DE COMENTAR
+function comentar(botao) {
 
-    area.innerHTML = "";
+    let comentario = prompt("Digite seu comentário sobre o jogo:");
 
-    if (lista.length === 0) {
-        area.innerHTML = "<p>Jogo não encontrado!</p>";
+    if (comentario && comentario.trim() !== "") {
+
+        let area = botao.closest(".post");
+
+        let novoComentario = document.createElement("p");
+
+        novoComentario.innerHTML = "<strong>💬 Comentário:</strong> ";
+
+        let texto = document.createTextNode(comentario);
+
+        novoComentario.appendChild(texto);
+
+        area.appendChild(novoComentario);
+
+        alert("Comentário publicado com sucesso!");
+    }
+}
+
+// FUNÇÃO DE COMPARTILHAR
+function compartilhar() {
+
+    if (navigator.share) {
+
+        navigator.share({
+            title: "GameBook",
+            text: "Confira esta publicação sobre os melhores jogos!"
+        });
+
+    } else {
+
+        alert("Publicação compartilhada com sucesso!");
+    }
+}
+
+// FUNÇÃO DE CRIAR PUBLICAÇÃO
+function publicar() {
+
+    let texto = document.getElementById("texto").value;
+
+    if (texto.trim() === "") {
+
+        alert("Digite alguma coisa antes de publicar!");
+
         return;
     }
 
-    lista.forEach(jogo => {
-        area.innerHTML += `
-            <div class="card">
-                <h2>${jogo.nome}</h2>
-                <p>Categoria: ${jogo.categoria}</p>
-                <p>Nota: ⭐ ${jogo.nota}/10</p>
-                <p>${jogo.descricao}</p>
-            </div>
-        `;
+    let publicacoes = document.getElementById("publicacoes");
+
+    let post = document.createElement("article");
+
+    post.className = "post";
+
+    let titulo = document.createElement("h2");
+    titulo.textContent = "🎮 Nova publicação";
+
+    let usuario = document.createElement("p");
+    usuario.innerHTML = "<strong>GameBook</strong> • Agora";
+
+    let conteudo = document.createElement("p");
+    conteudo.textContent = texto;
+
+    let botoes = document.createElement("div");
+    botoes.className = "buttons";
+
+    botoes.innerHTML = `
+        <button class="like" onclick="curtir(this)">
+            👍 Curtir
+        </button>
+
+        <button onclick="comentar(this)">
+            💬 Comentar
+        </button>
+
+        <button onclick="compartilhar()">
+            ↗ Compartilhar
+        </button>
+    `;
+
+    post.appendChild(titulo);
+    post.appendChild(usuario);
+    post.appendChild(conteudo);
+    post.appendChild(botoes);
+
+    publicacoes.prepend(post);
+
+    document.getElementById("texto").value = "";
+
+    alert("Sua publicação foi criada!");
+}
+
+// FUNÇÃO DE PESQUISAR JOGOS
+function pesquisarJogos() {
+
+    let pesquisa = document.querySelector(
+        'header input'
+    ).value.toLowerCase();
+
+    let posts = document.querySelectorAll(".post");
+
+    posts.forEach(function(post) {
+
+        let conteudo = post.textContent.toLowerCase();
+
+        if (conteudo.includes(pesquisa)) {
+            post.style.display = "block";
+        } else {
+            post.style.display = "none";
+        }
+
     });
 }
 
-// ORDENAR POR NOTA
-function ordenarJogos() {
-    const ranking = [...jogos].sort(
-        (a, b) => b.nota - a.nota
-    );
+// EVENTO DE PESQUISA
+document.querySelector("header input")
+    .addEventListener("input", pesquisarJogos);
 
-    mostrarJogos(ranking);
-}
-
-// MENSAGEM DE BOAS-VINDAS
-function boasVindas() {
-    alert("🎮 Bem-vindo ao Mundo dos Games!");
-}
-
-// CARREGAR OS JOGOS AO ABRIR O SITE
-window.addEventListener("DOMContentLoaded", () => {
-    mostrarJogos(jogos);
-    console.log("Site carregado com sucesso!");
-});
+console.log("🎮 GameBook iniciado com sucesso!");
