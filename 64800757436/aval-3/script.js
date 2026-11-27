@@ -1,177 +1,178 @@
-let totalPosts = 0;
-
-// CURTIR
-function likePost(button) {
-    const count = button.querySelector("span");
-
-    if (!count) return;
-
-    let number = Number(count.textContent);
-
-    if (button.classList.contains("liked")) {
-        button.classList.remove("liked");
-        count.textContent = number - 1;
-    } else {
-        button.classList.add("liked");
-        count.textContent = number + 1;
+const posts = [
+    {
+        id: 1,
+        user: "mariana",
+        avatar: "https://i.pravatar.cc/100?img=5",
+        image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=900",
+        likes: 1250,
+        caption: "Vivendo a vida e aproveitando cada momento! ❤️",
+        liked: false,
+        comments: []
+    },
+    {
+        id: 2,
+        user: "pedro",
+        avatar: "https://i.pravatar.cc/100?img=12",
+        image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
+        likes: 845,
+        caption: "Que lugar incrível! 🌎",
+        liked: false,
+        comments: []
+    },
+    {
+        id: 3,
+        user: "julia",
+        avatar: "https://i.pravatar.cc/100?img=9",
+        image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900",
+        likes: 2300,
+        caption: "Espalhando coisas boas! 🌸",
+        liked: false,
+        comments: []
     }
+];
+
+const feed = document.querySelector("#feed");
+
+function renderPosts() {
+    feed.innerHTML = "";
+
+    posts.forEach(post => {
+        const article = document.createElement("article");
+        article.className = "post";
+
+        article.innerHTML = `
+            <div class="post-header">
+                <img src="${post.avatar}">
+                <strong>${post.user}</strong>
+                <span style="margin-left:auto">•••</span>
+            </div>
+
+            <img class="post-image" src="${post.image}">
+
+            <div class="post-actions">
+                <button class="like-btn ${post.liked ? "liked" : ""}"
+                    data-action="like" data-id="${post.id}">
+                    ${post.liked ? "♥" : "♡"}
+                </button>
+
+                <button data-action="focus" data-id="${post.id}">♡</button>
+                <button data-action="share" data-id="${post.id}">➤</button>
+                <button style="margin-left:auto">♧</button>
+            </div>
+
+            <div class="post-info">
+                <strong>${post.likes.toLocaleString("pt-BR")} curtidas</strong>
+                <p><strong>${post.user}</strong> ${post.caption}</p>
+                <p class="comments">
+                    ${post.comments.length} comentários
+                </p>
+
+                <div class="comment-list">
+                    ${post.comments.map(comment =>
+                        `<p><strong>${escapeHTML(comment.user)}</strong> ${escapeHTML(comment.text)}</p>`
+                    ).join("")}
+                </div>
+            </div>
+
+            <div class="comment-area">
+                <input type="text" placeholder="Adicione um comentário..."
+                    id="comment-${post.id}">
+                <button data-action="comment" data-id="${post.id}">
+                    Publicar
+                </button>
+            </div>
+        `;
+
+        feed.appendChild(article);
+    });
 }
 
-// COMENTAR
-function addComment(button) {
-    const area = button.parentElement;
-    const input = area.querySelector("input");
+function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+// INTERAÇÕES
+
+feed.addEventListener("click", event => {
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
+
+    const id = Number(button.dataset.id);
+    const post = posts.find(item => item.id === id);
+
+    if (!post) return;
+
+    switch (button.dataset.action) {
+
+        case "like":
+            post.liked = !post.liked;
+            post.likes += post.liked ? 1 : -1;
+            renderPosts();
+            break;
+
+        case "comment":
+            addComment(id);
+            break;
+
+        case "focus":
+            document.querySelector(`#comment-${id}`).focus();
+            break;
+
+        case "share":
+            if (navigator.share) {
+                navigator.share({
+                    title: "Publicação",
+                    text: post.caption,
+                    url: location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard?.writeText(location.href);
+            }
+            break;
+    }
+});
+
+function addComment(id) {
+    const input = document.querySelector(`#comment-${id}`);
     const text = input.value.trim();
 
     if (!text) return;
 
-    const comments = area.previousElementSibling;
-    const comment = document.createElement("div");
+    const post = posts.find(item => item.id === id);
 
-    comment.className = "comment";
-    comment.textContent = "💪 Você: " + text;
+    post.comments.push({
+        user: "meu_usuario",
+        text: text
+    });
 
-    comments.appendChild(comment);
-    input.value = "";
+    renderPosts();
 }
 
-// ABRIR COMENTÁRIO
-function focusComment(button) {
-    const post = button.closest(".post");
-    post.querySelector(".comment-area input").focus();
-}
+// STORIES
 
-// CRIAR PUBLICAÇÃO
-function createPost() {
-    const text = document.getElementById("postText");
-    const image = document.getElementById("postImage");
-
-    const description = text.value.trim();
-    const imageUrl = image.value.trim();
-
-    if (!description) {
-        alert("Escreva alguma coisa sobre seu treino!");
-        return;
-    }
-
-    const post = document.createElement("article");
-    post.className = "post";
-
-    const header = document.createElement("div");
-    header.className = "post-user";
-    header.innerHTML = `
-        <div class="avatar">EU</div>
-        <div>
-            <strong>Meu Perfil</strong>
-            <small>💪 Fitness · Agora</small>
-        </div>
-    `;
-
-    const paragraph = document.createElement("p");
-    paragraph.textContent = description;
-
-    post.appendChild(header);
-
-    if (imageUrl) {
-        try {
-            const url = new URL(imageUrl);
-
-            if (url.protocol === "https:" || url.protocol === "http:") {
-                const img = document.createElement("img");
-                img.className = "post-img";
-                img.src = url.href;
-                img.alt = "Foto do treino";
-                img.onerror = () => img.remove();
-                post.appendChild(img);
-            }
-        } catch {
-            alert("Digite um endereço de imagem válido.");
-            return;
-        }
-    }
-
-    post.appendChild(paragraph);
-
-    const actions = document.createElement("div");
-    actions.className = "post-actions";
-    actions.innerHTML = `
-        <button onclick="likePost(this)">❤️ <span>0</span></button>
-        <button onclick="focusComment(this)">💬 Comentar</button>
-        <button onclick="sharePost()">↗ Compartilhar</button>
-    `;
-
-    post.appendChild(actions);
-
-    const comments = document.createElement("div");
-    comments.className = "comments";
-    post.appendChild(comments);
-
-    const commentArea = document.createElement("div");
-    commentArea.className = "comment-area";
-    commentArea.innerHTML = `
-        <input placeholder="Adicione um comentário...">
-        <button onclick="addComment(this)">Enviar</button>
-    `;
-
-    post.appendChild(commentArea);
-
-    document.getElementById("feed").prepend(post);
-
-    totalPosts++;
-    document.getElementById("myPosts").textContent = totalPosts;
-
-    text.value = "";
-    image.value = "";
-}
-
-// COMPARTILHAR
-function sharePost() {
-    if (navigator.share) {
-        navigator.share({
-            title: "Fitgram",
-            text: "Confira esta publicação fitness!"
-        }).catch(() => {});
-    } else {
-        alert("Compartilhamento disponível pelo seu dispositivo!");
-    }
-}
-
-// PESQUISAR
-document.getElementById("search").addEventListener("input", function() {
-    const value = this.value.toLowerCase();
-
-    document.querySelectorAll(".post").forEach(post => {
-        post.style.display = post.textContent.toLowerCase().includes(value)
-            ? "block"
-            : "none";
+document.querySelectorAll(".story").forEach(story => {
+    story.addEventListener("click", () => {
+        alert("Você abriu um Story!");
     });
 });
 
-// NAVEGAÇÃO
-function showFeed() {
-    window.scrollTo({top: 0, behavior: "smooth"});
-}
+// MENU
 
-function showExplore() {
-    document.getElementById("search").focus();
-}
+document.querySelectorAll(".menu-item").forEach(item => {
+    item.addEventListener("click", () => {
+        document.querySelectorAll(".menu-item")
+            .forEach(menu => menu.classList.remove("active"));
 
-function showNotifications() {
-    alert("Você não tem novas notificações!");
-}
+        item.classList.add("active");
+    });
+});
 
-function showProfile() {
-    alert("Perfil do atleta!");
-}
+// INICIAR
 
-function showTraining() {
-    alert("Área de treinos!");
-}
-
-function showAthletes() {
-    alert("Conheça outros atletas!");
-}
-
-function showSports() {
-    alert("Explore os esportes!");
-}
+renderPosts();
