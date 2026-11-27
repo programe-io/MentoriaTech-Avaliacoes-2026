@@ -1,121 +1,110 @@
 
 let produtos = [];
 
-let opcao;
+function cadastrarProduto() {
+    let codigo = document.getElementById("codigo").value;
+    let descricao = document.getElementById("descricao").value;
+    let quantidade = document.getElementById("quantidade").value;
+    let valor = document.getElementById("valor").value;
 
-do {
-    opcao = prompt(
-        "===== SISTEMA DE ESTOQUE =====\n\n" +
-        "1 - Cadastrar produto\n" +
-        "2 - Listar produtos\n" +
-        "3 - Alterar valor do produto\n" +
-        "4 - Alterar quantidade do produto\n" +
-        "5 - Sair\n\n" +
-        "Escolha uma opção:"
-    );
-
-    switch (opcao) {
-
-        case "1":
-            // Cadastrar produto
-            let codigo = prompt("Digite o código do produto:");
-
-            let existe = produtos.find(p => p.codigo === codigo);
-
-            if (existe) {
-                alert("Este código já está cadastrado!");
-                break;
-            }
-
-            let descricao = prompt("Digite a descrição do produto:");
-            let quantidade = Number(prompt("Digite a quantidade:"));
-            let valor = Number(prompt("Digite o valor do produto:"));
-
-            if (!descricao || !Number.isInteger(quantidade) ||
-                quantidade < 0 || !Number.isFinite(valor) || valor < 0) {
-                alert("Dados inválidos! Tente novamente.");
-                break;
-            }
-
-            produtos.push({
-                codigo: codigo,
-                descricao: descricao,
-                quantidade: quantidade,
-                valor: valor
-            });
-
-            alert("Produto cadastrado com sucesso!");
-            break;
-
-        case "2":
-            // Listar produtos
-            if (produtos.length === 0) {
-                alert("Nenhum produto cadastrado!");
-            } else {
-                let lista = "===== PRODUTOS CADASTRADOS =====\n\n";
-
-                produtos.forEach(produto => {
-                    lista +=
-                        "Código: " + produto.codigo + "\n" +
-                        "Descrição: " + produto.descricao + "\n" +
-                        "Quantidade: " + produto.quantidade + "\n" +
-                        "Valor: R$ " + produto.valor.toFixed(2) + "\n\n";
-                });
-
-                alert(lista);
-            }
-            break;
-
-        case "3":
-            // Alterar valor do produto
-            let codValor = prompt("Digite o código do produto:");
-
-            let produtoValor = produtos.find(p => p.codigo === codValor);
-
-            if (produtoValor) {
-                let novoValor = Number(prompt("Digite o novo valor:"));
-
-                if (!Number.isFinite(novoValor) || novoValor < 0) {
-                    alert("Valor inválido!");
-                } else {
-                    produtoValor.valor = novoValor;
-                    alert("Valor alterado com sucesso!");
-                }
-            } else {
-                alert("Produto não encontrado!");
-            }
-            break;
-
-        case "4":
-            // Alterar quantidade do produto
-            let codQuantidade = prompt("Digite o código do produto:");
-
-            let produtoQuantidade = produtos.find(
-                p => p.codigo === codQuantidade
-            );
-
-            if (produtoQuantidade) {
-                let novaQuantidade = Number(
-                    prompt("Digite a nova quantidade:")
-                );
-
-                if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
-                    alert("Quantidade inválida!");
-                } else {
-                    produtoQuantidade.quantidade = novaQuantidade;
-                    alert("Quantidade alterada com sucesso!");
-                }
-            } else {
-                alert("Produto não encontrado!");
-            }
-            break;
-
-        case "5":
-            alert("Sistema encerrado. Obrigado!");
-            break;
-
-        default:
-            alert("Opção inválida! Escolha novamente.");
+    if (!codigo || !descricao || quantidade === "" || valor === "") {
+        alert("Preencha todos os campos!");
+        return;
     }
 
-} while (opcao !== "5");
+    if (produtos.some(p => p.codigo === codigo)) {
+        alert("Esse código já está cadastrado!");
+        return;
+    }
+
+    if (Number(quantidade) < 0 || Number(valor) < 0) {
+        alert("Quantidade e valor não podem ser negativos!");
+        return;
+    }
+
+    let produto = {
+        codigo: codigo,
+        descricao: descricao,
+        quantidade: Number(quantidade),
+        valor: Number(valor)
+    };
+
+    produtos.push(produto);
+
+    alert("Produto cadastrado com sucesso!");
+
+    document.getElementById("codigo").value = "";
+    document.getElementById("descricao").value = "";
+    document.getElementById("quantidade").value = "";
+    document.getElementById("valor").value = "";
+
+    listarProdutos();
+}
+
+function listarProdutos() {
+    let lista = document.getElementById("listaProdutos");
+
+    lista.innerHTML = "";
+
+    if (produtos.length === 0) {
+        lista.innerHTML = "<p>Nenhum produto cadastrado.</p>";
+        return;
+    }
+
+    produtos.forEach((produto, indice) => {
+        lista.innerHTML += `
+            <div class="produto">
+                <p><strong>Código:</strong> ${produto.codigo}</p>
+                <p><strong>Descrição:</strong> ${produto.descricao}</p>
+                <p><strong>Quantidade:</strong> ${produto.quantidade}</p>
+                <p><strong>Valor:</strong> R$ ${produto.valor.toFixed(2)}</p>
+
+                <button onclick="alterarValor(${indice})">
+                    Alterar valor
+                </button>
+
+                <button onclick="alterarQuantidade(${indice})">
+                    Alterar quantidade
+                </button>
+            </div>
+        `;
+    });
+}
+
+function alterarValor(indice) {
+    let novoValor = prompt("Digite o novo valor:");
+
+    if (novoValor === null || novoValor.trim() === "") return;
+
+    novoValor = Number(novoValor);
+
+    if (!Number.isFinite(novoValor) || novoValor < 0) {
+        alert("Digite um valor válido!");
+        return;
+    }
+
+    produtos[indice].valor = novoValor;
+
+    alert("Valor alterado com sucesso!");
+    listarProdutos();
+}
+
+function alterarQuantidade(indice) {
+    let novaQuantidade = prompt("Digite a nova quantidade:");
+
+    if (novaQuantidade === null || novaQuantidade.trim() === "") return;
+
+    novaQuantidade = Number(novaQuantidade);
+
+    if (!Number.isInteger(novaQuantidade) || novaQuantidade < 0) {
+        alert("Digite uma quantidade válida!");
+        return;
+    }
+
+    produtos[indice].quantidade = novaQuantidade;
+
+    alert("Quantidade alterada com sucesso!");
+    listarProdutos();
+}
+
+listarProdutos();
