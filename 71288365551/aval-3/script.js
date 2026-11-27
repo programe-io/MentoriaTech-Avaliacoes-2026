@@ -1,11 +1,12 @@
 
 function CalcularIMC() {
 
-    const nome = document.getElementById("nome").value;
-    const peso = parseFloat(document.getElementById("peso").value);
-    const altura = parseFloat(document.getElementById("altura").value);
+    const nome = document.getElementById("nome").value.trim();
+    const peso = Number(document.getElementById("peso").value);
+    const altura = Number(document.getElementById("altura").value);
 
-    if (nome.trim() === "" || isNaN(peso) || isNaN(altura) || peso <= 0 || altura <= 0) {
+    if (nome === "" || peso <= 0 || altura <= 0 ||
+        !Number.isFinite(peso) || !Number.isFinite(altura)) {
         alert("Preencha todos os campos corretamente!");
         return;
     }
@@ -24,9 +25,10 @@ function CalcularIMC() {
         classificacao = "IMC elevado";
     }
 
-    document.getElementById("resultado").innerHTML =
-        "<h3>Informações do Paciente</h3>" +
-        "<p>Nome: " + nome + "</p>" +
-        "<p>IMC: " + imc.toFixed(2) + "</p>" +
-        "<p>Classificação: " + classificacao + "</p>";
+    document.getElementById("resultado").innerHTML = `
+        <h3>Informações do Paciente</h3>
+        <p><strong>Nome:</strong> ${nome}</p>
+        <p><strong>IMC:</strong> ${imc.toFixed(2)}</p>
+        <p><strong>Classificação:</strong> ${classificacao}</p>
+    `;
 }
