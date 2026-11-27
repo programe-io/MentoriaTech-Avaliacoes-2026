@@ -1,84 +1,118 @@
-const formTarefa = document.getElementById("formTarefa");
-const inputTarefa = document.getElementById("inputTarefa");
-const selectPrioridade = document.getElementById("selectPrioridade");
-const listaTarefas = document.getElementById("listaTarefas");
-const resumoTarefas = document.getElementById("resumoTarefas");
-const btnLimparConcluidas = document.getElementById("btnLimparConcluidas");
+let itens = [
+  { nome: "Caderno", qtd: 10 },
+  { nome: "Caneta", qtd: 4 }
+];
 
-function atualizarResumo() {
-  let todos = listaTarefas.querySelectorAll("li");
-  let concluidos = listaTarefas.querySelectorAll("li.concluida").length;
-  let pendentes = todos.length - concluidos;
+let termoBusca = "";
 
-  resumoTarefas.textContent = pendentes + " pendentes / " + concluidos + " concluídas";
+function pegarStatus(qtd) {
+  if (qtd === 0) {
+    return { texto: "Sem estoque", classe: "status-baixo" };
+  } else if (qtd <= 5) {
+    return { texto: "Estoque baixo", classe: "status-baixo" };
+  } else {
+    return { texto: "Estoque ok", classe: "status-ok" };
+  }
 }
 
-function criarItemTarefa(texto, prioridade) {
-  let li = document.createElement("li");
-  li.classList.add(prioridade);
+function renderizar() {
+  let lista = document.getElementById("listaProdutos");
+  lista.innerHTML = "";
 
-  let span = document.createElement("span");
-  span.className = "titulo-tarefa";
-  span.textContent = texto + " [" + prioridade + "]";
+  let exibidos = 0;
 
-  let divBotoes = document.createElement("div");
-  divBotoes.className = "acoes-tarefa";
+  for (let i = 0; i < itens.length; i++) {
+    let item = itens[i];
+    let bateBusca =
+      termoBusca === "" ||
+      item.nome.toLowerCase().includes(termoBusca.toLowerCase());
 
-  let btnConcluir = document.createElement("button");
-  btnConcluir.type = "button";
-  btnConcluir.textContent = "Concluir";
-  btnConcluir.addEventListener("click", function () {
-    li.classList.toggle("concluida");
-    atualizarResumo();
-  });
+    if (bateBusca) {
+      exibidos++;
+      let status = pegarStatus(item.qtd);
 
-  let btnExcluir = document.createElement("button");
-  btnExcluir.type = "button";
-  btnExcluir.textContent = "Excluir";
-  btnExcluir.className = "btn-excluir";
-  btnExcluir.addEventListener("click", function () {
-    li.remove();
-    atualizarResumo();
-  });
+      let card = document.createElement("div");
+      card.className = "produto-card";
 
-  span.addEventListener("click", function () {
-    li.classList.toggle("concluida");
-    atualizarResumo();
-  });
+      card.innerHTML =
+        "<div>" +
+          "<strong>" + item.nome + "</strong> - Qtd: " + item.qtd +
+          " <span class='" + status.classe + "'>(" + status.texto + ")</span>" +
+        "</div>" +
+        "<div class='botoes'>" +
+          "<button type='button' onclick='mudarQtd(" + i + ", 1)'>+1</button>" +
+          "<button type='button' onclick='mudarQtd(" + i + ", -1)'>-1</button>" +
+          "<button type='button' onclick='apagarItem(" + i + ")'>Excluir</button>" +
+        "</div>";
 
-  divBotoes.appendChild(btnConcluir);
-  divBotoes.appendChild(btnExcluir);
-  li.appendChild(span);
-  li.appendChild(divBotoes);
+      lista.appendChild(card);
+    }
+  }
 
-  return li;
+  if (exibidos === 0) {
+    lista.innerHTML = "<p>Nenhum item encontrado.</p>";
+  }
 }
 
-formTarefa.addEventListener("submit", function (evento) {
-  evento.preventDefault();
+function adicionarItem() {
+  let nomeCampo = document.getElementById("produtoInput");
+  let qtdCampo = document.getElementById("qtdInput");
+  let aviso = document.getElementById("aviso");
 
-  let texto = inputTarefa.value.trim();
-  let prioridade = selectPrioridade.value;
+  let nome = nomeCampo.value.trim();
+  let qtd = parseInt(qtdCampo.value, 10);
 
-  if (texto === "") {
-    alert("Digite uma tarefa antes de salvar.");
+  if (nome === "" || isNaN(qtd) || qtd < 0) {
+    aviso.textContent = "Digite o nome do produto e uma quantidade valida.";
     return;
   }
 
-  let novoItem = criarItemTarefa(texto, prioridade);
-  listaTarefas.appendChild(novoItem);
+  aviso.textContent = "";
 
-  inputTarefa.value = "";
-  inputTarefa.focus();
-  atualizarResumo();
-});
-
-btnLimparConcluidas.addEventListener("click", function () {
-  let concluidos = listaTarefas.querySelectorAll("li.concluida");
-  for (let i = 0; i < concluidos.length; i++) {
-    concluidos[i].remove();
+  let posicao = -1;
+  for (let i = 0; i < itens.length; i++) {
+    if (itens[i].nome.toLowerCase() === nome.toLowerCase()) {
+      posicao = i;
+      break;
+    }
   }
-  atualizarResumo();
-});
 
-atualizarResumo();
+  if (posicao >= 0) {
+    itens[posicao].qtd += qtd;
+  } else {
+    itens.push({ nome: nome, qtd: qtd });
+  }
+
+  nomeCampo.value = "";
+  qtdCampo.value = "";
+  renderizar();
+}
+
+function mudarQtd(indice, variacao) {
+  let novaQtd = itens[indice].qtd + variacao;
+  if (novaQtd < 0) {
+    document.getElementById("aviso").textContent = "A quantidade nao pode ser menor que 0.";
+    return;
+  }
+  document.getElementById("aviso").textContent = "";
+  itens[indice].qtd = novaQtd;
+  renderizar();
+}
+
+function apagarItem(indice) {
+  itens.splice(indice, 1);
+  renderizar();
+}
+
+function aplicarFiltro() {
+  termoBusca = document.getElementById("filtroInput").value.trim();
+  renderizar();
+}
+
+function mostrarTudo() {
+  document.getElementById("filtroInput").value = "";
+  termoBusca = "";
+  renderizar();
+}
+
+renderizar();
