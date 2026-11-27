@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de IMC</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f4f8;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1976d2;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 20px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #125ca1;
+        }
+
+        #resultado {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #eaf3ff;
+            border-radius: 8px;
+        }
+
+        #resultado h2 {
+            color: #1976d2;
+        }
+
+        .imc {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .classificacao {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .aviso {
+            font-size: 13px;
+            color: #555;
+            margin-top: 15px;
+        }
+    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Calculadora de IMC</h1>
+
+        <p>Informe os dados do paciente:</p>
+
+        <form id="formulario">
+
+            <label for="nome">Nome do paciente:</label>
+            <input type="text" id="nome"
+                   placeholder="Digite o nome" required>
+
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso"
+                   placeholder="Ex: 70" min="0.1"
+                   step="0.1" required>
+
+            <label for="altura">Altura (metros):</label>
+            <input type="number" id="altura"
+                   placeholder="Ex: 1.75" min="0.1"
+                   max="2.99" step="0.01" required>
+
+            <button type="submit">Calcular IMC</button>
+
+        </form>
+
+        <div id="resultado">
+
+            <h2>Resultado do Paciente</h2>
+
+            <p><strong>Nome:</strong> <span id="resNome"></span></p>
+
+            <p><strong>Peso:</strong> <span id="resPeso"></span> kg</p>
+
+            <p><strong>Altura:</strong> <span id="resAltura"></span> m</p>
+
+            <p>Índice de Massa Corporal:</p>
+
+            <div class="imc" id="resIMC"></div>
+
+            <p class="classificacao" id="resClassificacao"></p>
+
+            <p id="resInformacao"></p>
+
+            <p class="aviso">
+                O IMC é um indicador de triagem e não substitui
+                uma avaliação realizada por um profissional de saúde.
+                Classificação apresentada para adultos.
+            </p>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        document.getElementById("formulario")
+            .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            // Receber dados do paciente
+            const nome = document.getElementById("nome").value.trim();
+            const peso = parseFloat(document.getElementById("peso").value);
+            const altura = parseFloat(document.getElementById("altura").value);
+
+            // Validar informações
+            if (!nome || !Number.isFinite(peso) ||
+                !Number.isFinite(altura) ||
+                peso <= 0 || altura <= 0 || altura >= 3) {
+
+                alert("Informe dados válidos!");
+                return;
+            }
+
+            // Calcular IMC
+            const imc = peso / (altura * altura);
+
+            let classificacao = "";
+            let informacao = "";
+
+            // Classificar IMC
+            if (imc < 18.5) {
+
+                classificacao = "Abaixo do peso";
+                informacao = "O resultado indica peso abaixo da faixa de referência para adultos. Recomenda-se avaliação nutricional.";
+
+            } else if (imc < 25) {
+
+                classificacao = "Peso normal";
+                informacao = "O resultado está dentro da faixa de referência para adultos. Mantenha hábitos saudáveis.";
+
+            } else if (imc < 30) {
+
+                classificacao = "Sobrepeso";
+                informacao = "O resultado indica excesso de peso. Recomenda-se atenção à alimentação e atividade física.";
+
+            } else if (imc < 35) {
+
+                classificacao = "Obesidade grau I";
+                informacao = "Recomenda-se acompanhamento de um profissional de saúde.";
+
+            } else if (imc < 40) {
+
+                classificacao = "Obesidade grau II";
+                informacao = "É importante procurar acompanhamento médico e nutricional.";
+
+            } else {
+
+                classificacao = "Obesidade grau III";
+                informacao = "Recomenda-se avaliação e acompanhamento multiprofissional.";
+
+            }
+
+            // Exibir resultados
+            document.getElementById("resNome").textContent = nome;
+            document.getElementById("resPeso").textContent = peso.toFixed(1);
+            document.getElementById("resAltura").textContent = altura.toFixed(2);
+            document.getElementById("resIMC").textContent = imc.toFixed(2);
+            document.getElementById("resClassificacao").textContent = classificacao;
+            document.getElementById("resInformacao").textContent = informacao;
+
+            document.getElementById("resultado").style.display = "block";
+
+        });
+
+    </script>
+
+<script src="script.js"></script></body>
+</html>
