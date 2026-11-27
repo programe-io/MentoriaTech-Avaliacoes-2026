@@ -1,132 +1,186 @@
 
-// LISTA DE TUTORIAIS DE JOGOS
-const tutoriais = [
-    {
-        nome: "Minecraft",
-        categoria: "Sobrevivência",
-        nivel: "Iniciante",
-        descricao: "Aprenda a sobreviver, construir casas e encontrar diamantes.",
-        link: "https://www.youtube.com/results?search_query=tutorial+minecraft"
-    },
+// ======================================
+// GAMEGRAM - TUTORIAIS DE JOGOS
+// JAVASCRIPT INSPIRADO NO INSTAGRAM
+// ======================================
 
-    {
-        nome: "Free Fire",
-        categoria: "Battle Royale",
-        nivel: "Intermediário",
-        descricao: "Aprenda a melhorar sua mira e suas estratégias.",
-        link: "https://www.youtube.com/results?search_query=tutorial+free+fire"
-    },
+// 1. FUNÇÃO DE CURTIR PUBLICAÇÕES
+function curtir(elemento) {
 
-    {
-        nome: "Fortnite",
-        categoria: "Battle Royale",
-        nivel: "Avançado",
-        descricao: "Aprenda construções, edições e técnicas de combate.",
-        link: "https://www.youtube.com/results?search_query=tutorial+fortnite"
-    },
+    if (elemento.dataset.curtido === "sim") {
 
-    {
-        nome: "GTA V",
-        categoria: "Ação",
-        nivel: "Iniciante",
-        descricao: "Descubra missões, veículos e segredos do jogo.",
-        link: "https://www.youtube.com/results?search_query=tutorial+gta+5"
-    },
+        elemento.innerHTML = "🤍";
+        elemento.dataset.curtido = "nao";
 
-    {
-        nome: "Roblox",
-        categoria: "Aventura",
-        nivel: "Iniciante",
-        descricao: "Aprenda a criar jogos e explorar diferentes mundos.",
-        link: "https://www.youtube.com/results?search_query=tutorial+roblox"
-    },
+    } else {
 
-    {
-        nome: "God of War",
-        categoria: "Aventura",
-        nivel: "Intermediário",
-        descricao: "Aprenda técnicas de combate e estratégias para derrotar inimigos.",
-        link: "https://www.youtube.com/results?search_query=tutorial+god+of+war"
-    }
-];
+        elemento.innerHTML = "❤️";
+        elemento.dataset.curtido = "sim";
 
-// EXIBIR TUTORIAIS
-function mostrarTutoriais(lista = tutoriais) {
-    const area = document.getElementById("tutoriais");
-
-    area.innerHTML = "";
-
-    if (lista.length === 0) {
-        area.innerHTML = "<h3>Nenhum tutorial encontrado!</h3>";
-        return;
     }
 
-    lista.forEach(tutorial => {
-        area.innerHTML += `
-            <div class="card">
-                <h2>🎮 ${tutorial.nome}</h2>
-
-                <p>
-                    <strong>Categoria:</strong>
-                    ${tutorial.categoria}
-                </p>
-
-                <p>
-                    <strong>Nível:</strong>
-                    ${tutorial.nivel}
-                </p>
-
-                <p>${tutorial.descricao}</p>
-
-                <a href="${tutorial.link}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="botao">
-                   Assistir tutorial
-                </a>
-            </div>
-        `;
-    });
 }
 
-// PESQUISAR TUTORIAIS
-function pesquisarTutorial() {
-    const pesquisa = document
+// 2. FUNÇÃO DE COMENTAR
+function comentar(botao) {
+
+    let comentario = prompt(
+        "Digite seu comentário sobre o tutorial:"
+    );
+
+    if (comentario && comentario.trim() !== "") {
+
+        let post = botao.closest(".post");
+
+        let novoComentario = document.createElement("p");
+
+        novoComentario.className = "comentario";
+
+        let nome = document.createElement("strong");
+        nome.textContent = "👤 Você: ";
+
+        novoComentario.appendChild(nome);
+        novoComentario.appendChild(
+            document.createTextNode(comentario)
+        );
+
+        post.appendChild(novoComentario);
+
+        alert("Comentário publicado com sucesso!");
+
+    }
+
+}
+
+// 3. FUNÇÃO DE COMPARTILHAR
+function compartilhar() {
+
+    if (navigator.share) {
+
+        navigator.share({
+            title: "GameGram",
+            text: "Confira este tutorial incrível de jogos!"
+        }).catch(() => {});
+
+    } else {
+
+        alert("Tutorial compartilhado com sucesso!");
+
+    }
+
+}
+
+// 4. FUNÇÃO DE PUBLICAR TUTORIAL
+function publicar() {
+
+    let texto = document.getElementById("novoTutorial").value;
+
+    if (texto.trim() === "") {
+
+        alert("Escreva seu tutorial antes de publicar!");
+
+        return;
+
+    }
+
+    let feed = document.querySelector(".feed");
+
+    let post = document.createElement("article");
+
+    post.className = "post";
+
+    // Cabeçalho
+    let cabecalho = document.createElement("div");
+    cabecalho.className = "post-header";
+
+    let usuario = document.createElement("strong");
+    usuario.textContent = "🎮 gamegram_user";
+
+    cabecalho.appendChild(usuario);
+
+    // Conteúdo
+    let conteudo = document.createElement("div");
+    conteudo.className = "post-content";
+
+    let titulo = document.createElement("h2");
+    titulo.textContent = "📚 Novo tutorial";
+
+    let descricao = document.createElement("p");
+    descricao.textContent = texto;
+
+    conteudo.appendChild(titulo);
+    conteudo.appendChild(descricao);
+
+    // Botões
+    let acoes = document.createElement("div");
+    acoes.className = "post-actions";
+
+    acoes.innerHTML = `
+        <span onclick="curtir(this)">🤍</span>
+        <span onclick="comentar(this)">💬</span>
+        <span onclick="compartilhar()">↗️</span>
+    `;
+
+    // Montar publicação
+    post.appendChild(cabecalho);
+    post.appendChild(conteudo);
+    post.appendChild(acoes);
+
+    feed.prepend(post);
+
+    document.getElementById("novoTutorial").value = "";
+
+    alert("Tutorial publicado com sucesso!");
+
+}
+
+// 5. FUNÇÃO DE PESQUISAR TUTORIAIS
+function pesquisarTutoriais() {
+
+    let pesquisa = document
         .getElementById("pesquisa")
         .value.toLowerCase();
 
-    const resultados = tutoriais.filter(tutorial =>
-        tutorial.nome.toLowerCase().includes(pesquisa) ||
-        tutorial.categoria.toLowerCase().includes(pesquisa)
-    );
+    let publicacoes = document.querySelectorAll(".post");
 
-    mostrarTutoriais(resultados);
+    publicacoes.forEach(function(post) {
+
+        let conteudo = post.innerText.toLowerCase();
+
+        if (conteudo.includes(pesquisa)) {
+
+            post.style.display = "block";
+
+        } else {
+
+            post.style.display = "none";
+
+        }
+
+    });
+
 }
 
-// FILTRAR POR NÍVEL
-function filtrarNivel(nivel) {
-    if (nivel === "Todos") {
-        mostrarTutoriais();
-        return;
-    }
+// 6. FUNÇÃO DE ADICIONAR COMENTÁRIOS
+function mostrarComentarios() {
 
-    const resultados = tutoriais.filter(tutorial =>
-        tutorial.nivel === nivel
-    );
+    let comentarios = document.querySelectorAll(".comentario");
 
-    mostrarTutoriais(resultados);
-}
-
-// CONTAR TUTORIAIS
-function contarTutoriais() {
     alert(
-        "Temos " + tutoriais.length +
-        " tutoriais disponíveis no site! 🎮"
+        "Total de comentários: " + comentarios.length
     );
+
 }
 
-// CARREGAR AO ABRIR O SITE
-document.addEventListener("DOMContentLoaded", () => {
-    mostrarTutoriais();
-    console.log("Tutoriais carregados com sucesso!");
+// 7. INICIALIZAÇÃO DO GAMEGRAM
+document.addEventListener("DOMContentLoaded", function() {
+
+    console.log(
+        "🎮 GameGram iniciado com sucesso!"
+    );
+
+    console.log(
+        "📚 Bem-vindo à comunidade de tutoriais de jogos!"
+    );
+
 });
