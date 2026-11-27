@@ -1,69 +1,95 @@
 
-function createPost() {
-    const input = document.getElementById("postText");
-        const text = input.value.trim();
+// SISTEMA DE CURTIDAS
 
-            if (text === "") {
-                    alert("Escreva alguma coisa!");
-                            return;
-                                }
+document.querySelectorAll('.post').forEach(post => {
 
-                                    const post = document.createElement("article");
-                                        post.className = "post";
+    const like = post.querySelector('.like');
+    const likes = post.querySelector('.likes');
+    const imagem = post.querySelector('.post-image');
 
-                                            post.innerHTML = `
-                                                    <h3>Marlos</h3>
-                                                            <p></p>
-                                                                    <div class="actions">
-                                                                                <button onclick="likePost(this)">👍 Curtir</button>
-                                                                                            <button onclick="commentPost(this)">💬 Comentar</button>
-                                                                                                    </div>
-                                                                                                            <p class="likes">0 curtidas</p>
-                                                                                                                    <div class="comments"></div>
-                                                                                                                        `;
+    let curtido = false;
+    let total = parseInt(likes.textContent.replace(/\D/g, ''));
 
-                                                                                                                            post.querySelector("p").textContent = text;
+    function curtir() {
+        curtido = !curtido;
 
-                                                                                                                                document.getElementById("posts")
-                                                                                                                                        .prepend(post);
+        if (curtido) {
+            like.classList.add('ativo');
+            like.classList.replace('fa-regular', 'fa-solid');
+            total++;
+        } else {
+            like.classList.remove('ativo');
+            like.classList.replace('fa-solid', 'fa-regular');
+            total--;
+        }
 
-                                                                                                                                            input.value = "";
-                                                                                                                                            }
+        likes.textContent = total.toLocaleString('pt-BR') + ' curtidas';
+    }
 
-                                                                                                                                            function likePost(button) {
-                                                                                                                                                const post = button.closest(".post");
-                                                                                                                                                    const likes = post.querySelector(".likes");
+    like.addEventListener('click', curtir);
 
-                                                                                                                                                        let count = Number(
-                                                                                                                                                                likes.dataset.count || 0
-                                                                                                                                                                    );
+    // CURTIR COM DOIS CLIQUES NA FOTO
 
-                                                                                                                                                                        if (button.dataset.liked === "true") {
-                                                                                                                                                                                count--;
-                                                                                                                                                                                        button.dataset.liked = "false";
-                                                                                                                                                                                                button.textContent = "👍 Curtir";
-                                                                                                                                                                                                    } else {
-                                                                                                                                                                                                            count++;
-                                                                                                                                                                                                                    button.dataset.liked = "true";
-                                                                                                                                                                                                                            button.textContent = "❤️ Curtido";
-                                                                                                                                                                                                                                }
+    imagem.addEventListener('dblclick', () => {
+        if (!curtido) {
+            curtir();
+        }
+    });
 
-                                                                                                                                                                                                                                    likes.dataset.count = count;
-                                                                                                                                                                                                                                        likes.textContent = count + " curtidas";
-                                                                                                                                                                                                                                        }
+});
 
-                                                                                                                                                                                                                                        function commentPost(button) {
-                                                                                                                                                                                                                                            const post = button.closest(".post");
+// SISTEMA DE SALVAR PUBLICAÇÃO
 
-                                                                                                                                                                                                                                                const comment = prompt("Digite seu comentário:");
+document.querySelectorAll('.save').forEach(botao => {
 
-                                                                                                                                                                                                                                                    if (!comment || !comment.trim()) return;
+    botao.addEventListener('click', () => {
 
-                                                                                                                                                                                                                                                        const area = post.querySelector(".comments");
+        botao.classList.toggle('fa-regular');
+        botao.classList.toggle('fa-solid');
 
-                                                                                                                                                                                                                                                            const newComment = document.createElement("p");
-                                                                                                                                                                                                                                                                newComment.textContent = "Marlos: " + comment;
+    });
 
-                                                                                                                                                                                                                                                                    area.appendChild(newComment);
-                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                    
+});
+
+// SISTEMA DE COMENTÁRIOS
+
+document.querySelectorAll('.post-info input').forEach(input => {
+
+    input.addEventListener('keydown', (evento) => {
+
+        if (evento.key === 'Enter' && input.value.trim() !== '') {
+
+            const comentario = document.createElement('p');
+
+            comentario.innerHTML =
+                '<b>Marlos</b> ';
+
+            comentario.appendChild(
+                document.createTextNode(input.value)
+            );
+
+            input.parentElement.insertBefore(
+                comentario,
+                input
+            );
+
+            input.value = '';
+
+        }
+
+    });
+
+});
+
+// STORIES
+
+document.querySelectorAll('.story').forEach(story => {
+
+    story.addEventListener('click', () => {
+        const nome = story.querySelector('p').textContent;
+        alert('Você abriu o story de ' + nome + '!');
+    });
+
+});
+
+console.log('Instagram Clone carregado com sucesso!');
