@@ -1,53 +1,1498 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini Feed de Cartões e Humor</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InstaClone Brasil — Projeto Acadêmico Interativo</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonte Inter do Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Configuração customizada do Tailwind para suporte a Dark Mode por classe -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            logo: ['"Grand Hotel"', 'cursive'],
+          },
+          colors: {
+            igDark: '#000000',
+            igDarkElevated: '#121212',
+            igDarkBorder: '#262626',
+            igLightBorder: '#dbdbdb',
+            igBlue: '#0095f6',
+            igBlueHover: '#1877f2',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       ESTILOS PERSONALIZADOS E ANIMAÇÕES
+       ========================================================================== */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Borda gradiente clássica dos Stories do Instagram */
+    .story-ring {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+      padding: 2.5px;
+    }
+
+    .story-ring-seen {
+      background: #cbd5e1;
+      padding: 2px;
+    }
+    .dark .story-ring-seen {
+      background: #334155;
+    }
+
+    /* Ocultar barra de rolagem horizontal nos Stories mantendo funcionalidade */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Animação do Coração Gigante ao dar Duplo Clique na Foto */
+    @keyframes popHeart {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.2);
+      }
+      25% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1.25);
+      }
+      50% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      75% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1.05);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+    }
+
+    .animate-double-tap-heart {
+      animation: popHeart 0.85s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    /* Animação de pulso rápido no botão de curtir */
+    @keyframes likeBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.3); }
+      70% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+
+    .animate-like-btn {
+      animation: likeBounce 0.35s ease;
+    }
+
+    /* Animação de entrada suave para modais */
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-animate {
+      animation: fadeInScale 0.2s ease-out forwards;
+    }
+  </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" rel="stylesheet"></head>
-<body>
+</head>
 
-    <div class="app-container">
-        <!-- Painel de Criação -->
-        <aside class="creator-panel">
-            <h2>Criar Card</h2>
-            <textarea id="card-text" placeholder="Escreva o pensamento do dia..."></textarea>
-            
-            <div class="selector-group">
-                <label>Escolha o Humor:</label>
-                <div class="emoji-selector">
-                    <input type="radio" name="emoji" value="🚀" id="e1" checked><label for="e1">🚀 Focado</label>
-                    <input type="radio" name="emoji" value="☕" id="e2"><label for="e2">☕ Relaxado</label>
-                    <input type="radio" name="emoji" value="💡" id="e3"><label for="e3">💡 Ideia</label>
-                    <input type="radio" name="emoji" value="🔥" id="e4"><label for="e4">🔥 Animado</label>
-                </div>
-            </div>
+<body class="bg-gray-50 text-gray-900 dark:bg-igDark dark:text-gray-100 transition-colors duration-200 min-h-screen pb-16 md:pb-0">
 
-            <div class="selector-group">
-                <label>Cor do Card:</label>
-                <div class="color-selector">
-                    <input type="radio" name="color" value="bg-blue" id="c1" checked><label for="c1" class="dot blue"></label>
-                    <input type="radio" name="color" value="bg-purple" id="c2"><label for="c2" class="dot purple"></label>
-                    <input type="radio" name="color" value="bg-amber" id="c3"><label for="c3" class="dot amber"></label>
-                    <input type="radio" name="color" value="bg-emerald" id="c4"><label for="c4" class="dot emerald"></label>
-                </div>
-            </div>
+  <!-- ==========================================================================
+       1. CABEÇALHO SUPERIOR (MOBILE / TABLET)
+       ========================================================================== -->
+  <header class="sticky top-0 z-30 md:hidden bg-white/95 dark:bg-igDark/95 backdrop-blur-md border-b border-igLightBorder dark:border-igDarkBorder px-4 h-14 flex items-center justify-between gap-3">
+    <!-- Logo -->
+    <a href="#" onclick="resetFeed(event)" class="font-logo text-3xl tracking-wide select-none text-gray-900 dark:text-white shrink-0">
+      Instagram
+    </a>
 
-            <button id="publish-btn">Adicionar ao Mural</button>
-        </aside>
-
-        <!-- Mural do Feed -->
-        <main class="feed-mural">
-            <h2>Mural da Comunidade</h2>
-            <div id="mural-grid" class="grid-container">
-                <!-- Os cartões coloridos vão entrar aqui -->
-            </div>
-        </main>
+    <!-- Barra de Pesquisa Mobile -->
+    <div class="relative flex-1 max-w-[200px]">
+      <input
+        type="text"
+        id="mobileSearchInput"
+        oninput="handleSearch(this.value)"
+        placeholder="Pesquisar..."
+        class="w-full bg-gray-100 dark:bg-igDarkElevated text-sm rounded-lg pl-8 pr-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-gray-600 placeholder-gray-500"
+      />
+      <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/>
+      </svg>
     </div>
 
-    <script src="script.js"></script>
-<script src="script.js"></script></body>
+    <!-- Ações Rápidas Header Mobile -->
+    <div class="flex items-center gap-2">
+      <button onclick="openCreateModal()" title="Criar Novo Post" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-igDarkElevated transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+          <path stroke-linecap="round" d="M12 8v8M8 12h8"></path>
+        </svg>
+      </button>
+      <button onclick="toggleTheme()" title="Alternar Tema" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-igDarkElevated transition">
+        <svg class="w-5 h-5 hidden dark:block text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+        <svg class="w-5 h-5 block dark:hidden text-gray-700" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. LAYOUT PRINCIPAL (SIDEBAR ESQUERDA + FEED CENTRAL + SIDEBAR DIREITA)
+       ========================================================================== -->
+  <div class="flex min-h-screen">
+
+    <!-- SIDEBAR ESQUERDA FIXA (DESKTOP / TABLET) -->
+    <aside class="hidden md:flex flex-col justify-between fixed top-0 left-0 h-screen w-20 xl:w-64 bg-white dark:bg-igDark border-r border-igLightBorder dark:border-igDarkBorder px-3 py-6 z-30 transition-all">
+      <div>
+        <!-- Logo Desktop -->
+        <div class="px-3 mb-8">
+          <a href="#" onclick="resetFeed(event)" class="hidden xl:block font-logo text-4xl tracking-wide text-gray-900 dark:text-white select-none">
+            Instagram
+          </a>
+          <a href="#" onclick="resetFeed(event)" class="xl:hidden flex justify-center p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-igDarkElevated">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor"></circle>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Campo de Pesquisa na Sidebar (Desktop) -->
+        <div class="hidden xl:block px-2 mb-5">
+          <div class="relative">
+            <input
+              type="text"
+              id="desktopSearchInput"
+              oninput="handleSearch(this.value)"
+              placeholder="Buscar perfil ou legenda..."
+              class="w-full bg-gray-100 dark:bg-igDarkElevated text-sm rounded-xl pl-9 pr-8 py-2.5 focus:outline-none focus:ring-2 focus:ring-igBlue/40 transition placeholder-gray-500"
+            />
+            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103.5 10.5a7.5 7.5 0 0013.15 6.15z"/>
+            </svg>
+            <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Menu de Navegação -->
+        <nav class="space-y-1.5">
+          <!-- Página Inicial -->
+          <button onclick="setFilterMode('all')" id="navHomeBtn" class="w-full flex items-center justify-center xl:justify-start gap-4 p-3 rounded-xl font-semibold bg-gray-100 dark:bg-igDarkElevated text-gray-900 dark:text-white transition">
+            <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9.005 16.545a2.997 2.997 0 0 1 2.997-2.997A2.997 2.997 0 0 1 15 16.545V22h7V11.543L12 2 2 11.543V22h7.005Z"></path>
+            </svg>
+            <span class="hidden xl:inline text-[15px]">Página inicial</span>
+          </button>
+
+          <!-- Explorar (Filtra posts em destaque) -->
+          <button onclick="setFilterMode('popular')" id="navPopularBtn" class="w-full flex items-center justify-center xl:justify-start gap-4 p-3 rounded-xl font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-igDarkElevated transition">
+            <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <polygon points="13.941 13.953 7.581 16.424 10.06 10.056 16.42 7.585 13.941 13.953"></polygon>
+              <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            <span class="hidden xl:inline text-[15px]">Em alta</span>
+          </button>
+
+          <!-- Criar Novo Post -->
+          <button onclick="openCreateModal()" class="w-full flex items-center justify-center xl:justify-start gap-4 p-3 rounded-xl font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-igDarkElevated transition group">
+            <svg class="w-6 h-6 shrink-0 group-hover:scale-105 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+              <path stroke-linecap="round" d="M12 8v8M8 12h8"></path>
+            </svg>
+            <span class="hidden xl:inline text-[15px]">Criar publicação</span>
+          </button>
+
+          <!-- Salvos -->
+          <button onclick="setFilterMode('saved')" id="navSavedBtn" class="w-full flex items-center justify-center xl:justify-start gap-4 p-3 rounded-xl font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-igDarkElevated transition">
+            <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <polygon points="20 21 12 13.44 4 21 4 3 20 3 20 21"></polygon>
+            </svg>
+            <span class="hidden xl:inline text-[15px]">Salvos</span>
+            <span id="savedBadgeCount" class="hidden xl:inline-flex ml-auto bg-igBlue text-white text-xs font-semibold px-2 py-0.5 rounded-full">0</span>
+          </button>
+
+          <!-- Perfil Logado -->
+          <button onclick="filterByUser('estudante.dev')" class="w-full flex items-center justify-center xl:justify-start gap-4 p-3 rounded-xl font-normal text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-igDarkElevated transition">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" alt="Seu Perfil" class="w-6 h-6 rounded-full object-cover ring-1 ring-gray-300 dark:ring-gray-700 shrink-0" />
+            <span class="hidden xl:inline text-[15px]">Meu Perfil</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Rodapé da Sidebar: Alternar Modo Claro / Escuro -->
+      <div class="pt-4 border-t border-igLightBorder dark:border-igDarkBorder">
+        <button onclick="toggleTheme()" class="w-full flex items-center justify-center xl:justify-start gap-4 p-3 rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-igDarkElevated transition">
+          <svg class="w-6 h-6 hidden dark:block text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>
+          <svg class="w-6 h-6 block dark:hidden text-gray-700 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
+          <span id="themeLabel" class="hidden xl:inline text-[15px]">Modo Escuro</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==========================================================================
+         ÁREA CENTRAL (STORIES + FEED + SIDEBAR DIREITA)
+         ========================================================================== -->
+    <main class="flex-1 md:ml-20 xl:ml-64 flex justify-center px-0 sm:px-4 pt-3 md:pt-6">
+      <div class="w-full max-w-[935px] flex justify-center gap-12">
+
+        <!-- COLUNA DO FEED PRINCIPAL (Máximo 470px como no Instagram Web atual) -->
+        <div class="w-full max-w-[470px]">
+
+          <!-- BARRA DE STORIES -->
+          <section aria-label="Stories" class="bg-white dark:bg-igDark sm:border border-igLightBorder dark:border-igDarkBorder sm:rounded-xl py-3.5 px-3 mb-4">
+            <div id="storiesContainer" class="flex items-center gap-4 overflow-x-auto no-scrollbar">
+              <!-- Os Stories são renderizados dinamicamente via JavaScript -->
+            </div>
+          </section>
+
+          <!-- INDICADOR DE FILTRO ATIVO (Quando pesquisando ou vendo Salvos) -->
+          <div id="activeFilterBanner" class="hidden mb-4 mx-3 sm:mx-0 px-4 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 flex items-center justify-between text-sm">
+            <span id="activeFilterText" class="font-medium text-blue-800 dark:text-blue-200"></span>
+            <button onclick="resetFeed(event)" class="text-igBlue font-semibold hover:underline ml-3">Mostrar tudo</button>
+          </div>
+
+          <!-- CONTAINER DOS POSTS DO FEED -->
+          <section id="feedContainer" aria-label="Feed de publicações" class="space-y-4 sm:space-y-5 pb-10">
+            <!-- Os posts são renderizados dinamicamente via JavaScript -->
+          </section>
+
+        </div>
+
+        <!-- SIDEBAR DIREITA (PERFIL LOGADO + SUGESTÕES PARA SEGUIR - VISÍVEL EM TELAS GRANDES) -->
+        <aside class="hidden lg:block w-[310px] pt-2 shrink-0">
+          <div class="sticky top-6 space-y-5">
+
+            <!-- Card do Usuário Logado -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <img
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80"
+                  alt="Avatar do usuário logado"
+                  class="w-12 h-12 rounded-full object-cover ring-1 ring-gray-200 dark:ring-gray-700"
+                />
+                <div>
+                  <p class="text-sm font-semibold leading-tight">estudante.dev</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Lucas Almeida • ADS</p>
+                </div>
+              </div>
+              <button onclick="openCreateModal()" class="text-xs font-semibold text-igBlue hover:text-igBlueHover transition">
+                + Postar
+              </button>
+            </div>
+
+            <!-- Cabeçalho Sugestões -->
+            <div class="flex items-center justify-between pt-2">
+              <span class="text-sm font-semibold text-gray-500 dark:text-gray-400">Sugestões para você</span>
+              <span class="text-xs font-semibold text-gray-900 dark:text-gray-200">Brasil</span>
+            </div>
+
+            <!-- Lista de Sugestões de Perfis -->
+            <div id="suggestionsContainer" class="space-y-3.5">
+              <!-- Renderizado via JS -->
+            </div>
+
+            <!-- Rodapé Institucional / Atividade Escolar -->
+            <footer class="pt-4 text-[11px] text-gray-400 dark:text-gray-500 space-y-2 leading-relaxed">
+              <p>
+                Sobre • Ajuda • Imprensa • API • Carreiras • Privacidade • Termos • Localizações • Idioma: Português (Brasil)
+              </p>
+              <p class="uppercase tracking-wider font-medium text-gray-500 dark:text-gray-400">
+                © 2026 INSTAGRAM CLONE • ATIVIDADE ACADÊMICA HTML, CSS & JS
+              </p>
+            </footer>
+
+          </div>
+        </aside>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ==========================================================================
+       3. BARRA DE NAVEGAÇÃO INFERIOR (MOBILE)
+       ========================================================================== -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-igDark/95 backdrop-blur-md border-t border-igLightBorder dark:border-igDarkBorder h-13 py-2 px-6 flex items-center justify-between">
+    <button onclick="setFilterMode('all')" class="p-1.5 text-gray-900 dark:text-white" aria-label="Início">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9.005 16.545a2.997 2.997 0 0 1 2.997-2.997A2.997 2.997 0 0 1 15 16.545V22h7V11.543L12 2 2 11.543V22h7.005Z"></path></svg>
+    </button>
+    <button onclick="setFilterMode('popular')" class="p-1.5 text-gray-700 dark:text-gray-300" aria-label="Em alta">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13.941 13.953 7.581 16.424 10.06 10.056 16.42 7.585 13.941 13.953"></polygon><circle cx="12" cy="12" r="10"></circle></svg>
+    </button>
+    <button onclick="openCreateModal()" class="p-1.5 text-gray-700 dark:text-gray-300" aria-label="Criar Post">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"></rect><path stroke-linecap="round" d="M12 8v8M8 12h8"></path></svg>
+    </button>
+    <button onclick="setFilterMode('saved')" class="p-1.5 text-gray-700 dark:text-gray-300 relative" aria-label="Salvos">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="20 21 12 13.44 4 21 4 3 20 3 20 21"></polygon></svg>
+    </button>
+    <button onclick="filterByUser('estudante.dev')" class="p-1" aria-label="Meu Perfil">
+      <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80" alt="Perfil" class="w-6 h-6 rounded-full object-cover" />
+    </button>
+  </nav>
+
+  <!-- ==========================================================================
+       4. MODAL DE VISUALIZAÇÃO DE STORY (COM BARRA DE PROGRESSO AUTOMÁTICA)
+       ========================================================================== -->
+  <div id="storyModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4">
+    <div class="relative w-full max-w-[400px] h-[82vh] max-h-[720px] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between modal-animate select-none">
+
+      <!-- Imagem de Fundo do Story -->
+      <img id="storyImage" src="" alt="Story" class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/75"></div>
+
+      <!-- Cabeçalho do Story (Barras de Progresso + Info do Usuário) -->
+      <div class="relative z-10 p-3.5 space-y-3">
+        <!-- Barras de progresso segmentadas -->
+        <div id="storyProgressBars" class="flex gap-1.5"></div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <img id="storyUserAvatar" src="" alt="Avatar" class="w-9 h-9 rounded-full object-cover border border-white/60" />
+            <div>
+              <div class="flex items-center gap-1">
+                <span id="storyUsername" class="text-white text-sm font-semibold"></span>
+                <span id="storyTime" class="text-white/70 text-xs ml-1"></span>
+              </div>
+              <p id="storyLocation" class="text-white/80 text-[11px]"></p>
+            </div>
+          </div>
+
+          <button onclick="closeStoryModal()" class="text-white/90 hover:text-white p-1.5 rounded-full bg-black/30">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Áreas clicáveis invisíveis para Voltar (Esquerda) e Avançar (Direita) -->
+      <div class="relative z-10 flex-1 flex">
+        <div onclick="prevStory()" class="w-1/3 h-full cursor-pointer" title="Story anterior"></div>
+        <div onclick="nextStory()" class="w-2/3 h-full cursor-pointer" title="Próximo story"></div>
+      </div>
+
+      <!-- Rodapé do Story (Legenda + Resposta rápida) -->
+      <div class="relative z-10 p-4 space-y-3">
+        <p id="storyCaption" class="text-white text-sm font-medium drop-shadow"></p>
+        <form onsubmit="sendStoryReply(event)" class="flex items-center gap-2">
+          <input
+            type="text"
+            id="storyReplyInput"
+            placeholder="Enviar mensagem..."
+            class="flex-1 bg-transparent border border-white/50 rounded-full px-4 py-2 text-sm text-white placeholder-white/70 focus:outline-none focus:border-white"
+          />
+          <button type="submit" class="text-white font-semibold text-sm px-3 py-2 hover:opacity-80">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       5. MODAL PARA CRIAR NOVA PUBLICAÇÃO
+       ========================================================================== -->
+  <div id="createPostModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-igDarkElevated border border-igLightBorder dark:border-igDarkBorder w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl modal-animate">
+      <!-- Cabeçalho Modal -->
+      <div class="px-4 py-3 border-b border-igLightBorder dark:border-igDarkBorder flex items-center justify-between">
+        <button onclick="closeCreateModal()" class="text-sm text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 font-medium">Cancelar</button>
+        <h2 class="font-semibold text-base">Criar nova publicação</h2>
+        <button onclick="submitNewPost()" class="text-sm font-semibold text-igBlue hover:text-igBlueHover">Compartilhar</button>
+      </div>
+
+      <!-- Corpo do Formulário -->
+      <div class="p-4 space-y-4 max-h-[82vh] overflow-y-auto">
+
+        <!-- Pré-visualização da Imagem -->
+        <div class="relative aspect-square max-h-64 w-full bg-gray-100 dark:bg-black rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800 flex items-center justify-center">
+          <img
+            id="newPostPreview"
+            src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80"
+            alt="Prévia da publicação"
+            onerror="this.src='https://placehold.co/600x600/1e293b/ffffff?text=Imagem+Indispon%C3%ADvel'"
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- Galeria de Fotos Prontas (Presets para facilitar testes na apresentação) -->
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+            Escolha uma foto rápida ou cole uma URL abaixo:
+          </label>
+          <div class="grid grid-cols-4 gap-2" id="presetImagesGrid">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
+
+        <!-- Campo de URL Personalizada -->
+        <div>
+          <label for="newPostImageUrl" class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">URL da Imagem</label>
+          <input
+            type="url"
+            id="newPostImageUrl"
+            value="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80"
+            oninput="updateNewPostPreview(this.value)"
+            placeholder="https://exemplo.com/foto.jpg"
+            class="w-full bg-gray-50 dark:bg-igDark border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-igBlue"
+          />
+        </div>
+
+        <!-- Localização -->
+        <div>
+          <label for="newPostLocation" class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Localização</label>
+          <input
+            type="text"
+            id="newPostLocation"
+            placeholder="Ex: São Paulo, Brasil"
+            value="Campus Universitário • Brasil"
+            class="w-full bg-gray-50 dark:bg-igDark border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-igBlue"
+          />
+        </div>
+
+        <!-- Legenda -->
+        <div>
+          <label for="newPostCaption" class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Legenda</label>
+          <textarea
+            id="newPostCaption"
+            rows="3"
+            placeholder="Escreva uma legenda criativa para seu post..."
+            class="w-full bg-gray-50 dark:bg-igDark border border-gray-300 dark:border-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-igBlue resize-none"
+          >Desenvolvendo nosso clone completo do Instagram com HTML, CSS e JavaScript! 💻🚀 #ProgramacaoWeb #Frontend</textarea>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       6. TOAST DE NOTIFICAÇÃO (FEEDBACK VISUAL)
+       ========================================================================== -->
+  <div id="toastNotification" class="fixed bottom-16 md:bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 transition-all duration-300 transform translate-y-2">
+    <div class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-sm font-medium px-5 py-2.5 rounded-full shadow-lg flex items-center gap-2">
+      <span id="toastMessage">Ação realizada!</span>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       7. LÓGICA JAVASCRIPT COMPLETA E COMENTADA
+       ========================================================================== -->
+  <script>
+    /**
+     * ============================================================================
+     * BANCO DE DADOS INICIAL (MOCK DATA BRASILEIRO)
+     * Utiliza timestamps reais (Date.now() - minutos * 60000) para que o cálculo
+     * de tempo decorrido ("HÁ X MINUTOS") funcione dinamicamente em tempo real.
+     * ============================================================================
+     */
+    const CURRENT_USER = {
+      username: 'estudante.dev',
+      fullName: 'Lucas Almeida',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80'
+    };
+
+    // Stories disponíveis no topo
+    const storiesData = [
+      {
+        id: 1,
+        username: 'seu_story',
+        displayName: 'Seu story',
+        avatar: CURRENT_USER.avatar,
+        image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&auto=format&fit=crop&q=80',
+        location: 'Laboratório de Informática',
+        time: '12 min',
+        caption: 'Finalizando a atividade de Desenvolvimento Web! ☕💻',
+        seen: false
+      },
+      {
+        id: 2,
+        username: 'mariana.costa',
+        displayName: 'mariana.costa',
+        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&auto=format&fit=crop&q=80',
+        location: 'Rio de Janeiro, RJ',
+        time: '28 min',
+        caption: 'Fim de tarde inesquecível no Cristo Redentor! ☀️🇧🇷',
+        seen: false
+      },
+      {
+        id: 3,
+        username: 'tech.brasil',
+        displayName: 'tech.brasil',
+        avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+        location: 'São Paulo, SP',
+        time: '45 min',
+        caption: 'JavaScript moderno continua dominando a web em 2026! ⚡',
+        seen: false
+      },
+      {
+        id: 4,
+        username: 'cafe.e.codigo',
+        displayName: 'cafe.e.codigo',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop&q=80',
+        location: 'Curitiba, PR',
+        time: '1 h',
+        caption: 'Sem café o código não compila 😅☕',
+        seen: false
+      },
+      {
+        id: 5,
+        username: 'gabriel.viaja',
+        displayName: 'gabriel.viaja',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&auto=format&fit=crop&q=80',
+        location: 'Fernando de Noronha, PE',
+        time: '2 h',
+        caption: 'Águas cristalinas do nosso Nordeste! 🌊🐢',
+        seen: false
+      },
+      {
+        id: 6,
+        username: 'ana.design',
+        displayName: 'ana.design',
+        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&auto=format&fit=crop&q=80',
+        image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&auto=format&fit=crop&q=80',
+        location: 'Belo Horizonte, MG',
+        time: '3 h',
+        caption: 'Estudando UI/UX e sistemas de design responsivos 🎨✨',
+        seen: false
+      }
+    ];
+
+    // Posts do Feed Principal (criados com timestamps dinâmicos em minutos)
+    let postsData = [
+      {
+        id: 101,
+        username: 'mariana.costa',
+        userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
+        verified: true,
+        location: 'Copacabana, Rio de Janeiro',
+        image: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=900&auto=format&fit=crop&q=80',
+        caption: 'Nada supera a energia do Rio de Janeiro num dia ensolarado! Qual é o seu lugar favorito no Brasil? 🇧🇷☀️ #RioDeJaneiro #Viagem #Brasil',
+        likes: 1284,
+        liked: false,
+        saved: false,
+        createdAt: Date.now() - (4 * 60 * 1000), // Há 4 minutos
+        comments: [
+          { id: 1, user: 'gabriel.viaja', text: 'Foto sensacional Mari! A luz ficou perfeita 🔥', liked: false, isMine: false },
+          { id: 2, user: 'ana.design', text: 'Que vista maravilhosa!! 😍', liked: true, isMine: false }
+        ]
+      },
+      {
+        id: 102,
+        username: 'tech.brasil',
+        userAvatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80',
+        verified: true,
+        location: 'Avenida Paulista, São Paulo',
+        image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=900&auto=format&fit=crop&q=80',
+        caption: 'Dica rápida de desenvolvimento: dominar HTML semântico, CSS Flexbox/Grid e JavaScript puro é a base para qualquer framework moderno! 💻⚡ #DevBrasil #JavaScript #Programacao',
+        likes: 856,
+        liked: true,
+        saved: true,
+        createdAt: Date.now() - (19 * 60 * 1000), // Há 19 minutos
+        comments: [
+          { id: 3, user: 'estudante.dev', text: 'Concordo totalmente! Estou aplicando tudo isso no meu projeto hoje.', liked: false, isMine: true },
+          { id: 4, user: 'cafe.e.codigo', text: 'Setup limpo demais 👏👏', liked: false, isMine: false }
+        ]
+      },
+      {
+        id: 103,
+        username: 'cafe.e.codigo',
+        userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+        verified: false,
+        location: 'Batel, Curitiba',
+        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=900&auto=format&fit=crop&q=80',
+        caption: 'Pausa estratégica para um cappuccino antes de revisar o código da entrega final. Quantos cafés vocês tomam por dia? ☕✨ #Cafe #RotinaDev',
+        likes: 432,
+        liked: false,
+        saved: false,
+        createdAt: Date.now() - (47 * 60 * 1000), // Há 47 minutos
+        comments: [
+          { id: 5, user: 'mariana.costa', text: 'Pelo menos 3 xícaras por dia 😂☕', liked: false, isMine: false }
+        ]
+      },
+      {
+        id: 104,
+        username: 'gabriel.viaja',
+        userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+        verified: true,
+        location: 'Baía do Sancho, Fernando de Noronha',
+        image: 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=900&auto=format&fit=crop&q=80',
+        caption: 'Um verdadeiro paraíso preservado! A natureza brasileira é simplesmente espetacular. 🌊🌴 #Noronha #Natureza #Fotografia',
+        likes: 2150,
+        liked: false,
+        saved: false,
+        createdAt: Date.now() - (135 * 60 * 1000), // Há 2 horas
+        comments: [
+          { id: 6, user: 'ana.design', text: 'Essa paleta de cores azul-turquesa é surreal!', liked: true, isMine: false }
+        ]
+      }
+    ];
+
+    // Sugestões de perfis na barra lateral direita
+    const suggestionsData = [
+      { username: 'rocket.frontend', subtitle: 'Seguido(a) por tech.brasil', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&auto=format&fit=crop&q=80', following: false },
+      { username: 'camila.fotografia', subtitle: 'Sugestões para você', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&auto=format&fit=crop&q=80', following: false },
+      { username: 'ux.brasil', subtitle: 'Seguido(a) por ana.design', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120&auto=format&fit=crop&q=80', following: false },
+      { username: 'pedro.gastronomia', subtitle: 'Novo no Instagram', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80', following: false }
+    ];
+
+    // Presets de imagens para facilitar a criação de novos posts no modal
+    const presetPostImages = [
+      { label: 'Código & Notebook', url: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&auto=format&fit=crop&q=80' },
+      { label: 'Pôr do Sol Praia', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop&q=80' },
+      { label: 'Gastronomia', url: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800&auto=format&fit=crop&q=80' },
+      { label: 'Arquitetura Urbana', url: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&auto=format&fit=crop&q=80' }
+    ];
+
+    // Variáveis de Estado da Aplicação
+    let currentFilterMode = 'all'; // 'all' | 'saved' | 'popular' | 'user'
+    let currentUserFilter = '';
+    let searchQuery = '';
+    let currentStoryIndex = 0;
+    let storyTimerInterval = null;
+    let storyProgress = 0;
+
+    /**
+     * ============================================================================
+     * FUNÇÃO DE CÁLCULO DE MINUTOS / TEMPO DECORRIDO DE CADA POSTAGEM
+     * ============================================================================
+     */
+    function formatTimeAgo(timestamp) {
+      const diffMs = Date.now() - timestamp;
+      const diffSeconds = Math.floor(diffMs / 1000);
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+
+      if (diffSeconds < 60) {
+        return 'AGORA MESMO';
+      } else if (diffMinutes === 1) {
+        return 'HÁ 1 MINUTO';
+      } else if (diffMinutes < 60) {
+        return `HÁ ${diffMinutes} MINUTOS`;
+      } else if (diffHours === 1) {
+        return 'HÁ 1 HORA';
+      } else if (diffHours < 24) {
+        return `HÁ ${diffHours} HORAS`;
+      } else if (diffDays === 1) {
+        return 'HÁ 1 DIA';
+      } else {
+        return `HÁ ${diffDays} DIAS`;
+      }
+    }
+
+    // Formata números de curtidas no padrão brasileiro (ex: 1.284)
+    function formatNumberBR(num) {
+      return num.toLocaleString('pt-BR');
+    }
+
+    // Escapa caracteres HTML para evitar XSS em comentários e legendas
+    function escapeHTML(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    /**
+     * ============================================================================
+     * RENDERIZAÇÃO DA BARRA DE STORIES
+     * ============================================================================
+     */
+    function renderStories() {
+      const container = document.getElementById('storiesContainer');
+      container.innerHTML = storiesData.map((story, index) => `
+        <button
+          onclick="openStoryModal(${index})"
+          class="flex flex-col items-center gap-1.5 shrink-0 group focus:outline-none"
+        >
+          <div class="${story.seen ? 'story-ring-seen' : 'story-ring'} rounded-full transition-transform duration-200 group-hover:scale-105">
+            <div class="bg-white dark:bg-igDark p-0.5 rounded-full">
+              <img
+                src="${story.avatar}"
+                alt="${story.displayName}"
+                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover"
+              />
+            </div>
+          </div>
+          <span class="text-xs max-w-[70px] truncate ${story.seen ? 'text-gray-400' : 'text-gray-800 dark:text-gray-200'}">
+            ${story.displayName}
+          </span>
+        </button>
+      `).join('');
+    }
+
+    /**
+     * ============================================================================
+     * RENDERIZAÇÃO DO FEED DE POSTAGENS
+     * ============================================================================
+     */
+    function renderFeed() {
+      const container = document.getElementById('feedContainer');
+      const banner = document.getElementById('activeFilterBanner');
+      const bannerText = document.getElementById('activeFilterText');
+
+      // Atualiza contador de posts salvos na sidebar
+      const savedCount = postsData.filter(p => p.saved).length;
+      const savedBadge = document.getElementById('savedBadgeCount');
+      if (savedBadge) {
+        savedBadge.textContent = savedCount;
+        savedBadge.classList.toggle('hidden', savedCount === 0);
+      }
+
+      // Aplica filtros ativos (Salvos, Em Alta, Usuário Específico ou Busca)
+      let filteredPosts = [...postsData];
+
+      if (currentFilterMode === 'saved') {
+        filteredPosts = filteredPosts.filter(p => p.saved);
+        banner.classList.remove('hidden');
+        bannerText.textContent = `Exibindo publicações salvas (${filteredPosts.length})`;
+      } else if (currentFilterMode === 'popular') {
+        filteredPosts = filteredPosts.sort((a, b) => b.likes - a.likes);
+        banner.classList.remove('hidden');
+        bannerText.textContent = 'Ordenado por publicações mais curtidas';
+      } else if (currentFilterMode === 'user') {
+        filteredPosts = filteredPosts.filter(p => p.username === currentUserFilter);
+        banner.classList.remove('hidden');
+        bannerText.textContent = `Publicações de @${currentUserFilter}`;
+      } else if (searchQuery.trim() !== '') {
+        const q = searchQuery.toLowerCase();
+        filteredPosts = filteredPosts.filter(p =>
+          p.username.toLowerCase().includes(q) ||
+          p.caption.toLowerCase().includes(q) ||
+          (p.location && p.location.toLowerCase().includes(q))
+        );
+        banner.classList.remove('hidden');
+        bannerText.textContent = `Resultados para "${searchQuery}" (${filteredPosts.length})`;
+      } else {
+        banner.classList.add('hidden');
+      }
+
+      // Caso nenhum post corresponda ao filtro
+      if (filteredPosts.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white dark:bg-igDark sm:border border-igLightBorder dark:border-igDarkBorder sm:rounded-xl p-10 text-center space-y-3">
+            <div class="w-14 h-14 mx-auto rounded-full bg-gray-100 dark:bg-igDarkElevated flex items-center justify-center text-gray-400">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <circle cx="12" cy="13" r="3"/>
+              </svg>
+            </div>
+            <h3 class="font-semibold text-base">Nenhuma publicação encontrada</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Tente limpar os filtros ou crie uma nova publicação agora mesmo.</p>
+            <button onclick="resetFeed(event)" class="mt-2 inline-flex items-center px-4 py-2 bg-igBlue text-white text-sm font-semibold rounded-lg hover:bg-igBlueHover transition">
+              Voltar ao Feed Principal
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      // Renderiza cada cartão de postagem
+      container.innerHTML = filteredPosts.map(post => {
+        const timeAgoText = formatTimeAgo(post.createdAt);
+
+        // Ícone de Verificado
+        const verifiedBadge = post.verified ? `
+          <svg class="w-3.5 h-3.5 text-igBlue inline-block shrink-0" viewBox="0 0 40 40" fill="currentColor">
+            <path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z"/>
+          </svg>
+        ` : '';
+
+        // Lista de comentários
+        const commentsHTML = post.comments.map(comment => `
+          <div class="flex items-start justify-between gap-2 text-sm group py-0.5">
+            <p class="leading-snug break-words">
+              <span onclick="filterByUser('${escapeHTML(comment.user)}')" class="font-semibold cursor-pointer hover:underline mr-1.5">${escapeHTML(comment.user)}</span>
+              <span class="text-gray-800 dark:text-gray-200">${escapeHTML(comment.text)}</span>
+            </p>
+            <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+              ${comment.isMine ? `
+                <button onclick="deleteComment(${post.id}, ${comment.id})" title="Excluir meu comentário" class="text-gray-400 hover:text-red-500 transition opacity-70 group-hover:opacity-100">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              ` : ''}
+              <button onclick="toggleCommentLike(${post.id}, ${comment.id})" title="Curtir comentário" class="transition transform active:scale-125">
+                ${comment.liked
+                  ? `<svg class="w-3.5 h-3.5 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                  : `<svg class="w-3.5 h-3.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                }
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+        return `
+          <article class="bg-white dark:bg-igDark sm:border border-igLightBorder dark:border-igDarkBorder sm:rounded-xl overflow-hidden transition-colors">
+
+            <!-- Cabeçalho do Post -->
+            <div class="flex items-center justify-between px-3.5 py-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="story-ring rounded-full shrink-0">
+                  <div class="bg-white dark:bg-igDark p-[1.5px] rounded-full">
+                    <img
+                      src="${post.userAvatar}"
+                      alt="${post.username}"
+                      class="w-8 h-8 rounded-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1">
+                    <button onclick="filterByUser('${post.username}')" class="text-sm font-semibold hover:opacity-75 truncate">
+                      ${post.username}
+                    </button>
+                    ${verifiedBadge}
+                    <span class="text-gray-400 text-xs mx-0.5">•</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400 font-normal lowercase whitespace-nowrap" data-post-time="${post.id}">
+                      ${timeAgoText.toLowerCase()}
+                    </span>
+                  </div>
+                  ${post.location ? `<p class="text-xs text-gray-500 dark:text-gray-400 truncate">${escapeHTML(post.location)}</p>` : ''}
+                </div>
+              </div>
+
+              <!-- Botão Compartilhar / Copiar Link -->
+              <button onclick="sharePost(${post.id})" title="Copiar link da publicação" class="p-1.5 text-gray-600 dark:text-gray-300 hover:opacity-70 rounded-full">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="1.5"></circle>
+                  <circle cx="6" cy="12" r="1.5"></circle>
+                  <circle cx="18" cy="12" r="1.5"></circle>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Imagem do Post (Com suporte a Duplo Clique para Curtir) -->
+            <div
+              ondblclick="handleImageDoubleTap(${post.id})"
+              class="relative w-full bg-gray-100 dark:bg-igDarkElevated aspect-[4/4] max-h-[540px] overflow-hidden cursor-pointer select-none flex items-center justify-center"
+            >
+              <img
+                src="${post.image}"
+                alt="Publicação de ${post.username}"
+                onerror="this.src='https://placehold.co/600x600/1e293b/ffffff?text=Foto+da+Publica%C3%A7%C3%A3o'"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <!-- Coração Gigante Animado no Duplo Clique -->
+              <div id="bigHeart-${post.id}" class="pointer-events-none opacity-0 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-2xl">
+                <svg class="w-24 h-24 text-white fill-current" viewBox="0 0 24 24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Barra de Ações (Curtir, Comentar, Compartilhar, Salvar) -->
+            <div class="px-3.5 pt-3 pb-1 flex items-center justify-between">
+              <div class="flex items-center gap-4">
+                <!-- Botão Curtir -->
+                <button
+                  id="likeBtn-${post.id}"
+                  onclick="toggleLike(${post.id})"
+                  aria-label="Curtir"
+                  class="hover:opacity-70 transition-transform active:scale-125"
+                >
+                  ${post.liked
+                    ? `<svg class="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`
+                    : `<svg class="w-6 h-6 text-gray-900 dark:text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`
+                  }
+                </button>
+
+                <!-- Botão Focar no Campo de Comentário -->
+                <button
+                  onclick="focusCommentInput(${post.id})"
+                  aria-label="Comentar"
+                  class="hover:opacity-70 transition-transform active:scale-110"
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                  </svg>
+                </button>
+
+                <!-- Botão Compartilhar -->
+                <button
+                  onclick="sharePost(${post.id})"
+                  aria-label="Compartilhar"
+                  class="hover:opacity-70 transition-transform active:scale-110"
+                >
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Botão Salvar / Favoritar -->
+              <button
+                onclick="toggleSave(${post.id})"
+                aria-label="Salvar publicação"
+                class="hover:opacity-70 transition-transform active:scale-110"
+              >
+                ${post.saved
+                  ? `<svg class="w-6 h-6 text-gray-900 dark:text-white fill-current" viewBox="0 0 24 24"><polygon points="20 21 12 13.44 4 21 4 3 20 3 20 21"></polygon></svg>`
+                  : `<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="20 21 12 13.44 4 21 4 3 20 3 20 21"></polygon></svg>`
+                }
+              </button>
+            </div>
+
+            <!-- Contador de Curtidas, Legenda, Comentários e Timestamp em Minutos -->
+            <div class="px-3.5 pb-3.5 space-y-1.5">
+              <!-- Curtidas -->
+              <p class="text-sm font-semibold">
+                ${formatNumberBR(post.likes)} ${post.likes === 1 ? 'curtida' : 'curtidas'}
+              </p>
+
+              <!-- Legenda do Autor -->
+              <p class="text-sm leading-snug">
+                <span onclick="filterByUser('${post.username}')" class="font-semibold cursor-pointer hover:underline mr-1.5">${post.username}</span>
+                <span>${escapeHTML(post.caption)}</span>
+              </p>
+
+              <!-- Contador de Comentários -->
+              ${post.comments.length > 0 ? `
+                <p class="text-xs text-gray-500 dark:text-gray-400 pt-0.5">
+                  ${post.comments.length === 1 ? '1 comentário' : `Todos os ${post.comments.length} comentários`}
+                </p>
+              ` : ''}
+
+              <!-- Lista de Comentários -->
+              <div class="space-y-1 pt-0.5">
+                ${commentsHTML}
+              </div>
+
+              <!-- Tempo Decorrido em Destaque (Ex: HÁ 4 MINUTOS) -->
+              <p class="text-[11px] tracking-wide text-gray-400 dark:text-gray-500 uppercase pt-1 font-medium" data-post-footer-time="${post.id}">
+                ${timeAgoText}
+              </p>
+            </div>
+
+            <!-- Formulário para Adicionar Novo Comentário -->
+            <form onsubmit="addComment(event, ${post.id})" class="border-t border-gray-100 dark:border-igDarkBorder px-3.5 py-2.5 flex items-center gap-2">
+              <span class="text-lg select-none cursor-pointer" onclick="insertEmoji(${post.id}, '🔥')" title="Inserir emoji">😊</span>
+              <input
+                type="text"
+                id="commentInput-${post.id}"
+                oninput="togglePostCommentBtn(${post.id}, this.value)"
+                placeholder="Adicione um comentário..."
+                class="flex-1 bg-transparent text-sm focus:outline-none placeholder-gray-400 dark:placeholder-gray-500"
+              />
+              <button
+                type="submit"
+                id="commentSubmit-${post.id}"
+                disabled
+                class="text-sm font-semibold text-igBlue disabled:opacity-40 hover:text-igBlueHover transition cursor-pointer disabled:cursor-default"
+              >
+                Publicar
+              </button>
+            </form>
+
+          </article>
+        `;
+      }).join('');
+    }
+
+    /**
+     * ============================================================================
+     * RENDERIZAÇÃO DAS SUGESTÕES DA BARRA LATERAL DIREITA
+     * ============================================================================
+     */
+    function renderSuggestions() {
+      const container = document.getElementById('suggestionsContainer');
+      if (!container) return;
+
+      container.innerHTML = suggestionsData.map((person, index) => `
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="${person.avatar}" alt="${person.username}" class="w-9 h-9 rounded-full object-cover shrink-0" />
+            <div class="min-w-0">
+              <p class="text-sm font-semibold truncate leading-tight">${person.username}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">${person.subtitle}</p>
+            </div>
+          </div>
+          <button
+            onclick="toggleFollow(${index})"
+            class="text-xs font-semibold ml-2 shrink-0 transition ${
+              person.following
+                ? 'text-gray-600 dark:text-gray-300 hover:opacity-75'
+                : 'text-igBlue hover:text-igBlueHover'
+            }"
+          >
+            ${person.following ? 'Seguindo' : 'Seguir'}
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function toggleFollow(index) {
+      suggestionsData[index].following = !suggestionsData[index].following;
+      renderSuggestions();
+      const status = suggestionsData[index].following
+        ? `Você começou a seguir ${suggestionsData[index].username}`
+        : `Você deixou de seguir ${suggestionsData[index].username}`;
+      showToast(status);
+    }
+
+    /**
+     * ============================================================================
+     * INTERAÇÕES DE CURTIDAS (BOTÃO E DUPLO-CLIQUE NA FOTO)
+     * ============================================================================
+     */
+    function toggleLike(postId) {
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+
+      post.liked = !post.liked;
+      post.likes += post.liked ? 1 : -1;
+      renderFeed();
+
+      // Aplica animação de bounce no ícone de coração
+      const btn = document.getElementById(`likeBtn-${postId}`);
+      if (btn) btn.classList.add('animate-like-btn');
+    }
+
+    function handleImageDoubleTap(postId) {
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+
+      // Se ainda não estiver curtido, curte o post
+      if (!post.liked) {
+        post.liked = true;
+        post.likes += 1;
+        renderFeed();
+      }
+
+      // Dispara a animação do coração gigante branco sobre a imagem
+      const bigHeart = document.getElementById(`bigHeart-${postId}`);
+      if (bigHeart) {
+        bigHeart.classList.remove('animate-double-tap-heart');
+        void bigHeart.offsetWidth; // Força reflow para reiniciar animação
+        bigHeart.classList.add('animate-double-tap-heart');
+      }
+    }
+
+    /**
+     * ============================================================================
+     * SISTEMA DE COMENTÁRIOS (ADICIONAR, CURTIR E EXCLUIR)
+     * ============================================================================
+     */
+    function togglePostCommentBtn(postId, textValue) {
+      const btn = document.getElementById(`commentSubmit-${postId}`);
+      if (btn) {
+        btn.disabled = textValue.trim().length === 0;
+      }
+    }
+
+    function focusCommentInput(postId) {
+      const input = document.getElementById(`commentInput-${postId}`);
+      if (input) input.focus();
+    }
+
+    function insertEmoji(postId, emoji) {
+      const input = document.getElementById(`commentInput-${postId}`);
+      if (input) {
+        input.value += emoji;
+        input.focus();
+        togglePostCommentBtn(postId, input.value);
+      }
+    }
+
+    function addComment(event, postId) {
+      event.preventDefault();
+      const input = document.getElementById(`commentInput-${postId}`);
+      if (!input) return;
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+
+      post.comments.push({
+        id: Date.now(),
+        user: CURRENT_USER.username,
+        text: text,
+        liked: false,
+        isMine: true
+      });
+
+      renderFeed();
+      showToast('Comentário publicado!');
+    }
+
+    function toggleCommentLike(postId, commentId) {
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+      const comment = post.comments.find(c => c.id === commentId);
+      if (comment) {
+        comment.liked = !comment.liked;
+        renderFeed();
+      }
+    }
+
+    function deleteComment(postId, commentId) {
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+      post.comments = post.comments.filter(c => c.id !== commentId);
+      renderFeed();
+      showToast('Comentário excluído');
+    }
+
+    /**
+     * ============================================================================
+     * SALVAR POSTS E COMPARTILHAR LINK
+     * ============================================================================
+     */
+    function toggleSave(postId) {
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+      post.saved = !post.saved;
+      renderFeed();
+      showToast(post.saved ? 'Publicação salva nos favoritos!' : 'Removido dos salvos');
+    }
+
+    function sharePost(postId) {
+      const post = postsData.find(p => p.id === postId);
+      if (!post) return;
+
+      // Copia texto simulando link de compartilhamento usando fallback seguro
+      const shareText = `Confira a publicação de @${post.username} no InstaClone Brasil!`;
+      const tempInput = document.createElement('input');
+      tempInput.value = shareText;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+
+      showToast('Link da publicação copiado para a área de transferência!');
+    }
+
+    /**
+     * ============================================================================
+     * PESQUISA E FILTROS DE NAVEGAÇÃO
+     * ============================================================================
+     */
+    function handleSearch(value) {
+      searchQuery = value;
+      currentFilterMode = 'all';
+
+      // Sincroniza inputs mobile e desktop
+      const mobileInput = document.getElementById('mobileSearchInput');
+      const desktopInput = document.getElementById('desktopSearchInput');
+      const clearBtn = document.getElementById('clearSearchBtn');
+
+      if (mobileInput && mobileInput.value !== value) mobileInput.value = value;
+      if (desktopInput && desktopInput.value !== value) desktopInput.value = value;
+      if (clearBtn) clearBtn.classList.toggle('hidden', value.trim() === '');
+
+      renderFeed();
+    }
+
+    function clearSearch() {
+      handleSearch('');
+    }
+
+    function setFilterMode(mode) {
+      currentFilterMode = mode;
+      searchQuery = '';
+      const mobileInput = document.getElementById('mobileSearchInput');
+      const desktopInput = document.getElementById('desktopSearchInput');
+      if (mobileInput) mobileInput.value = '';
+      if (desktopInput) desktopInput.value = '';
+
+      updateNavActiveStyles(mode);
+      renderFeed();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterByUser(username) {
+      currentFilterMode = 'user';
+      currentUserFilter = username;
+      renderFeed();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetFeed(event) {
+      if (event) event.preventDefault();
+      currentFilterMode = 'all';
+      currentUserFilter = '';
+      searchQuery = '';
+      const mobileInput = document.getElementById('mobileSearchInput');
+      const desktopInput = document.getElementById('desktopSearchInput');
+      if (mobileInput) mobileInput.value = '';
+      if (desktopInput) desktopInput.value = '';
+      updateNavActiveStyles('all');
+      renderFeed();
+    }
+
+    function updateNavActiveStyles(mode) {
+      const homeBtn = document.getElementById('navHomeBtn');
+      const popBtn = document.getElementById('navPopularBtn');
+      const savedBtn = document.getElementById('navSavedBtn');
+      if (!homeBtn) return;
+
+      const activeClass = ['font-semibold', 'bg-gray-100', 'dark:bg-igDarkElevated', 'text-gray-900', 'dark:text-white'];
+      const inactiveClass = ['font-normal', 'text-gray-700', 'dark:text-gray-300'];
+
+      [homeBtn, popBtn, savedBtn].forEach(btn => {
+        btn.classList.remove(...activeClass);
+        btn.classList.add(...inactiveClass);
+      });
+
+      const target = mode === 'saved' ? savedBtn : mode === 'popular' ? popBtn : homeBtn;
+      target.classList.remove(...inactiveClass);
+      target.classList.add(...activeClass);
+    }
+
+    /**
+     * ============================================================================
+     * MODAL DE STORIES INTERATIVO COM TIMER E BARRA DE PROGRESSO
+     * ============================================================================
+     */
+    function openStoryModal(index) {
+      currentStoryIndex = index;
+      const modal = document.getElementById('storyModal');
+      modal.classList.remove('hidden');
+      loadStorySlide(index);
+    }
+
+    function closeStoryModal() {
+      const modal = document.getElementById('storyModal');
+      modal.classList.add('hidden');
+      clearInterval(storyTimerInterval);
+    }
+
+    function loadStorySlide(index) {
+      if (index < 0 || index >= storiesData.length) {
+        closeStoryModal();
+        return;
+      }
+
+      currentStoryIndex = index;
+      const story = storiesData[index];
+      story.seen = true;
+      renderStories();
+
+      // Preenche dados visuais do Story
+      document.getElementById('storyImage').src = story.image;
+      document.getElementById('storyUserAvatar').src = story.avatar;
+      document.getElementById('storyUsername').textContent = story.username;
+      document.getElementById('storyTime').textContent = `• ${story.time}`;
+      document.getElementById('storyLocation').textContent = story.location;
+      document.getElementById('storyCaption').textContent = story.caption;
+
+      // Renderiza barras de progresso segmentadas no topo do story
+      const barsContainer = document.getElementById('storyProgressBars');
+      barsContainer.innerHTML = storiesData.map((_, i) => `
+        <div class="h-1 flex-1 bg-white/30 rounded-full overflow-hidden">
+          <div
+            id="storyBarFill-${i}"
+            class="h-full bg-white transition-all duration-75"
+            style="width: ${i < index ? '100%' : '0%'}"
+          ></div>
+        </div>
+      `).join('');
+
+      // Inicia temporizador de 5 segundos por story
+      clearInterval(storyTimerInterval);
+      storyProgress = 0;
+      storyTimerInterval = setInterval(() => {
+        storyProgress += 2; // 2% a cada 100ms = 5 segundos
+        const activeBar = document.getElementById(`storyBarFill-${currentStoryIndex}`);
+        if (activeBar) activeBar.style.width = `${storyProgress}%`;
+
+        if (storyProgress >= 100) {
+          nextStory();
+        }
+      }, 100);
+    }
+
+    function nextStory() {
+      if (currentStoryIndex + 1 < storiesData.length) {
+        loadStorySlide(currentStoryIndex + 1);
+      } else {
+        closeStoryModal();
+      }
+    }
+
+    function prevStory() {
+      if (currentStoryIndex - 1 >= 0) {
+        loadStorySlide(currentStoryIndex - 1);
+      } else {
+        loadStorySlide(0);
+      }
+    }
+
+    function sendStoryReply(event) {
+      event.preventDefault();
+      const input = document.getElementById('storyReplyInput');
+      if (input.value.trim()) {
+        showToast(`Resposta enviada para @${storiesData[currentStoryIndex].username}!`);
+        input.value = '';
+      }
+    }
+
+    /**
+     * ============================================================================
+     * MODAL PARA CRIAR NOVA PUBLICAÇÃO NO FEED
+     * ============================================================================
+     */
+    function renderPresetImages() {
+      const grid = document.getElementById('presetImagesGrid');
+      if (!grid) return;
+
+      grid.innerHTML = presetPostImages.map(preset => `
+        <button
+          type="button"
+          onclick="selectPresetImage('${preset.url}')"
+          class="group relative aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-igBlue focus:border-igBlue transition"
+          title="${preset.label}"
+        >
+          <img src="${preset.url}" alt="${preset.label}" class="w-full h-full object-cover" />
+          <span class="absolute inset-x-0 bottom-0 bg-black/60 text-white text-[10px] py-0.5 px-1 truncate">
+            ${preset.label}
+          </span>
+        </button>
+      `).join('');
+    }
+
+    function selectPresetImage(url) {
+      document.getElementById('newPostImageUrl').value = url;
+      updateNewPostPreview(url);
+    }
+
+    function updateNewPostPreview(url) {
+      const preview = document.getElementById('newPostPreview');
+      if (preview && url.trim()) {
+        preview.src = url.trim();
+      }
+    }
+
+    function openCreateModal() {
+      renderPresetImages();
+      document.getElementById('createPostModal').classList.remove('hidden');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('createPostModal').classList.add('hidden');
+    }
+
+    function submitNewPost() {
+      const imageUrl = document.getElementById('newPostImageUrl').value.trim();
+      const location = document.getElementById('newPostLocation').value.trim();
+      const caption = document.getElementById('newPostCaption').value.trim();
+
+      if (!imageUrl) {
+        showToast('Por favor, informe a URL de uma imagem.');
+        return;
+      }
+
+      // Cria novo objeto de postagem com timestamp atual (Date.now())
+      const newPost = {
+        id: Date.now(),
+        username: CURRENT_USER.username,
+        userAvatar: CURRENT_USER.avatar,
+        verified: true,
+        location: location || 'Brasil',
+        image: imageUrl,
+        caption: caption || 'Nova publicação compartilhada!',
+        likes: 1,
+        liked: true,
+        saved: false,
+        createdAt: Date.now(), // Inicia como "AGORA MESMO" e conta os minutos automaticamente
+        comments: []
+      };
+
+      // Insere no topo do feed
+      postsData.unshift(newPost);
+      closeCreateModal();
+      resetFeed();
+      showToast('Publicação compartilhada no topo do feed!');
+    }
+
+    /**
+     * ============================================================================
+     * ALTERNADOR DE TEMA (DARK MODE / LIGHT MODE) E TOAST DE NOTIFICAÇÃO
+     * ============================================================================
+     */
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      const label = document.getElementById('themeLabel');
+      if (label) {
+        label.textContent = isDark ? 'Modo Claro' : 'Modo Escuro';
+      }
+      showToast(isDark ? 'Modo Escuro ativado 🌙' : 'Modo Claro ativado ☀️');
+    }
+
+    let toastTimeout = null;
+    function showToast(message) {
+      const toast = document.getElementById('toastNotification');
+      const msgEl = document.getElementById('toastMessage');
+      if (!toast || !msgEl) return;
+
+      msgEl.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-2');
+      }, 2800);
+    }
+
+    /**
+     * ============================================================================
+     * INICIALIZAÇÃO E ATUALIZAÇÃO AUTOMÁTICA DOS MINUTOS DAS POSTAGENS
+     * ============================================================================
+     */
+    function startDynamicTimestampsUpdater() {
+      // Atualiza os textos de "HÁ X MINUTOS" a cada 20 segundos sem perder o foco de inputs
+      setInterval(() => {
+        postsData.forEach(post => {
+          const formatted = formatTimeAgo(post.createdAt);
+          const headerEl = document.querySelector(`[data-post-time="${post.id}"]`);
+          const footerEl = document.querySelector(`[data-post-footer-time="${post.id}"]`);
+          if (headerEl) headerEl.textContent = formatted.toLowerCase();
+          if (footerEl) footerEl.textContent = formatted;
+        });
+      }, 20000);
+    }
+
+    // Executa ao carregar a página
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStories();
+      renderFeed();
+      renderSuggestions();
+      startDynamicTimestampsUpdater();
+    });
+  </script>
+</body>
+</html>
+</html>
 </html>
