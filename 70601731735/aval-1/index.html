@@ -1,0 +1,990 @@
+1. CRUD e Estoque
+html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Estoque</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet"></head>
+<body>
+<header>
+<h1>Controle de Estoque</h1>
+</header>
+<main>
+<section class="formulario">
+<h2>Cadastrar Produto</h2>
+<form id="formProduto">
+<input type="text" id="descricao" placeholder="Descrição do produto" required>
+<input type="number" id="quantidade" placeholder="Quantidade" min="1" required>
+<input type="number" id="valor" placeholder="Valor (R$)" min="0" step="0.01" required>
+<p id="erro" class="erro" hidden></p>
+<button type="submit">Cadastrar Produto</button>
+</form>
+</section>
+<section>
+<h2>Produtos cadastrados</h2>
+<div class="tabela-container">
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Descrição</th>
+<th>Quantidade</th>
+<th>Valor</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="listaProdutos"></tbody>
+</table>
+</div>
+</section>
+</main>
+<script src="script.js"></script>
+<script src="script.js"></script></body>
+</html>
+css
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}body {
+font-family: Arial, sans-serif;
+background: #f1f5f9;
+color: #333;
+}
+header {
+background: #075985;
+color: white;
+text-align: center;
+padding: 25px;
+}
+main {
+width: 90%;
+max-width: 1000px;
+margin: 30px auto;
+}
+.formulario, section {
+background: white;
+padding: 25px;
+margin-bottom: 25px;
+border-radius: 10px;
+box-shadow: 0 3px 10px #0001;
+}
+h2 {
+color: #075985;
+margin-bottom: 20px;
+}
+form {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+input {
+padding: 12px;border: 1px solid #ccc;
+border-radius: 6px;
+}
+button {
+padding: 12px;
+border: none;
+border-radius: 6px;
+background: #0284c7;
+color: white;
+cursor: pointer;
+font-weight: bold;
+}
+button:hover {
+opacity: .8;
+}
+.excluir {
+background: #dc2626;
+}
+.erro {
+color: #dc2626;
+}
+.tabela-container {
+overflow-x: auto;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+min-width: 600px;
+}
+th, td {
+padding: 12px;
+border-bottom: 1px solid #ddd;
+text-align: center;}
+th {
+background: #075985;
+color: white;
+}
+@media(max-width: 600px) {
+main {
+width: 95%;
+}
+}
+java
+let produtos = [];
+let contadorCodigo = 0;
+const formProduto = document.getElementById("formProduto");
+const listaProdutos = document.getElementById("listaProdutos");
+const mensagemErro = document.getElementById("erro");
+function validarProduto(descricao, quantidade, valor) {
+if (descricao.trim().length < 5) {
+throw new Error("Descrição deve ter no mínimo cinco caracteres.");
+}
+if (!Number.isInteger(quantidade) || quantidade < 1) {
+throw new Error("Quantidade deve ser maior que zero.");
+}
+if (!Number.isFinite(valor) || valor < 0) {
+throw new Error("Valor deve ser maior ou igual a zero.");
+}
+}
+function cadastrarProduto(descricao, quantidade, valor) {
+validarProduto(descricao, quantidade, valor);
+contadorCodigo++;const novoProduto = {
+codigo: contadorCodigo,
+descricao: descricao.trim(),
+quantidade: quantidade,
+valor: valor
+};
+produtos.push(novoProduto);
+listarProdutos();
+}
+function listarProdutos() {
+listaProdutos.innerHTML = "";
+produtos.forEach(produto => {
+const linha = document.createElement("tr");
+linha.innerHTML = `
+<td>${produto.codigo}</td>
+<td></td>
+<td>${produto.quantidade}</td>
+<td>${produto.valor.toFixed(2)}</td>
+`;
+linha.children[1].textContent = produto.descricao;
+const acoes = document.createElement("td");
+const botaoValor = document.createElement("button");
+botaoValor.textContent = "Alterar valor";
+botaoValor.onclick = () => {
+const novoValor = Number(prompt("Digite o novo valor:"));
+try {
+atualizarValor(produto.codigo, novoValor);
+} catch (erro) {
+alert(erro.message);
+}
+};const botaoQuantidade = document.createElement("button");
+botaoQuantidade.textContent = "Adicionar estoque";
+botaoQuantidade.onclick = () => {
+const quantidade = Number(prompt("Quantidade a adicionar:"));
+try {
+atualizarQuantidade(produto.codigo, quantidade);
+} catch (erro) {
+alert(erro.message);
+}
+};
+const botaoExcluir = document.createElement("button");
+botaoExcluir.textContent = "Excluir";
+botaoExcluir.className = "excluir";
+botaoExcluir.onclick = () => {
+produtos = produtos.filter(p => p.codigo !== produto.codigo);
+listarProdutos();
+};
+acoes.append(botaoValor, botaoQuantidade, botaoExcluir);
+linha.appendChild(acoes);
+listaProdutos.appendChild(linha);
+});
+}
+function buscarProduto(codigoProduto) {
+const produto = produtos.find(
+p => p.codigo === codigoProduto
+);
+if (!produto) {
+throw new Error("Produto não encontrado.");
+}
+return produto;}
+function atualizarValor(codigoProduto, novoValor) {
+if (!Number.isFinite(novoValor) || novoValor < 0) {
+throw new Error("Valor deve ser maior ou igual a zero.");
+}
+const produto = buscarProduto(codigoProduto);
+produto.valor = novoValor;
+listarProdutos();
+}
+function atualizarQuantidade(codigoProduto, novaQuantidade) {
+if (!Number.isInteger(novaQuantidade) || novaQuantidade < 1) {
+throw new Error("Quantidade deve ser maior que zero.");
+}
+const produto = buscarProduto(codigoProduto);
+produto.quantidade += novaQuantidade;
+listarProdutos();
+}
+formProduto.addEventListener("submit", function(event) {
+event.preventDefault();
+try {
+cadastrarProduto(
+document.getElementById("descricao").value,
+Number(document.getElementById("quantidade").value),
+Number(document.getElementById("valor").value)
+);
+mensagemErro.hidden = true;
+formProduto.reset();
+} catch (erro) {
+mensagemErro.textContent = erro.message;mensagemErro.hidden = false;
+}
+});
+2. Gerenciador de Tarefas
+html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciador de Tarefas</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>Gerenciador de Tarefas</h1>
+<p>Organize suas atividades</p>
+</header>
+<main>
+<section>
+<h2>Nova tarefa</h2>
+<form id="formTarefa">
+<input type="text" id="titulo" placeholder="Título da tarefa" required>
+<select id="prioridade">
+<option value="1">Alta prioridade</option>
+<option value="2">Média prioridade</option>
+<option value="3">Baixa prioridade</option>
+</select>
+<p id="erro" class="erro" hidden></p>
+<button type="submit">Cadastrar tarefa</button>
+</form>
+</section><section>
+<h2>Minhas tarefas</h2>
+<div id="listaTarefas"></div>
+</section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
+css
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: Arial, sans-serif;
+background: #f1f5f9;
+color: #333;
+}
+header {
+background: #4f46e5;
+color: white;
+text-align: center;
+padding: 30px;
+}
+main {
+max-width: 800px;
+width: 90%;
+margin: 30px auto;
+}
+section {
+background: white;padding: 25px;
+margin-bottom: 25px;
+border-radius: 10px;
+box-shadow: 0 3px 10px #0001;
+}
+h2 {
+margin-bottom: 20px;
+color: #4f46e5;
+}
+form {
+display: flex;
+flex-direction: column;
+gap: 12px;
+}
+input, select {
+padding: 12px;
+border: 1px solid #ccc;
+border-radius: 6px;
+}
+button {
+background: #4f46e5;
+color: white;
+padding: 12px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+margin-top: 10px;
+}
+button:hover {
+opacity: .8;
+}
+.tarefa {
+border: 1px solid #ddd;
+padding: 15px;margin-bottom: 12px;
+border-radius: 8px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 10px;
+}
+.concluida {
+background: #dcfce7;
+text-decoration: line-through;
+}
+.alta {
+color: #dc2626;
+font-weight: bold;
+}
+.media {
+color: #d97706;
+font-weight: bold;
+}
+.baixa {
+color: #16a34a;
+font-weight: bold;
+}
+.erro {
+color: #dc2626;
+}
+.excluir {
+background: #dc2626;
+}
+@media(max-width: 600px) {
+.tarefa {
+flex-direction: column;
+align-items: flex-start;}
+}
+java
+let tarefas = [];
+let contadorCodigo = 0;
+const formTarefa = document.getElementById("formTarefa");
+const listaTarefas = document.getElementById("listaTarefas");
+const mensagemErro = document.getElementById("erro");
+function validarDadosDaTarefa(titulo, prioridade) {
+if (titulo.trim().length < 5) {
+throw new Error("O título deve ter no mínimo cinco caracteres.");
+}
+if (!Number.isInteger(prioridade) || prioridade < 1 || prioridade > 3) {
+throw new Error("A prioridade deve estar entre 1 e 3.");
+}
+}
+function cadastrarTarefa(titulo, prioridade) {
+validarDadosDaTarefa(titulo, prioridade);
+contadorCodigo++;
+const novaTarefa = {
+codigo: contadorCodigo,
+titulo: titulo.trim(),
+prioridade: prioridade,
+status: true
+};
+tarefas.push(novaTarefa);
+listarTarefas();
+}
+function listarTarefas() {
+listaTarefas.innerHTML = "";tarefas.forEach(tarefa => {
+const div = document.createElement("div");
+div.className = "tarefa";
+if (!tarefa.status) {
+div.classList.add("concluida");
+}
+const informacoes = document.createElement("div");
+const titulo = document.createElement("h3");
+titulo.textContent = tarefa.titulo;
+const codigo = document.createElement("p");
+codigo.textContent = "Código: " + tarefa.codigo;
+const prioridade = document.createElement("p");
+const nomes = {
+1: "Alta",
+2: "Média",
+3: "Baixa"
+};
+prioridade.textContent = "Prioridade: " + nomes[tarefa.prioridade];
+prioridade.className = {
+1: "alta",
+2: "media",
+3: "baixa"
+}[tarefa.prioridade];
+informacoes.append(titulo, codigo, prioridade);
+const acoes = document.createElement("div");
+const concluir = document.createElement("button");
+concluir.textContent = tarefa.status ? "Concluir" : "Concluída";
+concluir.disabled = !tarefa.status;concluir.onclick = () => {
+try {
+concluirTarefa(tarefa.codigo);
+} catch (erro) {
+alert(erro.message);
+}
+};
+const alterar = document.createElement("button");
+alterar.textContent = "Alterar prioridade";
+alterar.onclick = () => {
+const nova = Number(prompt("Nova prioridade (1, 2 ou 3):"));
+try {
+alterarPrioridade(tarefa.codigo, nova);
+} catch (erro) {
+alert(erro.message);
+}
+};
+const excluir = document.createElement("button");
+excluir.textContent = "Excluir";
+excluir.className = "excluir";
+excluir.onclick = () => {
+tarefas = tarefas.filter(t => t.codigo !== tarefa.codigo);
+listarTarefas();
+};
+acoes.append(concluir, alterar, excluir);
+div.append(informacoes, acoes);
+listaTarefas.appendChild(div);
+});
+}
+function buscarTarefa(codigo) {const tarefa = tarefas.find(
+t => t.codigo === codigo
+);
+if (!tarefa) {
+throw new Error("Tarefa não encontrada.");
+}
+return tarefa;
+}
+function concluirTarefa(codigo) {
+const tarefa = buscarTarefa(codigo);
+if (!tarefa.status) {
+throw new Error("Esta tarefa já está concluída.");
+}
+tarefa.status = false;
+listarTarefas();
+}
+function alterarPrioridade(codigo, novaPrioridade) {
+const tarefa = buscarTarefa(codigo);
+validarDadosDaTarefa(
+tarefa.titulo,
+novaPrioridade
+);
+tarefa.prioridade = novaPrioridade;
+listarTarefas();
+}
+formTarefa.addEventListener("submit", function(event) {
+event.preventDefault();
+try {cadastrarTarefa(
+document.getElementById("titulo").value,
+Number(document.getElementById("prioridade").value)
+);
+mensagemErro.hidden = true;
+formTarefa.reset();
+} catch (erro) {
+mensagemErro.textContent = erro.message;
+mensagemErro.hidden = false;
+}
+});
+listarTarefas();
+3. Ficha de Anamnese – Parte 2
+html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Anamnese</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<h1>Ficha de Anamnese</h1>
+<p>Cadastro de pacientes e controle de IMC</p>
+</header>
+<main class="container">
+<section class="resumo">
+<div class="card">
+<h3>Total de pacientes</h3>
+<p id="totalPessoas">0</p></div>
+<div class="card">
+<h3>IMC médio</h3>
+<p id="imcMedio">0,0</p>
+</div>
+<div class="card">
+<h3>Cadastros realizados</h3>
+<p id="totalCadastros">0</p>
+</div>
+</section>
+<section class="formulario">
+<h2>Cadastro do paciente</h2>
+<form id="formPessoa">
+<label for="nome">Nome completo:</label>
+<input type="text" id="nome" placeholder="Nome do paciente" required>
+<label for="idade">Idade:</label>
+<input type="number" id="idade" required>
+<label for="altura">Altura (metros):</label>
+<input type="number" id="altura" step="0.01" required>
+<label for="peso">Peso (kg):</label>
+<input type="number" id="peso" step="0.1" required>
+<p id="erro" class="erro" hidden></p>
+<button type="submit">Salvar paciente</button>
+</form>
+</section>
+<section class="tabela-section">
+<h2>Pacientes cadastrados</h2>
+<input type="text" id="pesquisa" placeholder="Pesquisar paciente..."><div class="tabela-container">
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Nome</th>
+<th>Idade</th>
+<th>Altura</th>
+<th>Peso</th>
+<th>IMC</th>
+<th>Classificação</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="listaPessoas"></tbody>
+</table>
+</div>
+<p id="mensagemVazia" class="mensagem-vazia">
+Nenhum paciente cadastrado.
+</p>
+</section>
+<section class="aviso">
+<p>O IMC é um indicador de triagem e não substitui uma avaliação profissional.</p>
+</section>
+</main>
+<footer>
+<p>Projeto Ficha de Anamnese - Parte 2</p>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>css
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: Arial, sans-serif;
+background: #f1f5f9;
+color: #333;
+}
+header {
+background: #075985;
+color: white;
+text-align: center;
+padding: 30px 15px;
+}
+header h1 {
+margin-bottom: 10px;
+}
+.container {
+width: 90%;
+max-width: 1200px;
+margin: 30px auto;
+}
+.resumo {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 20px;
+margin-bottom: 30px;
+}
+.card {
+background: white;
+padding: 25px;border-radius: 10px;
+text-align: center;
+box-shadow: 0 3px 10px #0001;
+}
+.card h3 {
+margin-bottom: 15px;
+}
+.card p {
+color: #0284c7;
+font-size: 28px;
+font-weight: bold;
+}
+.formulario,
+.tabela-section {
+background: white;
+padding: 25px;
+border-radius: 10px;
+margin-bottom: 25px;
+box-shadow: 0 3px 10px #0001;
+}
+h2 {
+color: #075985;
+margin-bottom: 20px;
+}
+form {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+label {
+font-weight: bold;
+}
+input {width: 100%;
+padding: 12px;
+border: 1px solid #ccc;
+border-radius: 6px;
+font-size: 15px;
+}
+input:focus {
+border-color: #0284c7;
+outline: none;
+}
+button {
+padding: 12px 18px;
+border: none;
+border-radius: 6px;
+background: #0284c7;
+color: white;
+font-weight: bold;
+cursor: pointer;
+margin-top: 10px;
+}
+button:hover {
+opacity: .85;
+}
+.btn-excluir {
+background: #dc2626;
+}
+.erro {
+color: #dc2626;
+background: #fee2e2;
+padding: 12px;
+border-radius: 6px;
+}
+.erro[hidden] {
+display: none;}
+#pesquisa {
+margin-bottom: 20px;
+}
+.tabela-container {
+overflow-x: auto;
+}
+table {
+width: 100%;
+min-width: 900px;
+border-collapse: collapse;
+}
+th, td {
+padding: 13px;
+border-bottom: 1px solid #ddd;
+text-align: center;
+}
+th {
+background: #075985;
+color: white;
+}
+tr:hover {
+background: #f0f9ff;
+}
+.selo {
+display: inline-block;
+padding: 6px 10px;
+border-radius: 5px;
+font-size: 12px;
+font-weight: bold;
+}
+.baixo-peso {background: #dbeafe;
+color: #1d4ed8;
+}
+.normal {
+background: #dcfce7;
+color: #166534;
+}
+.sobrepeso {
+background: #fef3c7;
+color: #92400e;
+}
+.obesidade {
+background: #fee2e2;
+color: #b91c1c;
+}
+.especial {
+background: #e0e7ff;
+color: #3730a3;
+}
+.mensagem-vazia {
+display: none;
+text-align: center;
+color: #777;
+padding: 20px;
+}
+.aviso {
+background: #e0f2fe;
+color: #075985;
+border-left: 5px solid #0284c7;
+padding: 18px;
+border-radius: 6px;
+margin-bottom: 25px;
+}footer {
+background: #075985;
+color: white;
+text-align: center;
+padding: 20px;
+}
+@media(max-width: 700px) {
+.resumo {
+grid-template-columns: 1fr;
+}
+.container {
+width: 95%;
+}
+}
+java
+const chavePessoas = "pessoas";
+let contadorCodigo = 0;
+const formPessoa = document.getElementById("formPessoa");
+const inputNome = document.getElementById("nome");
+const inputIdade = document.getElementById("idade");
+const inputAltura = document.getElementById("altura");
+const inputPeso = document.getElementById("peso");
+const mensagemDeErro = document.getElementById("erro");
+const listaPessoas = document.getElementById("listaPessoas");
+const pesquisa = document.getElementById("pesquisa");
+function carregarPessoas() {
+const dados = localStorage.getItem(chavePessoas);
+if (!dados) {
+return [];
+}
+try {
+const pessoasCarregadas = JSON.parse(dados);if (Array.isArray(pessoasCarregadas)) {
+return pessoasCarregadas;
+}
+return [];
+} catch (erro) {
+console.error("Erro ao carregar pacientes:", erro);
+return [];
+}
+}
+let pessoas = carregarPessoas();
+function ajustarContadorCodigo() {
+let maior = 0;
+pessoas.forEach(pessoa => {
+if (Number.isInteger(pessoa.id) && pessoa.id > maior) {
+maior = pessoa.id;
+}
+});
+contadorCodigo = maior;
+}
+function salvar() {
+localStorage.setItem(
+chavePessoas,
+JSON.stringify(pessoas)
+);
+}
+function calcularIMC(peso, altura) {
+return peso / (altura * altura);
+}
+function classificarIMC(imc, idade) {
+if (idade < 18) {return {
+texto: "Avaliação específica",
+classe: "especial"
+};
+}
+if (imc < 18.5) {
+return {
+texto: "Baixo peso",
+classe: "baixo-peso"
+};
+} else if (imc < 25) {
+return {
+texto: "Peso normal",
+classe: "normal"
+};
+} else if (imc < 30) {
+return {
+texto: "Sobrepeso",
+classe: "sobrepeso"
+};
+} else if (imc < 35) {
+return {
+texto: "Obesidade I",
+classe: "obesidade"
+};
+} else if (imc < 40) {
+return {
+texto: "Obesidade II",
+classe: "obesidade"
+};
+} else {
+return {
+texto: "Obesidade III",
+classe: "obesidade"
+};
+}
+}
+function formatar(valor, casas) {return Number(valor).toFixed(casas);
+}
+function lerFormulario() {
+return {
+nome: inputNome.value.trim(),
+idade: Number(inputIdade.value),
+altura: Number(inputAltura.value),
+peso: Number(inputPeso.value)
+};
+}
+function validarDados(dados) {
+if (dados.nome.length < 2) {
+return "Informe o nome com no mínimo duas letras.";
+}
+if (
+!Number.isInteger(dados.idade) ||
+dados.idade < 1 ||
+dados.idade > 120
+){
+return "A idade deve ser um número inteiro entre 1 e 120.";
+}
+if (
+!Number.isFinite(dados.altura) ||
+dados.altura < 0.5 ||
+dados.altura > 2.5
+){
+return "A altura deve estar entre 0,50 m e 2,50 m.";
+}
+if (
+!Number.isFinite(dados.peso) ||
+dados.peso < 2 ||
+dados.peso > 500
+){
+return "O peso deve estar entre 2 kg e 500 kg.";
+}return "";
+}
+function mostrarErro(mensagem) {
+mensagemDeErro.textContent = mensagem;
+mensagemDeErro.hidden = false;
+}
+function limparErro() {
+mensagemDeErro.textContent = "";
+mensagemDeErro.hidden = true;
+}
+function adicionarPessoa(dados) {
+contadorCodigo++;
+const novaPessoa = {
+id: contadorCodigo,
+nome: dados.nome,
+idade: dados.idade,
+altura: dados.altura,
+peso: dados.peso
+};
+pessoas.push(novaPessoa);
+salvar();
+}
+function criarLinha(pessoa) {
+const linha = document.createElement("tr");
+const imc = calcularIMC(
+pessoa.peso,
+pessoa.altura
+);
+const classificacao = classificarIMC(
+imc,pessoa.idade
+);
+const codigo = document.createElement("td");
+codigo.textContent = pessoa.id;
+const nome = document.createElement("td");
+nome.textContent = pessoa.nome;
+const idade = document.createElement("td");
+idade.textContent = pessoa.idade + " anos";
+const altura = document.createElement("td");
+altura.textContent = formatar(pessoa.altura, 2) + " m";
+const peso = document.createElement("td");
+peso.textContent = formatar(pessoa.peso, 1) + " kg";
+const colunaIMC = document.createElement("td");
+colunaIMC.textContent = formatar(imc, 1);
+const colunaClassificacao = document.createElement("td");
+const selo = document.createElement("span");
+selo.classList.add(
+"selo",
+classificacao.classe
+);
+selo.textContent = classificacao.texto;
+colunaClassificacao.appendChild(selo);
+const acoes = document.createElement("td");
+const botaoExcluir = document.createElement("button");
+botaoExcluir.textContent = "Excluir";
+botaoExcluir.classList.add("btn-excluir");botaoExcluir.addEventListener("click", () => {
+excluirPessoa(pessoa.id);
+});
+acoes.appendChild(botaoExcluir);
+linha.append(
+codigo,
+nome,
+idade,
+altura,
+peso,
+colunaIMC,
+colunaClassificacao,
+acoes
+);
+return linha;
+}
+function render() {
+listaPessoas.innerHTML = "";
+const termo = pesquisa.value.toLowerCase();
+const pessoasFiltradas = pessoas.filter(pessoa =>
+pessoa.nome.toLowerCase().includes(termo)
+);
+pessoasFiltradas.forEach(pessoa => {
+const linha = criarLinha(pessoa);
+listaPessoas.appendChild(linha);
+});
+const mensagem = document.getElementById("mensagemVazia");
+mensagem.style.display =
+pessoasFiltradas.length === 0 ? "block" : "none";mensagem.textContent = pessoas.length === 0
+? "Nenhum paciente cadastrado."
+: "Nenhum paciente encontrado.";
+atualizarResumo();
+}
+function atualizarResumo() {
+const total = pessoas.length;
+let somaIMC = 0;
+pessoas.forEach(pessoa => {
+somaIMC += calcularIMC(
+pessoa.peso,
+pessoa.altura
+);
+});
+const media = total > 0
+? somaIMC / total
+: 0;
+document.getElementById("totalPessoas").textContent = total;
+document.getElementById("totalCadastros").textContent = total;
+document.getElementById("imcMedio").textContent = formatar(media, 1);
+}
+function excluirPessoa(id) {
+const pessoa = pessoas.find(p => p.id === id);
+if (!pessoa) {
+alert("Paciente não encontrado!");
+return;
+}
+const confirmar = confirm(
+"Deseja realmente excluir o cadastro de " +pessoa.nome + "?"
+);
+if (confirmar) {
+pessoas = pessoas.filter(p => p.id !== id);
+salvar();
+render();
+alert("Paciente excluído com sucesso!");
+}
+}
+formPessoa.addEventListener("submit", function(event) {
+event.preventDefault();
+const dados = lerFormulario();
+const erro = validarDados(dados);
+if (erro !== "") {
+mostrarErro(erro);
+return;
+}
+limparErro();
+adicionarPessoa(dados);
+formPessoa.reset();
+inputNome.focus();
+render();
+});
+pesquisa.addEventListener("input", function() {
+render();
+});ajustarContadorCodigo();
+render();
