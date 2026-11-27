@@ -1,59 +1,148 @@
 
-const alimentos = [
-    {
-        nome: "Banana",
-        beneficio: "Fornece energia e potássio, ajudando no funcionamento dos músculos.",
-        momento: "Antes ou depois do treino"
-    },
-    {
-        nome: "Ovos",
-        beneficio: "São ricos em proteínas, importantes para a recuperação muscular.",
-        momento: "Café da manhã ou após o treino"
-    },
-    {
-        nome: "Batata-doce",
-        beneficio: "É fonte de carboidratos, que ajudam a fornecer energia para jogar futebol.",
-        momento: "Antes dos treinos e jogos"
-    },
-    {
-        nome: "Frutas",
-        beneficio: "Fornecem vitaminas, minerais e fibras importantes para a saúde.",
-        momento: "Durante o dia"
-    },
-    {
-        nome: "Água",
-        beneficio: "Ajuda a manter o corpo hidratado durante os exercícios físicos.",
-        momento: "Antes, durante e depois do jogo"
-    },
-    {
-        nome: "Frango",
-        beneficio: "Possui proteínas que contribuem para a manutenção e recuperação dos músculos.",
-        momento: "Nas refeições principais"
+// ===================================
+// FUTGRAM - REDE SOCIAL DE FUTEBOL
+// ===================================
+
+// FUNÇÃO CURTIR
+function curtir(botao) {
+
+    const post = botao.closest(".post");
+    const contador = post.querySelector(".contador");
+
+    let curtidas = Number(contador.dataset.curtidas || 0);
+
+    if (botao.dataset.curtido === "sim") {
+        curtidas--;
+        botao.dataset.curtido = "nao";
+        botao.innerText = "❤️ Curtir";
+    } else {
+        curtidas++;
+        botao.dataset.curtido = "sim";
+        botao.innerText = "💚 Curtido";
     }
-];
 
-// Seleciona os elementos da página
-const botao = document.getElementById("mostrarAlimentos");
-const resultado = document.getElementById("resultado");
+    contador.dataset.curtidas = curtidas;
+    contador.innerText = curtidas + " curtidas";
+}
 
-// Mostra os alimentos saudáveis
-botao.addEventListener("click", function () {
-    resultado.innerHTML = "";
+// FUNÇÃO PUBLICAR
+function publicar() {
 
-    alimentos.forEach(function(alimento) {
-        const card = document.createElement("div");
+    const texto = document
+        .getElementById("textoPublicacao")
+        .value.trim();
 
-        card.classList.add("card-alimento");
+    const imagem = document
+        .getElementById("imagemPublicacao")
+        .value.trim();
 
-        card.innerHTML = `
-            <h3>${alimento.nome}</h3>
-            <p>${alimento.beneficio}</p>
-            <strong>${alimento.momento}</strong>
-        `;
+    if (texto === "") {
+        alert("Escreva algo sobre futebol!");
+        return;
+    }
 
-        resultado.appendChild(card);
+    const post = document.createElement("article");
+    post.className = "post";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = "⚽ Torcedor FutGram";
+
+    const mensagem = document.createElement("p");
+    mensagem.textContent = texto;
+
+    post.appendChild(titulo);
+    post.appendChild(mensagem);
+
+    // ADICIONAR IMAGEM
+    if (imagem) {
+        try {
+            const url = new URL(imagem);
+
+            if (url.protocol === "https:" || url.protocol === "http:") {
+                const foto = document.createElement("img");
+                foto.src = url.href;
+                foto.alt = "Imagem da publicação";
+                post.appendChild(foto);
+            } else {
+                alert("Use um link de imagem válido.");
+                return;
+            }
+        } catch {
+            alert("Digite um endereço de imagem válido.");
+            return;
+        }
+    }
+
+    // BOTÃO CURTIR
+    const acoes = document.createElement("div");
+    acoes.className = "acoes";
+
+    const botaoCurtir = document.createElement("button");
+    botaoCurtir.innerText = "❤️ Curtir";
+    botaoCurtir.onclick = function() {
+        curtir(botaoCurtir);
+    };
+
+    // BOTÃO COMENTAR
+    const botaoComentar = document.createElement("button");
+    botaoComentar.innerText = "💬 Comentar";
+    botaoComentar.onclick = function() {
+        comentar(botaoComentar);
+    };
+
+    acoes.appendChild(botaoCurtir);
+    acoes.appendChild(botaoComentar);
+
+    post.appendChild(acoes);
+
+    const contador = document.createElement("p");
+    contador.className = "contador";
+    contador.dataset.curtidas = "0";
+    contador.innerText = "0 curtidas";
+
+    post.appendChild(contador);
+
+    document.getElementById("feed").prepend(post);
+
+    document.getElementById("textoPublicacao").value = "";
+    document.getElementById("imagemPublicacao").value = "";
+
+    alert("Publicação realizada com sucesso! ⚽");
+}
+
+// FUNÇÃO COMENTAR
+function comentar(botao) {
+
+    const resposta = prompt("Escreva seu comentário:");
+
+    if (resposta && resposta.trim() !== "") {
+
+        const comentario = document.createElement("p");
+
+        comentario.textContent = "💬 " + resposta;
+
+        botao.closest(".post").appendChild(comentario);
+    }
+}
+
+// FUNÇÃO PESQUISAR
+document.getElementById("pesquisa")
+    .addEventListener("input", function() {
+
+        const busca = this.value.toLowerCase();
+
+        const posts = document.querySelectorAll(".post");
+
+        posts.forEach(function(post) {
+
+            const texto = post.innerText.toLowerCase();
+
+            post.style.display =
+                texto.includes(busca) ? "block" : "none";
+
+        });
     });
-});
 
-// Mensagem de boas-vindas
-console.log("Bem-vindo ao site de alimentação saudável no futebol!");
+// MENSAGEM INICIAL
+console.log("⚽ Bem-vindo ao FutGram!");
+console.log("Sua rede social de futebol está funcionando!");
