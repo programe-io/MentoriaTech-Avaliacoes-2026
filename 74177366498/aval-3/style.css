@@ -1,291 +1,129 @@
-/* ==========================================================
-   Calculadora de IMC
-   ========================================================== */
-
-:root {
-    --fundo: #eef2f6;
-    --superficie: #ffffff;
-    --texto: #1c2733;
-    --texto-suave: #6b7a8c;
-    --borda: #d5dde6;
-    --destaque: #1f5eff;
-    --destaque-hover: #1747c9;
-    --perigo: #d23a3a;
-    --raio: 10px;
-    --sombra: 0 1px 2px rgba(28, 39, 51, 0.06), 0 6px 20px rgba(28, 39, 51, 0.06);
-
-    /* Cores das classificações */
-    --cor-abaixo: #2a7fd1;
-    --cor-normal: #1f9d6b;
-    --cor-sobrepeso: #c27a0a;
-    --cor-obesidade: #d23a3a;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --fundo: #121820;
-        --superficie: #1b2430;
-        --texto: #e8edf3;
-        --texto-suave: #8fa0b3;
-        --borda: #2c3949;
-        --destaque: #5b8cff;
-        --destaque-hover: #7aa0ff;
-        --perigo: #ff6b6b;
-        --sombra: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
-
-        --cor-abaixo: #6db3ff;
-        --cor-normal: #3ccf94;
-        --cor-sobrepeso: #f0b04a;
-        --cor-obesidade: #ff6b6b;
-    }
-}
-
-*,
-*::before,
-*::after {
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
+/* Estilização geral */
 body {
-    margin: 0;
-    padding: 48px 16px;
-    background: var(--fundo);
-    color: var(--texto);
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    line-height: 1.5;
-}
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f1f5f9;
+    color: #1e293b;
 
-main {
-    max-width: 860px;
-    margin: 0 auto;
-}
+    min-height: 100vh;
 
-h1 {
-    margin: 0 0 24px;
-    font-size: 1.9rem;
-    letter-spacing: -0.02em;
-}
-
-h2 {
-    margin: 0 0 16px;
-    font-size: 1.15rem;
-}
-
-/* ---------- Cards ---------- */
-
-.card {
-    margin-bottom: 24px;
-    padding: 24px;
-    background: var(--superficie);
-    border: 1px solid var(--borda);
-    border-radius: var(--raio);
-    box-shadow: var(--sombra);
-}
-
-/* ---------- Formulário ---------- */
-
-form {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 16px;
-    align-items: end;
-}
-
-.campo {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    align-items: center;
+
+    padding: 60px 20px;
 }
 
-label {
-    font-size: 0.875rem;
-    font-weight: 600;
+/* Título */
+h1 {
+    font-size: 32px;
+    color: #1e3a8a;
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-input {
+/* Formulário */
+form {
+    display: flex;
+    gap: 10px;
+
     width: 100%;
-    padding: 11px 12px;
-    background: var(--superficie);
-    color: var(--texto);
-    border: 1px solid var(--borda);
-    border-radius: var(--raio);
-    font: inherit;
+    max-width: 500px;
+
+    margin-bottom: 30px;
 }
 
-input::placeholder {
-    color: var(--texto-suave);
+/* Campo de texto */
+input {
+    flex: 1;
+    padding: 14px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    font-size: 16px;
+    outline: none;
+
+    transition: 0.3s;
 }
 
 input:focus {
-    outline: none;
-    border-color: var(--destaque);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--destaque) 25%, transparent);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px #bfdbfe;
 }
 
-input.invalido {
-    border-color: var(--perigo);
-}
-
-.botoes {
-    grid-column: 1 / -1;
-    display: flex;
-    gap: 8px;
-}
-
+/* Botão */
 button {
-    padding: 11px 20px;
-    border: 0;
-    border-radius: var(--raio);
-    background: var(--destaque);
-    color: #fff;
-    font: inherit;
-    font-weight: 600;
+    padding: 14px 20px;
+
+    background-color: #2563eb;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: bold;
+
     cursor: pointer;
-    transition: background 0.15s;
+    transition: 0.3s;
 }
 
 button:hover {
-    background: var(--destaque-hover);
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
 }
 
-button:focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--destaque) 40%, transparent);
-    outline-offset: 2px;
-}
+/* Lista */
+ul {
+    list-style: none;
 
-button.secundario {
-    background: transparent;
-    color: var(--texto);
-    border: 1px solid var(--borda);
-}
-
-button.secundario:hover {
-    background: var(--fundo);
-}
-
-#erro {
-    margin: 16px 0 0;
-    color: var(--perigo);
-    font-size: 0.875rem;
-}
-
-/* ---------- Tabela ---------- */
-
-.tabela-wrapper {
-    overflow-x: auto;   /* em telas pequenas, a tabela rola para o lado */
-}
-
-table {
     width: 100%;
-    border-collapse: collapse;
-    white-space: nowrap;
+    max-width: 500px;
 }
 
-th,
-td {
-    padding: 12px 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--borda);
+/* Itens da lista */
+li {
+    background-color: white;
+
+    padding: 18px;
+    margin-bottom: 12px;
+
+    border-radius: 8px;
+    border-left: 5px solid #2563eb;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    font-size: 16px;
+
+    transition: 0.3s;
 }
 
-th {
-    color: var(--texto-suave);
-    font-size: 0.8rem;
-    font-weight: 600;
+li:hover {
+    transform: translateX(5px);
 }
 
-tbody tr:last-child td {
-    border-bottom: 0;
-}
-
-/* Linha da pessoa que está sendo editada */
-tr.em-edicao {
-    background: color-mix(in srgb, var(--destaque) 10%, transparent);
-}
-
-td.vazio {
-    padding: 28px 14px;
-    text-align: center;
-    color: var(--texto-suave);
-}
-
-/* ---------- Selo de classificação ---------- */
-
-.selo {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-.selo.abaixo {
-    color: var(--cor-abaixo);
-    background: color-mix(in srgb, var(--cor-abaixo) 15%, transparent);
-}
-
-.selo.normal {
-    color: var(--cor-normal);
-    background: color-mix(in srgb, var(--cor-normal) 15%, transparent);
-}
-
-.selo.sobrepeso {
-    color: var(--cor-sobrepeso);
-    background: color-mix(in srgb, var(--cor-sobrepeso) 15%, transparent);
-}
-
-.selo.obesidade {
-    color: var(--cor-obesidade);
-    background: color-mix(in srgb, var(--cor-obesidade) 15%, transparent);
-}
-
-/* ---------- Botões da tabela ---------- */
-
-td.acoes {
-    display: flex;
-    gap: 6px;
-}
-
-td.acoes button {
-    padding: 5px 12px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    background: transparent;
-    color: var(--destaque);
-    border: 1px solid color-mix(in srgb, var(--destaque) 40%, transparent);
-}
-
-td.acoes button:hover {
-    background: var(--destaque);
-    color: #fff;
-}
-
-td.acoes button.remover {
-    color: var(--perigo);
-    border-color: color-mix(in srgb, var(--perigo) 40%, transparent);
-}
-
-td.acoes button.remover:hover {
-    background: var(--perigo);
-    color: #fff;
-}
-
-/* ---------- Telas pequenas ---------- */
-
-@media (max-width: 640px) {
+/* Responsividade */
+@media (max-width: 480px) {
     body {
-        padding: 28px 12px;
+        padding: 40px 15px;
+    }
+
+    h1 {
+        font-size: 25px;
     }
 
     form {
-        grid-template-columns: 1fr 1fr;
+        flex-direction: column;
     }
 
-    .campo-nome {
-        grid-column: 1 / -1;
-    }
-
-    .card {
-        padding: 18px;
+    button {
+        width: 100%;
     }
 }
