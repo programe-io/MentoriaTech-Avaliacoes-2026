@@ -1,427 +1,201 @@
 
-const feed = document.getElementById("feed");
+const posts = document.getElementById("posts");
+const postInput = document.getElementById("postInput");
+const publishBtn = document.getElementById("publishBtn");
 const search = document.getElementById("search");
-const toast = document.getElementById("toast");
 
-let activeTab = "home";
+// CONTROLE DE CURTIDAS
+document.querySelectorAll(".post").forEach(post => {
+    const count = post.querySelector(".likes-count");
 
-const images = {
-  couple: "https://www.leftdownrightup.co.uk/images/screenshots/Jason_and_Lucia_03.jpg",
-  city: "https://www.nextg.tv/assets/images/42/373/42373720-gta-screenshot-eine-belebte-strasse-in-vice-city-mit-autos-motorraedern-und-auffaelliger-street-art-unter-einer-bruecke-der-screenshot-zeigt.jpg",
-  gameplay: "https://i.imgur.com/u4k973q.jpeg",
-  lucia: "https://www.notebookcheck.it/fileadmin/_processed_/9/0/csm_GTA6releasedatescreenshot_a6be71bb90.jpg",
-  dock: "https://i.blogs.es/d19b44/captura_de_pantalla_2025-05-06_a_las_16.45.47/650_1200.jpeg"
-};
+    if (count) {
+        count.dataset.likes = "0";
+    }
+});
 
-const initialPosts = [
-  {
-    id: 1,
-    author: "GTA VI News",
-    avatar: "VI",
-    time: "19 de novembro de 2026",
-    category: "NOTÍCIA",
-    type: "news",
-    text: "🚨 GTA VI JÁ ESTÁ DISPONÍVEL!\n\nO lançamento oficial de Grand Theft Auto VI aconteceu em 19 de novembro de 2026 para PlayStation 5 e Xbox Series X|S. Bem-vindos a Leonida! 🌴",
-    image: images.couple,
-    caption: "Jason e Lucia — captura do jogo.",
-    likes: 2840,
-    dislikes: 12,
-    comments: [],
-    liked: false,
-    disliked: false
-  },
-  {
-    id: 2,
-    author: "Vice City Explorer",
-    avatar: "VC",
-    time: "Hoje",
-    category: "GAMEPLAY",
-    type: "community",
-    text: "🌆 Olha só essa paisagem de Vice City! A cidade está cheia de detalhes, veículos e personagens. Qual região de Leonida vocês mais gostam?",
-    image: images.city,
-    caption: "Vice City — imagem do jogo.",
-    likes: 1570,
-    dislikes: 8,
-    comments: [],
-    liked: false,
-    disliked: false
-  },
-  {
-    id: 3,
-    author: "GTA VI News",
-    avatar: "VI",
-    time: "16 de novembro de 2026",
-    category: "NOVIDADE",
-    type: "news",
-    text: "🌧️ CLIMA DINÂMICO EM LEONIDA!\n\nA Rockstar apresentou detalhes do sistema climático de GTA VI. Chuva, neblina e tempestades ajudam a transformar a experiência pelo mapa.",
-    image: images.dock,
-    caption: "Ambiente de Leonida — imagem do jogo.",
-    likes: 3210,
-    dislikes: 15,
-    comments: [],
-    liked: false,
-    disliked: false
-  },
-  {
-    id: 4,
-    author: "Jason & Lucia Fanpage",
-    avatar: "JL",
-    time: "Ontem",
-    category: "PERSONAGENS",
-    type: "community",
-    text: "❤️ Jason e Lucia são o centro da história de GTA VI. Uma dupla que promete muitos momentos inesquecíveis em Leonida!",
-    image: images.lucia,
-    caption: "Lucia — captura do jogo.",
-    likes: 1950,
-    dislikes: 5,
-    comments: [],
-    liked: false,
-    disliked: false
-  },
-  {
-    id: 5,
-    author: "GTA VI Gameplay",
-    avatar: "GP",
-    time: "Hoje",
-    category: "GAMEPLAY",
-    type: "community",
-    text: "🏍️ Perseguições, motos e muita adrenalina! Quem já está explorando as ruas de Leonida? Compartilhe seu momento favorito de gameplay!",
-    image: images.gameplay,
-    caption: "Cena de ação de GTA VI — captura do jogo.",
-    likes: 4120,
-    dislikes: 19,
-    comments: [],
-    liked: false,
-    disliked: false
-  }
-];
+// EVENTOS DOS BOTÕES
+posts.addEventListener("click", function(event) {
 
-function loadPosts() {
-  try {
-    const saved = localStorage.getItem("gtaVIposts");
-    return saved ? JSON.parse(saved) : initialPosts;
-  } catch {
-    return initialPosts;
-  }
-}
+    const button = event.target;
 
-let posts = loadPosts();
+    // CURTIR
+    if (button.classList.contains("like-btn")) {
 
-function savePosts() {
-  localStorage.setItem("gtaVIposts", JSON.stringify(posts));
-}
+        const post = button.closest(".post");
+        const count = post.querySelector(".likes-count");
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
+        let likes = Number(count.dataset.likes || 0);
 
-  clearTimeout(window.toastTimer);
-  window.toastTimer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2400);
-}
+        if (button.classList.contains("liked")) {
+            likes--;
+            button.classList.remove("liked");
+            button.textContent = "👍 Curtir";
+        } else {
+            likes++;
+            button.classList.add("liked");
+            button.textContent = "👍 Curtido";
+        }
 
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  })[char]);
-}
+        count.dataset.likes = likes;
 
-function formatNumber(number) {
-  return new Intl.NumberFormat("pt-BR", {
-    notation: number >= 10000 ? "compact" : "standard",
-    maximumFractionDigits: 1
-  }).format(number);
-}
+        count.textContent = "👍 " + likes.toLocaleString("pt-BR") +
+            " curtidas";
+    }
 
-function getVisiblePosts() {
-  let visible = [...posts];
+    // ABRIR COMENTÁRIOS
+    if (button.classList.contains("comment-btn")) {
 
-  if (activeTab === "news") {
-    visible = visible.filter(post => post.type === "news");
-  }
+        const post = button.closest(".post");
+        const area = post.querySelector(".comment-area");
 
-  if (activeTab === "community") {
-    visible = visible.filter(post => post.type === "community");
-  }
+        area.classList.toggle("active");
+    }
 
-  const term = search.value.trim().toLowerCase();
+    // ENVIAR COMENTÁRIO
+    if (button.classList.contains("send-comment")) {
 
-  if (term) {
-    visible = visible.filter(post =>
-      (post.text + post.author + post.category)
-        .toLowerCase()
-        .includes(term)
-    );
-  }
+        const post = button.closest(".post");
+        const input = post.querySelector(".comment-area input");
+        const list = post.querySelector(".comment-list");
 
-  return visible;
-}
+        const message = input.value.trim();
 
-function renderFeed() {
-  const visible = getVisiblePosts();
+        if (!message) {
+            alert("Digite um comentário!");
+            return;
+        }
 
-  document.getElementById("emptyMessage").hidden = visible.length > 0;
+        const comment = document.createElement("div");
 
-  feed.innerHTML = visible.map(post => `
-    <article class="post" data-id="${post.id}">
+        comment.className = "comment-item";
 
-      <div class="post-header">
-        <div class="post-avatar">${escapeHTML(post.avatar)}</div>
-        <div>
-          <div class="post-author">${escapeHTML(post.author)}</div>
-          <div class="post-time">${escapeHTML(post.time)}</div>
-        </div>
-        <span class="post-category">${escapeHTML(post.category)}</span>
-      </div>
+        const name = document.createElement("strong");
+        name.textContent = "Você: ";
 
-      <div class="post-text">${escapeHTML(post.text)}</div>
+        const text = document.createElement("span");
+        text.textContent = message;
 
-      ${post.image ? `
-        <img
-          class="post-image"
-          src="${escapeHTML(post.image)}"
-          alt="Imagem real de Grand Theft Auto VI"
-          loading="lazy"
-          onerror="this.style.display='none'"
-        >
-        <div class="post-image-caption">${escapeHTML(post.caption || "Imagem de GTA VI")}</div>
-      ` : ""}
+        comment.append(name, text);
+        list.appendChild(comment);
 
-      <div class="post-counts">
-        <span>❤️ ${formatNumber(post.likes)} curtidas</span>
-        <span>${post.comments.length} comentários · 👎 ${formatNumber(post.dislikes)}</span>
-      </div>
+        input.value = "";
 
-      <div class="post-actions">
-        <button class="action-btn ${post.liked ? "liked" : ""}"
-          data-action="like" data-id="${post.id}">
-          ${post.liked ? "♥ Curtido" : "♡ Curtir"}
-        </button>
+        // ATUALIZAR CONTADOR
+        const counter = post.querySelector(".comments-count");
 
-        <button class="action-btn ${post.disliked ? "disliked" : ""}"
-          data-action="dislike" data-id="${post.id}">
-          👎 Descurtir
-        </button>
+        if (counter) {
+            const total = Number(counter.dataset.total || 0) + 1;
+            counter.dataset.total = total;
+            counter.textContent = total.toLocaleString("pt-BR") +
+                " comentários";
+        }
+    }
 
-        <button class="action-btn"
-          data-action="comments" data-id="${post.id}">
-          💬 Comentar
-        </button>
+    // COMPARTILHAR
+    if (button.classList.contains("share-btn")) {
 
-        <button class="action-btn"
-          data-action="share" data-id="${post.id}">
-          ↗ Compartilhar
-        </button>
-      </div>
+        const post = button.closest(".post");
+        const text = post.querySelector(".post-text");
 
-      <div class="comments" id="comments-${post.id}">
-        <div class="comment-list">
-          ${post.comments.map(comment => `
-            <div class="comment">
-              <b>${escapeHTML(comment.author)}:</b>
-              ${escapeHTML(comment.text)}
+        const message = text
+            ? text.innerText
+            : post.querySelector("p").innerText;
+
+        if (navigator.share) {
+
+            navigator.share({
+                title: "GTA VI News",
+                text: message
+            }).catch(() => {});
+
+        } else if (navigator.clipboard) {
+
+            navigator.clipboard.writeText(message)
+                .then(() => alert("Publicação copiada!"))
+                .catch(() => alert("Não foi possível copiar."));
+
+        } else {
+            alert("Compartilhamento indisponível.");
+        }
+    }
+
+});
+
+// CRIAR PUBLICAÇÃO
+publishBtn.addEventListener("click", function() {
+
+    const message = postInput.value.trim();
+
+    if (!message) {
+        alert("Escreva alguma notícia antes de publicar!");
+        return;
+    }
+
+    const article = document.createElement("article");
+
+    article.className = "post";
+
+    article.innerHTML = `
+        <div class="post-header">
+            <div class="page-avatar">G</div>
+
+            <div class="post-user">
+                <strong>GTA VI News</strong>
+                <small>Agora · 🌎 Público</small>
             </div>
-          `).join("")}
+
+            <button class="more-button">•••</button>
         </div>
 
-        <form class="comment-form" data-id="${post.id}">
-          <input name="comment" placeholder="Escreva um comentário..." maxlength="300" required>
-          <button type="submit">Enviar</button>
-        </form>
-      </div>
+        <div class="post-text">
+            <p></p>
+        </div>
 
-    </article>
-  `).join("");
-}
+        <div class="post-information">
+            <span class="likes-count" data-likes="0">👍 0 curtidas</span>
+            <span class="comments-count" data-total="0">0 comentários</span>
+        </div>
 
-function findPost(id) {
-  return posts.find(post => post.id === Number(id));
-}
+        <div class="post-buttons">
+            <button class="like-btn">👍 Curtir</button>
+            <button class="comment-btn">💬 Comentar</button>
+            <button class="share-btn">↗ Compartilhar</button>
+        </div>
 
-feed.addEventListener("click", async event => {
-  const button = event.target.closest("[data-action]");
-  if (!button) return;
+        <div class="comment-area">
+            <input type="text" placeholder="Escreva um comentário...">
+            <button class="send-comment">Enviar</button>
+            <div class="comment-list"></div>
+        </div>
+    `;
 
-  const id = button.dataset.id;
-  const action = button.dataset.action;
-  const post = findPost(id);
+    // INSERIR TEXTO COM SEGURANÇA
+    article.querySelector(".post-text p").textContent = message;
 
-  if (!post) return;
+    posts.prepend(article);
 
-  if (action === "like") {
-    if (post.liked) {
-      post.liked = false;
-      post.likes--;
-    } else {
-      post.liked = true;
-      post.likes++;
+    postInput.value = "";
 
-      if (post.disliked) {
-        post.disliked = false;
-        post.dislikes--;
-      }
-    }
-    savePosts();
-    renderFeed();
-  }
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 
-  if (action === "dislike") {
-    if (post.disliked) {
-      post.disliked = false;
-      post.dislikes--;
-    } else {
-      post.disliked = true;
-      post.dislikes++;
-
-      if (post.liked) {
-        post.liked = false;
-        post.likes--;
-      }
-    }
-    savePosts();
-    renderFeed();
-  }
-
-  if (action === "comments") {
-    const area = document.getElementById(`comments-${id}`);
-    area.classList.toggle("open");
-  }
-
-  if (action === "share") {
-    const shareData = {
-      title: "GTA VI Feed",
-      text: post.text,
-      url: window.location.href
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(
-          shareData.text + "\n" + shareData.url
-        );
-        showToast("Publicação copiada para compartilhar!");
-      }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        showToast("Não foi possível compartilhar.");
-      }
-    }
-  }
 });
 
-feed.addEventListener("submit", event => {
-  if (!event.target.matches(".comment-form")) return;
+// PESQUISAR PUBLICAÇÕES
+search.addEventListener("input", function() {
 
-  event.preventDefault();
+    const term = search.value.toLowerCase();
 
-  const form = event.target;
-  const id = form.dataset.id;
-  const input = form.elements.comment;
-  const text = input.value.trim();
+    document.querySelectorAll(".post").forEach(post => {
 
-  if (!text) return;
+        const content = post.innerText.toLowerCase();
 
-  const post = findPost(id);
-  if (!post) return;
+        post.style.display = content.includes(term)
+            ? "block"
+            : "none";
 
-  post.comments.push({
-    author: "Visitante",
-    text
-  });
+    });
 
-  savePosts();
-  renderFeed();
-
-  document.getElementById(`comments-${id}`).classList.add("open");
-  showToast("Comentário publicado!");
 });
-
-function setTab(tab) {
-  activeTab = tab;
-
-  const titles = {
-    home: "Explorar Leonida",
-    news: "Últimas notícias GTA VI",
-    community: "Gameplay e comunidade"
-  };
-
-  document.getElementById("feedTitle").textContent = titles[tab];
-
-  document.querySelectorAll("[data-tab]").forEach(button => {
-    button.classList.toggle("active", button.dataset.tab === tab);
-  });
-
-  renderFeed();
-}
-
-document.querySelectorAll("[data-tab]").forEach(button => {
-  button.addEventListener("click", () => {
-    setTab(button.dataset.tab);
-  });
-});
-
-search.addEventListener("input", renderFeed);
-
-document.getElementById("publishBtn").addEventListener("click", () => {
-  const input = document.getElementById("postText");
-  const text = input.value.trim();
-
-  if (!text) {
-    showToast("Escreva alguma coisa antes de publicar!");
-    return;
-  }
-
-  posts.unshift({
-    id: Date.now(),
-    author: "Visitante",
-    avatar: "VI",
-    time: "Agora",
-    category: "COMUNIDADE",
-    type: "community",
-    text,
-    image: null,
-    caption: "",
-    likes: 0,
-    dislikes: 0,
-    comments: [],
-    liked: false,
-    disliked: false
-  });
-
-  savePosts();
-  input.value = "";
-  setTab("home");
-  showToast("Sua publicação foi adicionada!");
-});
-
-const followBtn = document.getElementById("followBtn");
-const followStatus = document.getElementById("followStatus");
-
-let following = localStorage.getItem("gtaVIfollowing") === "true";
-
-function updateFollow() {
-  followBtn.textContent = following ? "✓ Seguindo" : "+ Seguir página";
-  followStatus.textContent = following
-    ? "Você está acompanhando esta página!"
-    : "Acompanhe as publicações";
-}
-
-followBtn.addEventListener("click", () => {
-  following = !following;
-  localStorage.setItem("gtaVIfollowing", following);
-  updateFollow();
-
-  showToast(following
-    ? "Você começou a seguir a página!"
-    : "Você deixou de seguir a página.");
-});
-
-updateFollow();
-renderFeed();
