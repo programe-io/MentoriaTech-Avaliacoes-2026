@@ -1,83 +1,129 @@
 
-function likePost(button) {
-    const post = button.closest(".post");
-    const likes = post.querySelector(".likes b");
+function like(button) {
+  const post = button.closest(".post");
+    const likes = post.querySelector(".likes");
+      const liked = button.classList.toggle("liked");
 
-    let count = Number(likes.textContent);
+        let count = Number(likes.dataset.count || 
+            likes.textContent.match(/\d+/)?.[0] || 0);
 
-    if (button.dataset.liked === "true") {
-        count--;
-        button.dataset.liked = "false";
-        button.textContent = "♡";
-    } else {
-        count++;
-        button.dataset.liked = "true";
-        button.textContent = "♥";
-        button.style.color = "#ff3155";
-    }
+              count += liked ? 1 : -1;
 
-    likes.textContent = count;
-}
+                likes.dataset.count = count;
+                  likes.textContent = count + " curtidas";
+                    button.textContent = liked ? "♥" : "♡";
+                    }
 
-function commentPost(button) {
-    const post = button.closest(".post");
-    const comments = post.querySelector(".comments");
+                    function savePost(button) {
+                      button.classList.toggle("saved");
+                        button.textContent =
+                            button.classList.contains("saved") ? "▣" : "♧";
+                            }
 
-    const message = prompt("Digite seu comentário:");
+                            function comment(button) {
+                              const post = button.closest(".post");
+                                const comments = post.querySelector(".comments");
+                                  const message = prompt("Escreva seu comentário:");
 
-    if (message && message.trim() !== "") {
-        const comment = document.createElement("p");
-        comment.textContent = "💬 Você: " + message;
-        comments.appendChild(comment);
-    }
-}
+                                    if (message && message.trim()) {
+                                        const comment = document.createElement("p");
+                                            comment.className = "caption";
+                                                comment.textContent = "Você: " + message;
 
-function addPost() {
-    const input = document.getElementById("imageInput");
+                                                    comments.before(comment);
+                                                        comments.textContent = "Ver comentários";
+                                                          }
+                                                          }
 
-    if (!input.files.length) {
-        alert("Escolha uma imagem primeiro!");
-        return;
-    }
+                                                          function publish() {
+                                                            const input = document.getElementById("postText");
+                                                              const author = document.getElementById("author").value;
+                                                                const text = input.value.trim();
 
-    const file = input.files[0];
+                                                                  if (!text) {
+                                                                      alert("Escreva alguma coisa!");
+                                                                          return;
+                                                                            }
 
-    if (!file.type.startsWith("image/")) {
-        alert("Selecione um arquivo de imagem!");
-        return;
-    }
+                                                                              const post = document.createElement("article");
+                                                                                post.className = "post";
 
-    const imageURL = URL.createObjectURL(file);
+                                                                                  const avatar = author.charAt(0).toUpperCase();
 
-    const post = document.createElement("article");
-    post.className = "post";
+                                                                                    const header = document.createElement("div");
+                                                                                      header.className = "post-header";
 
-    post.innerHTML = `
-        <div class="post-header">
-            <span>👤 SAGAZ</span>
-            <span>•••</span>
-        </div>
+                                                                                        const circle = document.createElement("div");
+                                                                                          circle.className = "avatar c1";
+                                                                                            circle.textContent = avatar;
 
-        <img class="post-image" alt="Nova publicação">
+                                                                                              const info = document.createElement("div");
+                                                                                                info.className = "user-info";
 
-        <div class="actions">
-            <button onclick="likePost(this)">♡</button>
-            <button onclick="commentPost(this)">💬</button>
-        </div>
+                                                                                                  const name = document.createElement("b");
+                                                                                                    name.textContent = author;
 
-        <p class="likes">❤️ <b>0</b> curtidas</p>
-        <p><b>SAGAZ</b> Nova publicação! 📸</p>
-        <div class="comments"></div>
-    `;
+                                                                                                      const time = document.createElement("small");
+                                                                                                        time.textContent = "Agora mesmo";
 
-    post.querySelector(".post-image").src = imageURL;
+                                                                                                          info.append(name, time);
 
-    const posts = document.getElementById("posts");
-    posts.prepend(post);
+                                                                                                            const dots = document.createElement("button");
+                                                                                                              dots.className = "dots";
+                                                                                                                dots.textContent = "•••";
 
-    document.getElementById("postCount").textContent =
-        posts.children.length;
+                                                                                                                  header.append(circle, info, dots);
 
-    input.value = "";
-    alert("Imagem publicada com sucesso!");
-}
+                                                                                                                    const content = document.createElement("div");
+                                                                                                                      content.className = "text-post purple";
+
+                                                                                                                        const title = document.createElement("span");
+                                                                                                                          title.textContent = "NOVA PUBLICAÇÃO";
+
+                                                                                                                            const message = document.createElement("h2");
+                                                                                                                              message.textContent = text;
+
+                                                                                                                                const footer = document.createElement("small");
+                                                                                                                                  footer.textContent = "Compartilhado agora ✨";
+
+                                                                                                                                    content.append(title, message, footer);
+
+                                                                                                                                      const actions = document.createElement("div");
+                                                                                                                                        actions.className = "post-actions";
+                                                                                                                                          actions.innerHTML = `
+                                                                                                                                              <button class="like" onclick="like(this)">♡</button>
+                                                                                                                                                  <button onclick="comment(this)">♧</button>
+                                                                                                                                                      <button>↗</button>
+                                                                                                                                                          <button class="save" onclick="savePost(this)">♧</button>
+                                                                                                                                                            `;
+
+                                                                                                                                                              const likes = document.createElement("p");
+                                                                                                                                                                likes.className = "likes";
+                                                                                                                                                                  likes.textContent = "0 curtidas";
+                                                                                                                                                                    likes.dataset.count = "0";
+
+                                                                                                                                                                      const caption = document.createElement("p");
+                                                                                                                                                                        caption.className = "caption";
+                                                                                                                                                                          caption.textContent = author + " " + text;
+
+                                                                                                                                                                            const comments = document.createElement("p");
+                                                                                                                                                                              comments.className = "comments";
+                                                                                                                                                                                comments.textContent = "Seja o primeiro a comentar";
+
+                                                                                                                                                                                  post.append(header, content, actions, likes, caption, comments);
+
+                                                                                                                                                                                    document.getElementById("feed").prepend(post);
+                                                                                                                                                                                      input.value = "";
+                                                                                                                                                                                        post.scrollIntoView({behavior: "smooth"});
+                                                                                                                                                                                        }
+
+                                                                                                                                                                                        function searchPosts() {
+                                                                                                                                                                                          const value = document.getElementById("search").value.toLowerCase();
+
+                                                                                                                                                                                            document.querySelectorAll(".post").forEach(post => {
+                                                                                                                                                                                                post.style.display = post.textContent.toLowerCase().includes(value)
+                                                                                                                                                                                                      ? "block"
+                                                                                                                                                                                                            : "none";
+                                                                                                                                                                                                              });
+                                                                                                                                                                                                              }
+                                                                                                                                                                                                              
