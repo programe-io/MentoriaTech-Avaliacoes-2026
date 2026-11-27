@@ -1,115 +1,78 @@
 
-// SISTEMA DE LESÕES NO FUTEBOL ⚽
+// FACEBOOK
+ - REDE SOCIAL ESPORTIVA
 
-// Lista de jogadores
-let jogadores = [];
-
-// Registrar uma lesão
-function registrarLesao(nome, tipo, regiao, sintomas) {
-
-    let lesao = {
-        jogador: nome,
-        tipo: tipo,
-        regiao: regiao,
-        sintomas: sintomas,
-        data: new Date().toLocaleDateString("pt-BR")
-    };
-
-    jogadores.push(lesao);
-
-    console.log("🏥 LESÃO REGISTRADA!");
-    console.log(lesao);
+// CURTIR PUBLICAÇÕES
+function curtir(botao) {
+    if (botao.innerHTML === "👍 Curtir") {
+        botao.innerHTML = "❤️ Curtido";
+        botao.style.background = "#e91e63";
+    } else {
+        botao.innerHTML = "👍 Curtir";
+        botao.style.background = "#1877f2";
+    }
 }
 
-// Mostrar todas as lesões
-function mostrarLesoes() {
+// PUBLICAR CONTEÚDO
+function publicar() {
+    let texto = document.getElementById("publicacao").value;
 
-    console.log("===== RELATÓRIO DE LESÕES =====");
-
-    if (jogadores.length === 0) {
-        console.log("Nenhuma lesão registrada.");
+    if (texto.trim() === "") {
+        alert("Digite alguma coisa antes de publicar!");
         return;
     }
 
-    jogadores.forEach((lesao, indice) => {
+    let novaPublicacao = document.createElement("article");
 
-        console.log("Jogador: " + lesao.jogador);
-        console.log("Tipo: " + lesao.tipo);
-        console.log("Região: " + lesao.regiao);
-        console.log("Sintomas: " + lesao.sintomas);
-        console.log("Data: " + lesao.data);
+    novaPublicacao.className = "post";
 
-        console.log("----------------------");
+    novaPublicacao.innerHTML = `
+        <h3>👤 Usuário SportBook</h3>
+        <p>${texto.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+        <button onclick="curtir(this)">👍 Curtir</button>
+        <button onclick="comentar(this)">💬 Comentar</button>
+    `;
+
+    document.getElementById("feed").prepend(novaPublicacao);
+
+    document.getElementById("publicacao").value = "";
+
+    alert("Publicação realizada com sucesso!");
+}
+
+// COMENTAR PUBLICAÇÕES
+function comentar(botao) {
+    let comentario = prompt("Escreva seu comentário:");
+
+    if (comentario && comentario.trim() !== "") {
+        let novoComentario = document.createElement("p");
+
+        novoComentario.textContent = "💬 " + comentario;
+
+        botao.parentElement.appendChild(novoComentario);
+    }
+}
+
+// PESQUISAR ESPORTES
+function pesquisar() {
+    let pesquisa = document.getElementById("pesquisa")
+        .value.toLowerCase();
+
+    let publicacoes = document.querySelectorAll(".post");
+
+    publicacoes.forEach(function(post) {
+        let conteudo = post.innerText.toLowerCase();
+
+        if (conteudo.includes(pesquisa)) {
+            post.style.display = "block";
+        } else {
+            post.style.display = "none";
+        }
     });
 }
 
-// Contar lesões
-function contarLesoes() {
-
-    console.log(
-        "Total de lesões registradas: " + jogadores.length
-    );
-
-}
-
-// Pesquisar jogador
-function pesquisarJogador(nome) {
-
-    let resultado = jogadores.filter(lesao =>
-        lesao.jogador.toLowerCase() === nome.toLowerCase()
-    );
-
-    if (resultado.length > 0) {
-        console.log("Lesões encontradas:", resultado);
-    } else {
-        console.log("Jogador não encontrado!");
-    }
-
-}
-
-// Orientações educativas de prevenção
-function prevenirLesoes() {
-
-    console.log("===== PREVENÇÃO DE LESÕES =====");
-
-    console.log("1. Fazer aquecimento antes dos jogos.");
-    console.log("2. Fortalecer os músculos.");
-    console.log("3. Manter boa hidratação.");
-    console.log("4. Respeitar o descanso.");
-    console.log("5. Utilizar equipamentos adequados.");
-    console.log("6. Evitar excesso de treinamento.");
-
-}
-
-// EXEMPLOS DE REGISTROS
-
-registrarLesao(
-    "Carlos",
-    "Lesão muscular",
-    "Coxa",
-    "Dor e dificuldade de movimentação"
-);
-
-registrarLesao(
-    "Pedro",
-    "Entorse",
-    "Tornozelo",
-    "Inchaço e dor"
-);
-
-registrarLesao(
-    "Lucas",
-    "Contusão",
-    "Joelho",
-    "Dor após impacto"
-);
-
-// EXECUTAR FUNÇÕES
-
-mostrarLesoes();
-
-contarLesoes();
-
-pesquisarJogador("Carlos");
-
-prevenirLesoes();
+// MENSAGEM DE BOAS-VINDAS
+window.addEventListener("load", function() {
+    console.log("Bem-vindo ao SportBook!");
+    console.log("Sua rede social esportiva está funcionando!");
+});
