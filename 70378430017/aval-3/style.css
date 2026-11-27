@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Anamnese</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h1>Ficha de Anamnese</h1>
+    <p>Cadastro de pacientes e controle de IMC</p>
+</header>
+
+<main class="container">
+
+    <section class="resumo">
+        <div class="card">
+            <h3>Total de pacientes</h3>
+            <p id="totalPessoas">0</p>
+        </div>
+
+        <div class="card">
+            <h3>IMC médio</h3>
+            <p id="imcMedio">0,0</p>
+        </div>
+
+        <div class="card">
+            <h3>Cadastros realizados</h3>
+            <p id="totalCadastros">0</p>
+        </div>
+    </section>
+
+    <section class="formulario">
+        <h2>Cadastro do paciente</h2>
+
+        <form id="formPessoa">
+
+            <label for="nome">Nome completo:</label>
+            <input type="text" id="nome"
+                placeholder="Nome do paciente" required>
+
+            <label for="idade">Idade:</label>
+            <input type="number" id="idade" required>
+
+            <label for="altura">Altura (metros):</label>
+            <input type="number" id="altura"
+                step="0.01" required>
+
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso"
+                step="0.1" required>
+
+            <p id="erro" class="erro" hidden></p>
+
+            <button type="submit">Salvar paciente</button>
+        </form>
+    </section>
+
+    <section class="tabela-section">
+        <h2>Pacientes cadastrados</h2>
+
+        <input type="text" id="pesquisa"
+            placeholder="Pesquisar paciente...">
+
+        <div class="tabela-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Altura</th>
+                        <th>Peso</th>
+                        <th>IMC</th>
+                        <th>Classificação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaPessoas"></tbody>
+            </table>
+        </div>
+
+        <p id="mensagemVazia" class="mensagem-vazia">
+            Nenhum paciente cadastrado.
+        </p>
+    </section>
+
+    <section class="aviso">
+        <p>
+            O IMC é um indicador de triagem e não substitui
+            uma avaliação profissional.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>Projeto Ficha de Anamnese - Parte 2</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
