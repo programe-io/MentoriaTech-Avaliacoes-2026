@@ -1,4 +1,4 @@
-let produtos=[]{
+let produtos=[]
     function validarProduto(descricao,quantidade,valor);
         if(descricao.lenght<5){
             throw new Error("Descricao deve ter no mínimo cinco caracteres");
@@ -9,7 +9,7 @@ let produtos=[]{
         if(valor<0){
             throw new Error("Valor deve ser maior igual a zero");
         }
-    }
+    
     function cadastrarProdutos(descricao,quantidade,valor){
         validarProduto(descricao,quantidade, valor);
         let novoProduto={
@@ -39,7 +39,7 @@ let produtos=[]{
         if(novaQuantidade<1){
             throw new Error("Quantidade deve ser maior que zero");
         }
-        const produto=produtos,find(prod=>prod.codigo===codigoProduto);
+        const produto=produtos.find(prod=>prod.codigo===codigoProduto);
         if(produto){
             produto.quantidade+=novoQuantidade;
         }
