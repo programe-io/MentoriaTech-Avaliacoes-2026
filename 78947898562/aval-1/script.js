@@ -1,149 +1,693 @@
-const seriesPadrao = [
-        {
-                id: 1,
-                        titulo: "The Walking Dead",
-                                categoria: "Terror",
-                                        nota: "⭐ 9.5/10",
-                                                imagem: "img/twd.gif",
-                                                        resumo: "Sobreviventes lutam para manter a humanidade em um mundo dominado por zumbis e grupos rivais implacáveis.",
-                                                                conteudo: "Liderados inicialmente por Rick Grimes, os sobreviventes de The Walking Dead descobrem rápido que os mortos-vivos são apenas parte do problema. Com vilões icônicos como Negan e o Governador, a série entrega tensão constante e cenas de ação inesquecíveis."
-                                                                    },
-                                                                        {
-                                                                                id: 2,
-                                                                                        titulo: "Cobra Kai",
-                                                                                                categoria: "Ação",
-                                                                                                        nota: "⭐ 9.3/10",
-                                                                                                                imagem: "img/cobrakai.gif",
-                                                                                                                        resumo: "Johnny Lawrence reabre o dojo Cobra Kai e reacende a rivalidade clássica com Daniel LaRusso décadas depois.",
-                                                                                                                                conteudo: "O que parecia apenas uma continuação nostálgica de Karatê Kid se tornou uma das séries mais empolgantes da atualidade. Cobra Kai acerta em cheio ao mostrar o ponto de vista do antigo vilão, trazendo lutas coreografadas e muito humor."
-                                                                                                                                    },
-                                                                                                                                        {
-                                                                                                                                                id: 3,
-                                                                                                                                                        titulo: "Wandinha",
-                                                                                                                                                                categoria: "Mistério",
-                                                                                                                                                                        nota: "⭐ 9.1/10",
-                                                                                                                                                                                imagem: "img/wandinha.gif",
-                                                                                                                                                                                        resumo: "Na Escola Nunca Mais, Wandinha Addams tenta dominar seus poderes psíquicos enquanto investiga assassinatos.",
-                                                                                                                                                                                                conteudo: "Com seu humor ácido, visual gótico e a icônica cena da dança que viralizou no mundo todo, Wandinha conquistou o público. A investigação sobrenatural na Escola Nunca Mais mistura mistério adolescente, monstros e os segredos da família Addams."
-                                                                                                                                                                                                    }
-                                                                                                                                                                                                    ];
-
-                                                                                                                                                                                                    let series = JSON.parse(localStorage.getItem('minhasSeriesBlogTWD')) || seriesPadrao;
-
-                                                                                                                                                                                                    const listaPosts = document.getElementById('lista-posts');
-                                                                                                                                                                                                    const campoBusca = document.getElementById('campo-busca');
-                                                                                                                                                                                                    const botoesFiltro = document.querySelectorAll('.btn-filtro');
-
-                                                                                                                                                                                                    const modalLeitura = document.getElementById('modal-leitura');
-                                                                                                                                                                                                    const fecharModal = document.getElementById('fechar-modal');
-                                                                                                                                                                                                    const modalCadastro = document.getElementById('modal-cadastro');
-                                                                                                                                                                                                    const btnAbrirCadastro = document.getElementById('btn-abrir-cadastro');
-                                                                                                                                                                                                    const fecharCadastro = document.getElementById('fechar-cadastro');
-                                                                                                                                                                                                    const formNovaSerie = document.getElementById('form-nova-serie');
-
-                                                                                                                                                                                                    let categoriaAtual = 'Todas';
-
-                                                                                                                                                                                                    function renderizarSeries() {
-                                                                                                                                                                                                        const termoBusca = campoBusca.value.toLowerCase();
-                                                                                                                                                                                                            listaPosts.innerHTML = '';
-
-                                                                                                                                                                                                                const filtradas = series.filter(serie => {
-                                                                                                                                                                                                                        const bateCategoria = categoriaAtual === 'Todas' || serie.categoria === categoriaAtual;
-                                                                                                                                                                                                                                const bateTexto = serie.titulo.toLowerCase().includes(termoBusca) || 
-                                                                                                                                                                                                                                                          serie.resumo.toLowerCase().includes(termoBusca);
-                                                                                                                                                                                                                                                                  return bateCategoria && bateTexto;
-                                                                                                                                                                                                                                                                      });
-
-                                                                                                                                                                                                                                                                          if (filtradas.length === 0) {
-                                                                                                                                                                                                                                                                                  listaPosts.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Nenhuma série encontrada.</p>';
-                                                                                                                                                                                                                                                                                          return;
-                                                                                                                                                                                                                                                                                              }
-
-                                                                                                                                                                                                                                                                                                  filtradas.forEach(serie => {
-                                                                                                                                                                                                                                                                                                          const card = document.createElement('article');
-                                                                                                                                                                                                                                                                                                                  card.classList.add('card-post');
-
-                                                                                                                                                                                                                                                                                                                          const fallbackImg = `https://placehold.co{encodeURIComponent(serie.titulo)}`;
-
-                                                                                                                                                                                                                                                                                                                                  card.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                              <img src="${serie.imagem}" alt="Cena ${serie.titulo}" class="card-img" onerror="this.onerror=null; this.src='${fallbackImg}';">
-                                                                                                                                                                                                                                                                                                                                                          <div class="card-corpo">
-                                                                                                                                                                                                                                                                                                                                                                          <div>
-                                                                                                                                                                                                                                                                                                                                                                                              <div class="card-topo">
-                                                                                                                                                                                                                                                                                                                                                                                                                      <span class="tag">${serie.categoria}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                              <span class="nota">${serie.nota}</span>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      <h2>${serie.titulo}</h2>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <p>${serie.resumo}</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <button class="btn-ler" onclick="abrirSerie(${serie.id})">Ver cena e resenha</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              `;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      listaPosts.appendChild(card);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          function abrirSerie(id) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              const serie = series.find(item => item.id === id);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  if (serie) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          const modalImg = document.getElementById('modal-img');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  const fallbackImg = `https://placehold.co{encodeURIComponent(serie.titulo)}`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  modalImg.src = serie.imagem;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          modalImg.onerror = function() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      this.onerror = null;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  this.src = fallbackImg;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          };
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  document.getElementById('modal-categoria').innerText = serie.categoria;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          document.getElementById('modal-nota').innerText = " • " + serie.nota;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  document.getElementById('modal-titulo').innerText = serie.titulo;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          document.getElementById('modal-texto').innerText = serie.conteudo;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  modalLeitura.style.display = 'flex';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      formNovaSerie.addEventListener('submit', (e) => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          e.preventDefault();
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              const novaSerie = {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      id: Date.now(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              titulo: document.getElementById('novo-titulo').value,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      categoria: document.getElementById('nova-categoria').value,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              nota: "⭐ " + document.getElementById('nova-nota').value + "/10",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      imagem: document.getElementById('nova-imagem').value,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              resumo: document.getElementById('novo-resumo').value,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      conteudo: document.getElementById('novo-conteudo').value
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          };
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              series.unshift(novaSerie);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  localStorage.setItem('minhasSeriesBlogTWD', JSON.stringify(series));
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          formNovaSerie.reset();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              modalCadastro.style.display = 'none';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  renderizarSeries();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  botoesFiltro.forEach(botao => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      botao.addEventListener('click', () => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              document.querySelector('.btn-filtro.ativo').classList.remove('ativo');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      botao.classList.add('ativo');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              categoriaAtual = botao.getAttribute('data-categoria');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      renderizarSeries();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          });
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          campoBusca.addEventListener('input', renderizarSeries);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          btnAbrirCadastro.onclick = () => modalCadastro.style.display = 'flex';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          fecharCadastro.onclick = () => modalCadastro.style.display = 'none';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          fecharModal.onclick = () => modalLeitura.style.display = 'none';
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          window.onclick = (e) => {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              if (e.target === modalLeitura) modalLeitura.style.display = 'none';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  if (e.target === modalCadastro) modalCadastro.style.display = 'none';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  };
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  renderizarSeries();
-]
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Clone</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!--Ícones -->
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-white text-gray-900">
+<div class="flex min-h-screen">
+<!--MENU LATERAL-->
+<aside class="hidden md:flex fixed left-0 top-0 h-screen w-64 border-r p-6 flex-col">
+<h1 class="text-3xl font-bold italic mb-10">
+Instagram
+</h1>
+<nav class="space-y-6">
+<a href="#" class="flex items-center gap-4 font-semibold">
+<i data-lucide="house"></i>
+Página inicial
+</a> <a href="#" class="flex items-center gap-4">
+<i data-lucide="search"></i>
+Pesquisa
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="compass"></i>
+Explorar
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="clapperboard"></i>
+Reels
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="send"></i>
+Mensagens
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="heart"></i>
+Notificações
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="plus-square"></i>
+Criarpublicação
+</a>
+<a href="#" class="flex items-center gap-4">
+<img
+src="https://i.pravatar.cc/40?img=12" class="w-7 h-7 rounded-full"
+>
+Perfil
+</a>
+</nav>
+<div class="mt-auto">
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="menu"></i>
+Mais
+</a>
+</div>
+</aside>
+<!-- CONTEÚDO PRINCIPAL -->
+<main class="w-full md:ml-64">
+<div class="max-w-5xl mx-auto flex justify-center gap-10 p-4">
+<!-- FEED -->
+<section class="w-full max-w-xl">
+<!-- STORIES -->
+<div class="flex gap-4 overflow-x-auto py-5 mb-5">
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=12"
+class="w-16 h-16 rounded-full border-2 border-white" </div>
+<p class="text-xs mt-2">Seu story</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=5"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div>
+<p class="text-xs mt-2">ana_silva</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=8"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div>
+<p class="text-xs mt-2">joaopedro</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=9"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div> <p class="text-xs mt-2">mariana</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=15"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div>
+<p class="text-xs mt-2">pedro</p>
+</div>
+</div>
+<!-- PUBLICAÇÃO -->
+<article class="border-b pb-5 mb-6">
+<!-- CABEÇALHO -->
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=5"
+class="w-10 h-10 rounded-full"
+>
+<div>
+<p class="font-semibold text-sm">
+ana_silva
+</p>
+<p class="text-xs text-gray-500"> São Paulo, Brasil
+</p>
+</div>
+</div>
+<button>
+<i data-lucide="more-horizontal"></i>
+</button>
+</div>
+<!--IMAGEM-->
+<img
+src="https://images.unsplash.com/photo-1500530855697-
+b586d89ba3ee"
+class="w-full aspect-square object-cover rounded-sm"
+alt="Paisagem natural"
+>
+<!-- AÇÕES -->
+<div class="flex items-center justify-between mt-3">
+<div class="flex gap-4">
+<button onclick="curtir(this)">
+<idata-lucide="heart"
+class="w-7 h-7"></i>
+</button>
+<button>
+<i data-lucide="message-circle"
+class="w-7 h-7"></i>
+</button> <button>
+<i data-lucide="send"
+class="w-7 h-7"></i>
+</button>
+</div>
+<button>
+<idata-lucide="bookmark"
+class="w-7 h-7"></i>
+</button>
+</div>
+<!--LEGENDA -->
+<p class="font-semibold text-sm mt-3">
+<span class="likes">1.245</span> curtidas
+</p>
+<p class="text-sm mt-2">
+<strong>ana_silva</strong>
+Um dia incrível para agradecer pela vida!
+</p>
+<p class="text-sm text-gray-500 mt-2">
+Ver todos os 32 comentários
+</p>
+<input
+type="text"
+placeholder="Adicione um comentário..."
+class="w-full mt-3 text-sm outline-none" >
+</article>
+<!-- SEGUNDA PUBLICAÇÃO -->
+<article class="border-b pb-5 mb-6">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=8"
+class="w-10 h-10 rounded-full"
+>
+<p class="font-semibold text-sm">
+joaopedro
+</p>
+</div>
+<button>
+<i data-lucide="more-horizontal"></i>
+</button>
+</div>
+<img
+src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e"
+class="w-full aspect-square object-cover rounded-sm"
+alt="Montanhas enatureza"
+> <div class="flex justify-between mt-3">
+<div class="flex gap-4">
+<button onclick="curtir(this)">
+<idata-lucide="heart"
+class="w-7 h-7"></i>
+</button>
+<button>
+<i data-lucide="message-circle"
+class="w-7 h-7"></i>
+</button>
+<button>
+<i data-lucide="send"
+class="w-7 h-7"></i>
+</button>
+</div>
+<button>
+<idata-lucide="bookmark"
+class="w-7 h-7"></i>
+</button>
+</div>
+<p class="font-semibold text-sm mt-3">
+<span class="likes">876</span> curtidas
+</p> <p class="text-sm mt-2">
+<strong>joaopedro</strong>
+A natureza sempre nos surpreende.
+</p>
+</article>
+</section>
+<!-- SUGESTÕES -->
+<aside class="hidden lg:block w-80 pt-8">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/50?img=12"
+class="w-12 h-12 rounded-full"
+>
+<div>
+<p class="font-semibold text-sm">
+meu_perfil
+</p>
+<p class="text-sm text-gray-500">
+MychellRibeiro
+</p>
+</div>
+</div>
+<button class="text-blue-500 text-xs font-semibold"> Mudar
+</button>
+</div>
+<div class="flex justify-between mb-5">
+<p class="text-sm font-semibold text-gray-500">
+Sugestões para você
+</p>
+<button class="text-xs font-semibold">
+Vertudo
+</button>
+</div>
+<!-- SUGESTÃO 1 -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=20"
+class="w-10 h-10 rounded-full"
+>
+<div>
+<p class="text-sm font-semibold">
+carlos_santos
+</p>
+<p class="text-xs text-gray-500">
+Seguido por ana_silva
+</p>
+</div> </div>
+<button class="text-blue-500 text-xs font-semibold">
+Seguir
+</button>
+</div>
+<!-- SUGESTÃO 2 -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=25"
+class="w-10 h-10 rounded-full"
+>
+<div>
+<p class="text-sm font-semibold">
+maria_oliveira
+</p>
+<p class="text-xs text-gray-500">
+Sugestão para você
+</p>
+</div>
+</div>
+<button class="text-blue-500 text-xs font-semibold">
+Seguir
+</button> </div>
+<p class="text-xs text-gray-400 mt-10 leading-6">
+Sobre · Ajuda ·Imprensa · API· Carreiras ·
+Privacidade · Termos
+</p>
+<p class="text-xs text-gray-400 mt-4">
+© 2026 INSTAGRAM CLONE
+</p>
+</aside>
+</div>
+</main>
+</div>
+<!--MENUMOBILE-->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t flex justify-
+aroundp-4">
+<i data-lucide="house"></i>
+<i data-lucide="search"></i>
+<i data-lucide="plus-square"></i>
+<i data-lucide="clapperboard"></i>
+<img
+src="https://i.pravatar.cc/40?img=12"
+class="w-6 h-6 rounded-full"
+> </nav>
+<script>
+//Inicializar ícones
+lucide.createIcons();
+// Função de curtir
+function curtir(botao) {
+const icone = botao.querySelector("svg");
+const artigo = botao.closest("article");
+const contador = artigo.querySelector(".likes");
+if (botao.classList.contains("curtido")) {
+botao.classList.remove("curtido");
+icone.style.fill = "none";
+icone.style.color = "black";
+let likes = parseInt(
+contador.textContent.replace(".", "")
+);
+likes--;
+contador.textContent =
+likes.toLocaleString("pt-BR");
+} else {
+botao.classList.add("curtido"); icone.style.fill = "red";
+icone.style.color = "red";
+let likes = parseInt(
+contador.textContent.replace(".", "")
+);
+likes++;
+contador.textContent =
+likes.toLocaleString("pt-BR");
+}
+}
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram Clone</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!--Ícones -->
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-white text-gray-900">
+<div class="flex min-h-screen">
+<!--MENU LATERAL-->
+<aside class="hidden md:flex fixed left-0 top-0 h-screen w-64 border-r p-6 flex-col">
+<h1 class="text-3xl font-bold italic mb-10">
+Instagram
+</h1>
+<nav class="space-y-6">
+<a href="#" class="flex items-center gap-4 font-semibold">
+<i data-lucide="house"></i>
+Página inicial
+</a> <a href="#" class="flex items-center gap-4">
+<i data-lucide="search"></i>
+Pesquisa
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="compass"></i>
+Explorar
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="clapperboard"></i>
+Reels
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="send"></i>
+Mensagens
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="heart"></i>
+Notificações
+</a>
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="plus-square"></i>
+Criarpublicação
+</a>
+<a href="#" class="flex items-center gap-4">
+<img
+src="https://i.pravatar.cc/40?img=12" class="w-7 h-7 rounded-full"
+>
+Perfil
+</a>
+</nav>
+<div class="mt-auto">
+<a href="#" class="flex items-center gap-4">
+<i data-lucide="menu"></i>
+Mais
+</a>
+</div>
+</aside>
+<!-- CONTEÚDO PRINCIPAL -->
+<main class="w-full md:ml-64">
+<div class="max-w-5xl mx-auto flex justify-center gap-10 p-4">
+<!-- FEED -->
+<section class="w-full max-w-xl">
+<!-- STORIES -->
+<div class="flex gap-4 overflow-x-auto py-5 mb-5">
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=12"
+class="w-16 h-16 rounded-full border-2 border-white" </div>
+<p class="text-xs mt-2">Seu story</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=5"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div>
+<p class="text-xs mt-2">ana_silva</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=8"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div>
+<p class="text-xs mt-2">joaopedro</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=9"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div> <p class="text-xs mt-2">mariana</p>
+</div>
+<div class="text-center flex-shrink-0">
+<div class="p-1 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500
+to-purple-600">
+<img
+src="https://i.pravatar.cc/80?img=15"
+class="w-16 h-16 rounded-full border-2 border-white"
+>
+</div>
+<p class="text-xs mt-2">pedro</p>
+</div>
+</div>
+<!-- PUBLICAÇÃO -->
+<article class="border-b pb-5 mb-6">
+<!-- CABEÇALHO -->
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=5"
+class="w-10 h-10 rounded-full"
+>
+<div>
+<p class="font-semibold text-sm">
+ana_silva
+</p>
+<p class="text-xs text-gray-500"> São Paulo, Brasil
+</p>
+</div>
+</div>
+<button>
+<i data-lucide="more-horizontal"></i>
+</button>
+</div>
+<!--IMAGEM-->
+<img
+src="https://images.unsplash.com/photo-1500530855697-
+b586d89ba3ee"
+class="w-full aspect-square object-cover rounded-sm"
+alt="Paisagem natural"
+>
+<!-- AÇÕES -->
+<div class="flex items-center justify-between mt-3">
+<div class="flex gap-4">
+<button onclick="curtir(this)">
+<idata-lucide="heart"
+class="w-7 h-7"></i>
+</button>
+<button>
+<i data-lucide="message-circle"
+class="w-7 h-7"></i>
+</button> <button>
+<i data-lucide="send"
+class="w-7 h-7"></i>
+</button>
+</div>
+<button>
+<idata-lucide="bookmark"
+class="w-7 h-7"></i>
+</button>
+</div>
+<!--LEGENDA -->
+<p class="font-semibold text-sm mt-3">
+<span class="likes">1.245</span> curtidas
+</p>
+<p class="text-sm mt-2">
+<strong>ana_silva</strong>
+Um dia incrível para agradecer pela vida!
+</p>
+<p class="text-sm text-gray-500 mt-2">
+Ver todos os 32 comentários
+</p>
+<input
+type="text"
+placeholder="Adicione um comentário..."
+class="w-full mt-3 text-sm outline-none" >
+</article>
+<!-- SEGUNDA PUBLICAÇÃO -->
+<article class="border-b pb-5 mb-6">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=8"
+class="w-10 h-10 rounded-full"
+>
+<p class="font-semibold text-sm">
+joaopedro
+</p>
+</div>
+<button>
+<i data-lucide="more-horizontal"></i>
+</button>
+</div>
+<img
+src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e"
+class="w-full aspect-square object-cover rounded-sm"
+alt="Montanhas enatureza"
+> <div class="flex justify-between mt-3">
+<div class="flex gap-4">
+<button onclick="curtir(this)">
+<idata-lucide="heart"
+class="w-7 h-7"></i>
+</button>
+<button>
+<i data-lucide="message-circle"
+class="w-7 h-7"></i>
+</button>
+<button>
+<i data-lucide="send"
+class="w-7 h-7"></i>
+</button>
+</div>
+<button>
+<idata-lucide="bookmark"
+class="w-7 h-7"></i>
+</button>
+</div>
+<p class="font-semibold text-sm mt-3">
+<span class="likes">876</span> curtidas
+</p> <p class="text-sm mt-2">
+<strong>joaopedro</strong>
+A natureza sempre nos surpreende.
+</p>
+</article>
+</section>
+<!-- SUGESTÕES -->
+<aside class="hidden lg:block w-80 pt-8">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/50?img=12"
+class="w-12 h-12 rounded-full"
+>
+<div>
+<p class="font-semibold text-sm">
+meu_perfil
+</p>
+<p class="text-sm text-gray-500">
+MychellRibeiro
+</p>
+</div>
+</div>
+<button class="text-blue-500 text-xs font-semibold"> Mudar
+</button>
+</div>
+<div class="flex justify-between mb-5">
+<p class="text-sm font-semibold text-gray-500">
+Sugestões para você
+</p>
+<button class="text-xs font-semibold">
+Vertudo
+</button>
+</div>
+<!-- SUGESTÃO 1 -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=20"
+class="w-10 h-10 rounded-full"
+>
+<div>
+<p class="text-sm font-semibold">
+carlos_santos
+</p>
+<p class="text-xs text-gray-500">
+Seguido por ana_silva
+</p>
+</div> </div>
+<button class="text-blue-500 text-xs font-semibold">
+Seguir
+</button>
+</div>
+<!-- SUGESTÃO 2 -->
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<img
+src="https://i.pravatar.cc/40?img=25"
+class="w-10 h-10 rounded-full"
+>
+<div>
+<p class="text-sm font-semibold">
+maria_oliveira
+</p>
+<p class="text-xs text-gray-500">
+Sugestão para você
+</p>
+</div>
+</div>
+<button class="text-blue-500 text-xs font-semibold">
+Seguir
+</button> </div>
+<p class="text-xs text-gray-400 mt-10 leading-6">
+Sobre · Ajuda ·Imprensa · API· Carreiras ·
+Privacidade · Termos
+</p>
+<p class="text-xs text-gray-400 mt-4">
+© 2026 INSTAGRAM CLONE
+</p>
+</aside>
+</div>
+</main>
+</div>
+<!--MENUMOBILE-->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t flex justify-
+aroundp-4">
+<i data-lucide="house"></i>
+<i data-lucide="search"></i>
+<i data-lucide="plus-square"></i>
+<i data-lucide="clapperboard"></i>
+<img
+src="https://i.pravatar.cc/40?img=12"
+class="w-6 h-6 rounded-full"
+> </nav>
+<script>
+//Inicializar ícones
+lucide.createIcons();
+// Função de curtir
+function curtir(botao) {
+const icone = botao.querySelector("svg");
+const artigo = botao.closest("article");
+const contador = artigo.querySelector(".likes");
+if (botao.classList.contains("curtido")) {
+botao.classList.remove("curtido");
+icone.style.fill = "none";
+icone.style.color = "black";
+let likes = parseInt(
+contador.textContent.replace(".", "")
+);
+likes--;
+contador.textContent =
+likes.toLocaleString("pt-BR");
+} else {
+botao.classList.add("curtido"); icone.style.fill = "red";
+icone.style.color = "red";
+let likes = parseInt(
+contador.textContent.replace(".", "")
+);
+likes++;
+contador.textContent =
+likes.toLocaleString("pt-BR");
+}
+}
+</script>
+</body>
+</html>
