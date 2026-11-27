@@ -1,408 +1,223 @@
+const form = document.getElementById("formTarefa");
+const campoTitulo = document.getElementById("titulo");
+const campoPrioridade = document.getElementById("prioridade");
+const listaTarefas = document.getElementById("listaTarefas");
+const mensagemVazia = document.getElementById("mensagemVazia");
+const contador = document.getElementById("contador");
+const btnSalvar = document.getElementById("btnSalvar");
+const botoesFiltro = document.querySelectorAll(".filtro");
 
-/* =========================================
-   HALA MADRID - JAVASCRIPT
-   HISTÓRIA DO REAL MADRID
-========================================= */
+// Carrega as tarefas salvas
+let tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
 
-document.addEventListener("DOMContentLoaded", () => {
+let filtroAtual = "todas";
+let tarefaEditando = null;
 
-    console.log("👑 HALA MADRID carregado!");
+// Salva as tarefas no navegador
+function salvarTarefas() {
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+}
 
-    // =====================================
-    // 1. NAVEGAÇÃO
-    // =====================================
+// Cadastra ou atualiza uma tarefa
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
 
-    const linksMenu = document.querySelectorAll("nav a");
+    const titulo = campoTitulo.value.trim();
+    const prioridade = campoPrioridade.value;
 
-    linksMenu.forEach(link => {
-
-        link.addEventListener("click", () => {
-
-            linksMenu.forEach(item => {
-                item.classList.remove("selecionado");
-            });
-
-            link.classList.add("selecionado");
-
-        });
-
-    });
-
-
-    // =====================================
-    // 2. ANO AUTOMÁTICO
-    // =====================================
-
-    const ano = document.getElementById("ano");
-
-    if (ano) {
-        ano.textContent = new Date().getFullYear();
+    if (titulo === "") {
+        alert("Digite o nome da tarefa!");
+        return;
     }
 
+    if (tarefaEditando !== null) {
+        const tarefa = tarefas.find(t => t.id === tarefaEditando);
 
-    // =====================================
-    // 3. SISTEMA DE FAVORITOS
-    // =====================================
+        tarefa.titulo = titulo;
+        tarefa.prioridade = prioridade;
 
-    const jogadores = document.querySelectorAll(".card");
+        tarefaEditando = null;
+        btnSalvar.textContent = "Adicionar tarefa";
+    } else {
+        const novaTarefa = {
+            id: Date.now(),
+            titulo: titulo,
+            prioridade: prioridade,
+            concluida: false
+        };
 
-    let favoritos = [];
-
-    try {
-
-        favoritos = JSON.parse(
-            localStorage.getItem("halaMadridFavoritos") || "[]"
-        );
-
-        if (!Array.isArray(favoritos)) {
-            favoritos = [];
-        }
-
-    } catch (erro) {
-
-        favoritos = [];
-
+        tarefas.push(novaTarefa);
     }
 
-
-    function salvarFavoritos() {
-
-        localStorage.setItem(
-            "halaMadridFavoritos",
-            JSON.stringify(favoritos)
-        );
-
-    }
-
-
-    jogadores.forEach(card => {
-
-        const nomeElemento = card.querySelector("h3");
-
-        if (!nomeElemento) return;
-
-        const nome = nomeElemento.textContent.trim();
-
-        const botao = document.createElement("button");
-
-        botao.className = "favorito";
-
-        function atualizarBotao() {
-
-            const estaFavoritado = favoritos.includes(nome);
-
-            botao.textContent = estaFavoritado
-                ? "❤️ Favoritado"
-                : "♡ Adicionar aos favoritos";
-
-            botao.setAttribute(
-                "aria-pressed",
-                String(estaFavoritado)
-            );
-
-        }
-
-        atualizarBotao();
-
-        botao.addEventListener("click", () => {
-
-            if (favoritos.includes(nome)) {
-
-                favoritos = favoritos.filter(
-                    jogador => jogador !== nome
-                );
-
-            } else {
-
-                favoritos.push(nome);
-
-            }
-
-            salvarFavoritos();
-
-            atualizarBotao();
-
-        });
-
-        card.appendChild(botao);
-
-    });
-
-
-    // =====================================
-    // 4. PESQUISA DE JOGADORES
-    // =====================================
-
-    const areaJogadores = document.querySelector(".jogadores");
-
-    if (areaJogadores) {
-
-        const titulo = areaJogadores.querySelector(".titulo");
-
-        const pesquisa = document.createElement("input");
-
-        pesquisa.type = "search";
-
-        pesquisa.placeholder = "🔎 Pesquisar jogador...";
-
-        pesquisa.className = "pesquisa-jogador";
-
-        pesquisa.setAttribute(
-            "aria-label",
-            "Pesquisar jogadores"
-        );
-
-        titulo.insertAdjacentElement(
-            "afterend",
-            pesquisa
-        );
-
-
-        pesquisa.addEventListener("input", () => {
-
-            const termo = pesquisa.value
-                .toLowerCase()
-                .trim();
-
-            jogadores.forEach(card => {
-
-                const nome = card.querySelector("h3")
-                    ?.textContent.toLowerCase() || "";
-
-                const informacoes = card.querySelector(".card-info")
-                    ?.textContent.toLowerCase() || "";
-
-                const encontrado =
-                    nome.includes(termo) ||
-                    informacoes.includes(termo);
-
-                card.style.display = encontrado ? "" : "none";
-
-            });
-
-        });
-
-    }
-
-
-    // =====================================
-    // 5. ANIMAÇÕES AO ROLAR A PÁGINA
-    // =====================================
-
-    const elementosAnimados = document.querySelectorAll(
-        ".card, .conquista, .evento, .historia-conteudo, .estadio"
-    );
-
-    const observadorAnimacao = new IntersectionObserver(
-        (entradas, observador) => {
-
-            entradas.forEach(entrada => {
-
-                if (entrada.isIntersecting) {
-
-                    entrada.target.classList.add("aparecer");
-
-                    observador.unobserve(entrada.target);
-
-                }
-
-            });
-
-        },
-        {
-            threshold: 0.15
-        }
-    );
-
-    elementosAnimados.forEach(elemento => {
-
-        observadorAnimacao.observe(elemento);
-
-    });
-
-
-    // =====================================
-    // 6. ANIMAÇÃO DAS CONQUISTAS
-    // =====================================
-
-    const numeros = document.querySelectorAll(".conquista h3");
-
-    const observadorNumeros = new IntersectionObserver(
-        (entradas, observador) => {
-
-            entradas.forEach(entrada => {
-
-                if (!entrada.isIntersecting) return;
-
-                const elemento = entrada.target;
-
-                const valorFinal = parseInt(
-                    elemento.textContent,
-                    10
-                );
-
-                if (Number.isNaN(valorFinal)) return;
-
-                let atual = 0;
-
-                const incremento = Math.max(
-                    1,
-                    Math.ceil(valorFinal / 50)
-                );
-
-                const intervalo = setInterval(() => {
-
-                    atual += incremento;
-
-                    if (atual >= valorFinal) {
-
-                        atual = valorFinal;
-
-                        clearInterval(intervalo);
-
-                    }
-
-                    elemento.textContent = atual;
-
-                }, 30);
-
-                observador.unobserve(elemento);
-
-            });
-
-        },
-        {
-            threshold: 0.5
-        }
-    );
-
-    numeros.forEach(numero => {
-
-        observadorNumeros.observe(numero);
-
-    });
-
-
-    // =====================================
-    // 7. BOTÃO VOLTAR AO TOPO
-    // =====================================
-
-    const voltarTopo = document.createElement("button");
-
-    voltarTopo.id = "voltarTopo";
-
-    voltarTopo.textContent = "↑";
-
-    voltarTopo.title = "Voltar ao topo";
-
-    voltarTopo.setAttribute(
-        "aria-label",
-        "Voltar ao topo da página"
-    );
-
-    voltarTopo.style.display = "none";
-
-    document.body.appendChild(voltarTopo);
-
-
-    window.addEventListener("scroll", () => {
-
-        voltarTopo.style.display =
-            window.scrollY > 400 ? "block" : "none";
-
-    });
-
-    voltarTopo.addEventListener("click", () => {
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    });
-
-
-    // =====================================
-    // 8. DESTAQUE DO MENU AO ROLAR
-    // =====================================
-
-    const secoes = document.querySelectorAll(
-        "section[id]"
-    );
-
-    const observadorMenu = new IntersectionObserver(
-        (entradas) => {
-
-            entradas.forEach(entrada => {
-
-                if (entrada.isIntersecting) {
-
-                    const id = entrada.target.id;
-
-                    linksMenu.forEach(link => {
-
-                        link.classList.toggle(
-                            "selecionado",
-                            link.getAttribute("href") === "#" + id
-                        );
-
-                    });
-
-                }
-
-            });
-
-        },
-        {
-            rootMargin: "-20% 0px -65% 0px"
-        }
-    );
-
-    secoes.forEach(secao => {
-
-        observadorMenu.observe(secao);
-
-    });
-
-
-    // =====================================
-    // 9. EFEITO DE CARREGAMENTO DAS FOTOS
-    // =====================================
-
-    const imagens = document.querySelectorAll("img");
-
-    imagens.forEach(imagem => {
-
-        imagem.addEventListener("error", () => {
-
-            imagem.style.backgroundColor = "#e9edf4";
-
-            imagem.style.color = "#17213a";
-
-            console.warn(
-                "Não foi possível carregar uma imagem:",
-                imagem.src
-            );
-
-        });
-
-    });
-
-
-    // =====================================
-    // 10. MENSAGEM DE BOAS-VINDAS
-    // =====================================
-
-    console.log(
-        "⚽ Bem-vindo ao portal HALA MADRID!"
-    );
-
-    console.log(
-        "🏆 Conheça nossa história e nossas conquistas!"
-    );
-
-    console.log(
-        "👑 ¡HALA MADRID Y NADA MÁS!"
-    );
-
+    salvarTarefas();
+    renderizarTarefas();
+
+    form.reset();
+    campoPrioridade.value = "baixa";
 });
+
+// Renderiza as tarefas na tela
+function renderizarTarefas() {
+    listaTarefas.innerHTML = "";
+
+    let tarefasFiltradas = tarefas.filter(function(tarefa) {
+        if (filtroAtual === "pendentes") {
+            return !tarefa.concluida;
+        }
+
+        if (filtroAtual === "concluidas") {
+            return tarefa.concluida;
+        }
+
+        return true;
+    });
+
+    mensagemVazia.style.display =
+        tarefasFiltradas.length === 0 ? "block" : "none";
+
+    tarefasFiltradas.forEach(function(tarefa) {
+        const li = document.createElement("li");
+        li.className = "tarefa";
+
+        if (tarefa.concluida) {
+            li.classList.add("concluida");
+        }
+
+        const divInfo = document.createElement("div");
+        divInfo.className = "tarefa-info";
+
+        const titulo = document.createElement("h3");
+        titulo.textContent = tarefa.titulo;
+
+        const badge = document.createElement("span");
+        badge.className = "badge-prioridade " + tarefa.prioridade;
+
+        const nomesPrioridade = {
+            baixa: "Baixa",
+            media: "Média",
+            alta: "Alta"
+        };
+
+        badge.textContent = "Prioridade: " +
+            nomesPrioridade[tarefa.prioridade];
+
+        divInfo.appendChild(titulo);
+        divInfo.appendChild(badge);
+
+        const divAcoes = document.createElement("div");
+        divAcoes.className = "acoes";
+
+        // Botão concluir
+        const btnConcluir = document.createElement("button");
+        btnConcluir.className = "btnConcluir";
+        btnConcluir.textContent = tarefa.concluida
+            ? "Reabrir"
+            : "Concluir";
+
+        btnConcluir.addEventListener("click", function() {
+            concluirTarefa(tarefa.id);
+        });
+
+        // Botão editar
+        const btnEditar = document.createElement("button");
+        btnEditar.className = "btnEditar";
+        btnEditar.textContent = "Editar";
+
+        btnEditar.addEventListener("click", function() {
+            editarTarefa(tarefa.id);
+        });
+
+        // Botão excluir
+        const btnExcluir = document.createElement("button");
+        btnExcluir.className = "btnExcluir";
+        btnExcluir.textContent = "Excluir";
+
+        btnExcluir.addEventListener("click", function() {
+            excluirTarefa(tarefa.id);
+        });
+
+        divAcoes.appendChild(btnConcluir);
+        divAcoes.appendChild(btnEditar);
+        divAcoes.appendChild(btnExcluir);
+
+        li.appendChild(divInfo);
+        li.appendChild(divAcoes);
+
+        listaTarefas.appendChild(li);
+    });
+
+    atualizarContador();
+}
+
+// Conclui ou reabre uma tarefa
+function concluirTarefa(id) {
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (tarefa) {
+        tarefa.concluida = !tarefa.concluida;
+        salvarTarefas();
+        renderizarTarefas();
+    }
+}
+
+// Edita uma tarefa
+function editarTarefa(id) {
+    const tarefa = tarefas.find(t => t.id === id);
+
+    if (!tarefa) return;
+
+    campoTitulo.value = tarefa.titulo;
+    campoPrioridade.value = tarefa.prioridade;
+
+    tarefaEditando = id;
+    btnSalvar.textContent = "Salvar alterações";
+
+    campoTitulo.focus();
+}
+
+// Exclui uma tarefa
+function excluirTarefa(id) {
+    const confirmar = confirm("Deseja realmente excluir esta tarefa?");
+
+    if (!confirmar) return;
+
+    tarefas = tarefas.filter(t => t.id !== id);
+
+    if (tarefaEditando === id) {
+        tarefaEditando = null;
+        form.reset();
+        btnSalvar.textContent = "Adicionar tarefa";
+    }
+
+    salvarTarefas();
+    renderizarTarefas();
+}
+
+// Atualiza o contador
+function atualizarContador() {
+    const total = tarefas.length;
+    const pendentes = tarefas.filter(t => !t.concluida).length;
+    const concluidas = tarefas.filter(t => t.concluida).length;
+
+    contador.textContent =
+        `${total} tarefas cadastradas | ` +
+        ${pendentes} pendentes | ${concluidas} concluídas;
+}
+
+// Configura os filtros
+botoesFiltro.forEach(function(botao) {
+    botao.addEventListener("click", function() {
+        filtroAtual = botao.dataset.filtro;
+
+        botoesFiltro.forEach(function(b) {
+            b.classList.remove("ativo");
+        });
+
+        botao.classList.add("ativo");
+
+        renderizarTarefas();
+    });
+});
+
+// Inicializa o sistema
+renderizarTarefas();
