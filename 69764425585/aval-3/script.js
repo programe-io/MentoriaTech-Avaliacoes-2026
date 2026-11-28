@@ -3,14 +3,15 @@ function curtir(botao) {
   const post = botao.closest(".post");
     const likes = post.querySelector(".likes");
 
-      let numero = Number(likes.dataset.numero || 120);
+      let numero = Number(post.dataset.likes);
         let curtido = botao.dataset.curtido === "true";
 
-          numero += curtido ? -1 : 1;
+          numero = curtido ? numero - 1 : numero + 1;
 
-            botao.dataset.curtido = !curtido;
-              botao.innerText = curtido ? "♡" : "❤️";
-                likes.dataset.numero = numero;
+            post.dataset.likes = numero;
+              botao.dataset.curtido = String(!curtido);
+
+                botao.innerText = curtido ? "♡" : "❤️";
                   likes.innerText = numero + " curtidas";
                   }
 
@@ -26,38 +27,50 @@ function curtir(botao) {
 
                                       const novo = document.createElement("p");
                                         novo.textContent = "Você: " + campo.value;
-                                          comentarios.appendChild(novo);
 
+                                          comentarios.appendChild(novo);
                                             campo.value = "";
                                             }
 
-                                            document.querySelectorAll(".campo-comentario").forEach(campo => {
+                                            document.querySelectorAll(".campo-comentario")
+                                            .forEach(campo => {
                                               campo.addEventListener("keydown", function(event) {
                                                   if (event.key === "Enter") {
-                                                        const botao = this.closest(".post").querySelector(".acoes button:nth-child(2)");
-                                                              comentar(botao);
-                                                                  }
-                                                                    });
-                                                                    });
+                                                        comentar(this.closest(".post"));
+                                                            }
+                                                              });
+                                                              });
 
-                                                                    function novaPublicacao() {
-                                                                      const legenda = prompt("O que você quer publicar?");
+                                                              function novaPublicacao() {
+                                                                const legenda = prompt("O que você quer publicar?");
 
-                                                                        if (!legenda || !legenda.trim()) return;
+                                                                  if (!legenda || !legenda.trim()) return;
 
-                                                                          const post = document.createElement("article");
-                                                                            post.className = "post";
+                                                                    const post = document.createElement("article");
+                                                                      post.className = "post";
+                                                                        post.dataset.likes = "0";
 
-                                                                              const usuario = document.createElement("div");
-                                                                                usuario.className = "usuario";
-                                                                                  usuario.innerHTML = "<strong>seu_perfil</strong><span>•••</span>";
+                                                                          post.innerHTML = `
+                                                                              <div class="usuario">
+                                                                                    <strong>seu_perfil</strong>
+                                                                                        </div>
 
-                                                                                    const texto = document.createElement("p");
-                                                                                      texto.textContent = legenda;
+                                                                                            <p class="legenda"></p>
 
-                                                                                        post.appendChild(usuario);
-                                                                                          post.appendChild(texto);
+                                                                                                <div class="acoes">
+                                                                                                      <button onclick="curtir(this)">♡</button>
+                                                                                                            <button onclick="comentar(this)">♧</button>
+                                                                                                                  <button>➤</button>
+                                                                                                                      </div>
 
-                                                                                            document.getElementById("feed").prepend(post);
-                                                                                            }
-                                                                                            
+                                                                                                                          <p class="likes">0 curtidas</p>
+                                                                                                                              <div class="comentarios"></div>
+                                                                                                                                  <input class="campo-comentario"
+                                                                                                                                      placeholder="Adicione um comentário...">
+                                                                                                                                        `;
+
+                                                                                                                                          post.querySelector(".legenda").textContent = legenda;
+
+                                                                                                                                            document.getElementById("feed").prepend(post);
+                                                                                                                                            }
+                                                                                                                                            
