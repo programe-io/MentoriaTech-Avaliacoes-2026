@@ -1,0 +1,267 @@
+/* ABRIR E FECHAR MENU MOBILE */
+
+function abrirMenu() {
+
+    const menu = document.getElementById("menu");
+
+    menu.classList.toggle("ativo");
+
+}
+
+
+/* CRIAR NOVA PUBLICAÇÃO */
+
+function publicarPost() {
+
+    const texto = document.getElementById("textoPost");
+
+    const conteudo = texto.value.trim();
+
+    // Verifica se existe texto
+    if (conteudo === "") {
+
+        alert("Digite alguma coisa antes de publicar!");
+
+        return;
+
+    }
+
+    // Cria um novo elemento
+    const novoPost = document.createElement("article");
+
+    novoPost.className = "post";
+
+    // Cria o cabeçalho
+    const cabecalho = document.createElement("div");
+
+    cabecalho.className = "post-header";
+
+    const imagem = document.createElement("img");
+
+    imagem.src = "https://i.pravatar.cc/150?img=12";
+    imagem.alt = "Foto do usuário";
+
+    const identificacao = document.createElement("div");
+
+    const nome = document.createElement("h3");
+
+    nome.textContent = "Paulo Silva";
+
+    const horario = document.createElement("span");
+
+    horario.textContent = "Agora";
+
+    identificacao.append(nome, horario);
+
+    cabecalho.append(imagem, identificacao);
+
+    // Cria o texto da publicação
+    const paragrafo = document.createElement("p");
+
+    paragrafo.className = "post-texto";
+
+    paragrafo.textContent = conteudo;
+
+    // Cria informações da publicação
+    const informacoes = document.createElement("div");
+
+    informacoes.className = "post-info";
+
+    informacoes.innerHTML = `
+        <span>❤️ <span class="contador">0</span> curtidas</span>
+        <span>0 comentários</span>
+    `;
+
+    // Cria os botões de interação
+    const acoes = document.createElement("div");
+
+    acoes.className = "post-acoes";
+
+    acoes.innerHTML = `
+        <button class="curtir" onclick="curtirPost(this)">
+            ♡ Curtir
+        </button>
+
+        <button onclick="focarComentario(this)">
+            💬 Comentar
+        </button>
+
+        <button onclick="compartilharPost(this)">
+            ↗ Compartilhar
+        </button>
+    `;
+
+    // Cria área de comentários
+    const comentarios = document.createElement("div");
+
+    comentarios.className = "comentarios";
+
+    comentarios.innerHTML = `
+        <input type="text"
+               placeholder="Escreva um comentário...">
+
+        <button onclick="adicionarComentario(this)">
+            Enviar
+        </button>
+
+        <div class="lista-comentarios"></div>
+    `;
+
+    // Monta a publicação
+    novoPost.append(
+        cabecalho,
+        paragrafo,
+        informacoes,
+        acoes,
+        comentarios
+    );
+
+    // Adiciona no início do feed
+    const feed = document.getElementById("listaPosts");
+
+    feed.prepend(novoPost);
+
+    // Limpa o campo de texto
+    texto.value = "";
+
+}
+
+
+/* CURTIR PUBLICAÇÃO */
+
+function curtirPost(botao) {
+
+    const post = botao.closest(".post");
+
+    const contador = post.querySelector(".contador");
+
+    let quantidade = Number(contador.textContent);
+
+    if (botao.classList.contains("curtido")) {
+
+        quantidade--;
+
+        botao.classList.remove("curtido");
+
+        botao.innerHTML = "♡ Curtir";
+
+    } else {
+
+        quantidade++;
+
+        botao.classList.add("curtido");
+
+        botao.innerHTML = "❤️ Curtido";
+
+    }
+
+    contador.textContent = quantidade;
+
+}
+
+
+/* FOCAR NO CAMPO DE COMENTÁRIO */
+
+function focarComentario(botao) {
+
+    const post = botao.closest(".post");
+
+    const campo = post.querySelector(".comentarios input");
+
+    campo.focus();
+
+}
+
+
+/* ADICIONAR COMENTÁRIO */
+
+function adicionarComentario(botao) {
+
+    const comentarios = botao.closest(".comentarios");
+
+    const campo = comentarios.querySelector("input");
+
+    const lista = comentarios.querySelector(
+        ".lista-comentarios"
+    );
+
+    const texto = campo.value.trim();
+
+    if (texto === "") {
+
+        alert("Digite um comentário!");
+
+        return;
+
+    }
+
+    // Cria o comentário
+    const novoComentario = document.createElement("p");
+
+    novoComentario.textContent = "👤 Paulo Silva: " + texto;
+
+    lista.appendChild(novoComentario);
+
+    // Atualiza a quantidade de comentários
+    const post = botao.closest(".post");
+
+    const contadorComentarios = post.querySelector(
+        ".post-info span:last-child"
+    );
+
+    const quantidade = lista.querySelectorAll("p").length;
+
+    contadorComentarios.textContent =
+        quantidade + " comentários";
+
+    // Limpa o campo
+    campo.value = "";
+
+}
+
+
+/* COMPARTILHAR PUBLICAÇÃO */
+
+function compartilharPost(botao) {
+
+    const post = botao.closest(".post");
+
+    const texto = post.querySelector(".post-texto").textContent;
+
+    // Copia o texto para a área de transferência
+    if (navigator.clipboard) {
+
+        navigator.clipboard.writeText(texto)
+            .then(function() {
+
+                alert("Texto da publicação copiado!");
+
+            })
+            .catch(function() {
+
+                alert("Não foi possível copiar o texto.");
+
+            });
+
+    } else {
+
+        alert("Compartilhamento não disponível neste navegador.");
+
+    }
+
+}
+
+
+/* ADICIONAR AMIGO */
+
+function adicionarAmigo(botao) {
+
+    botao.textContent = "✓";
+
+    botao.disabled = true;
+
+    botao.style.background = "#28a745";
+
+    botao.title = "Amigo adicionado";
+
+}
