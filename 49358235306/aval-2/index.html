@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desvie! - Jogo</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #10172a;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.game {
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
+
+canvas {
+  width: 100%;
+  background: #0b1220;
+  border: 2px solid #49627f;
+  border-radius: 12px;
+}
+
+.hud {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px;
+}
+
+button {
+  padding: 12px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  background: #35c6a5;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="style.css" rel="stylesheet"></head>
+<body>
+
+<div class="game">
+  <h1>DESVIE!</h1>
+  <p>Desvie dos obstáculos!</p>
+
+  <div class="hud">
+    <span>Pontos: <b id="score">0</b></span>
+    <span>Recorde: <b id="best">0</b></span>
+  </div>
+
+  <canvas id="game" width="480" height="600"></canvas>
+
+  <div>
+    <button onclick="move(-1)">◀ Esquerda</button>
+    <button onclick="start()">Começar</button>
+    <button onclick="move(1)">Direita ▶</button>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let player = { x: 218, y: 520, w: 44, h: 44 };
+let blocks = [];
+let score = 0;
+let best = Number(localStorage.getItem("best") || 0);
+let running = false;
+let direction = 0;
+let speed = 3;
+let spawn = 0;
+
+document.getElementById("best").textContent = best;
+
+function move(dir) {
+  if (!running) return;
+  player.x += dir * 35;
+  player.x = Math.max(0, Math.min(436, player.x));
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft" || e.key === "a") direction = -1;
+  if (e.key === "ArrowRight" || e.key === "d") direction = 1;
+});
+
+document.addEventListener("keyup", () => direction = 0);
+
+function start() {
+  player.x = 218;
+  blocks = [];
+  score = 0;
+  speed = 3;
+  spawn = 0;
+  running = true;
+  loop();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, 480, 600);
+
+  ctx.fillStyle = "#35c6a5";
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+
+  blocks.forEach(b => {
+    ctx.fillStyle = "#ff647c";
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+  });
+}
+
+function loop() {
+  if (!running) return;
+
+  player.x += direction * 5;
+  player.x = Math.max(0, Math.min(436, player.x));
+
+  spawn++;
+
+  if (spawn > 45) {
+    let w = 30 + Math.random() * 40;
+    blocks.push({
+      x: Math.random() * (480 - w),
+      y: -40,
+      w: w,
+      h: 30
+    });
+    spawn = 0;
+  }
+
+  blocks.forEach(b => b.y += speed);
+  blocks = blocks.filter(b => b.y < 620);
+
+  for (let b of blocks) {
+    if (
+      player.x < b.x + b.w &&
+      player.x + player.w > b.x &&
+      player.y < b.y + b.h &&
+      player.y + player.h > b.y
+    ) {
+      endGame();
+      return;
+    }
+  }
+
+  score++;
+  document.getElementById("score").textContent = Math.floor(score / 10);
+
+  speed += 0.001;
+
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function endGame() {
+  running = false;
+
+  let points = Math.floor(score / 10);
+
+  if (points > best) {
+    best = points;
+    localStorage.setItem("best", best);
+    document.getElementById("best").textContent = best;
+  }
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 35px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText("FIM DE JOGO", 240, 280);
+
+  ctx.font = "20px Arial";
+  ctx.fillText("Pontuação: " + points, 240, 320);
+}
+
+draw();
+</script>
+
+<script src="script.js"></script></body>
+</html>
