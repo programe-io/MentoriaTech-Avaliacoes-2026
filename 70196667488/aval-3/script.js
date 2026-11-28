@@ -1,112 +1,70 @@
-document.getElementById("btAdd").onclick = Add;
-document.getElementById("btAtualizar").onclick = Atualizar;
-document.getElementById("btExcluir").onclick = Excluir;
+import java.util.Locale;
+import java.util.Scanner;
 
-const descricao = document.getElementById("nomeP");
-const qtd = document.getElementById("qtdP");
-const valor = document.getElementById("precoP");
+public class CalculadoraIMC {
 
-let produtos = [];
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
 
-function Add(){
-    ValidarProdutos(descricao.value, qtd.value, valor.value);
+        System.out.println("=== CALCULADORA DE IMC ===");
 
-    let novoProduto = {
-        "codigo": produtos.length + 1,
-        "descricao": descricao.value,
-        "quantidade": qtd.value,
-        "valor": valor.value
-    }
+        System.out.print("Digite o nome do paciente: ");
+        String nome = scanner.nextLine();
 
-    produtos.push(novoProduto);
-    limparCampos();
-    exibirProdutos();
-}
+        System.out.print("Digite o peso do paciente (kg) [ex: 70.5]: ");
+        double peso = scanner.nextDouble();
 
-function ValidarProdutos(descricao, qtd, valor){
-    if (descricao.length < 5){
-        alert("A descrição deve ter +4 caracteres");
-        throw new Error("A descrição deve ter +4 caracteres");
-    }
+        System.out.print("Digite a altura do paciente (m) [ex: 1.75]: ");
+        double altura = scanner.nextDouble();
 
-    if(qtd < 1){
-        alert("Quantidade deve ser maior que zero");
-        throw new Error("Quantidade deve ser maior que zero");
-    }
+        Paciente paciente = new Paciente(nome, peso, altura);
+        paciente.exibirInformacoes();
 
-    if(valor <= 0){
-        alert("valor deve ser maior que zero");
-        throw new Error("valor deve ser maior que zero");
+        scanner.close();
     }
 }
 
-function exibirProdutos() {
-    const listaUl = document.getElementById("listaProdutos");
+class Paciente {
+    private String nome;
+    private double peso;
+    private double altura;
 
-    listaUl.innerHTML = produtos.map(item =>
-        `<li>
-            <strong>Código:</strong> ${item.codigo} |
-            <strong>Produto:</strong> ${item.descricao} |
-            <strong>Qtd:</strong> ${item.quantidade} |
-            <strong>Valor:</strong> R$ ${item.valor}
-        </li>`
-    ).join('');
-}
+    public Paciente(String nome, double peso, double altura) {
+        this.nome = nome;
+        this.peso = peso;
+        this.altura = altura;
+    }
 
-function Atualizar(){
+    public double calcularIMC() {
+        return peso / (altura * altura);
+    }
 
-    let buscarcod = prompt("Digite o código do produto que deseja atualizar:");
+    public String obterClassificacao() {
+        double imc = calcularIMC();
 
-    if (buscarcod !== null && buscarcod.trim() !== "") {
-
-        let codigo = Number(buscarcod) - 1;
-
-        if(codigo < produtos.length){
-            let novoV = prompt("Digite o novo Preço:");
-
-            if (novoV !== null && novoV.trim() !== "" && Number(novoV) > 0) {
-                produtos[codigo].valor = Number(novoV);
-                exibirProdutos();
-            } else {
-                alert("Operação cancelada ou valor inválido.");
-            }
+        if (imc < 18.5) {
+            return "Abaixo do peso";
+        } else if (imc < 25.0) {
+            return "Peso normal";
+        } else if (imc < 30.0) {
+            return "Sobrepeso";
+        } else if (imc < 35.0) {
+            return "Obesidade Grau I";
+        } else if (imc < 40.0) {
+            return "Obesidade Grau II";
         } else {
-            alert("Código inválido.");
+            return "Obesidade Grau III";
         }
-    } else {
-        alert("Operação cancelada ou código inválido.");
     }
-}
 
-function Excluir(){
-
-    let buscarcod = prompt("Digite o código do produto que deseja excluir:");
-
-    if (buscarcod !== null && buscarcod.trim() !== "") {
-
-        let codigo = Number(buscarcod) - 1;
-
-        if(codigo >= 0 && codigo < produtos.length){
-
-            produtos.splice(codigo, 1);
-
-            for (let i = 0; i < produtos.length; i++) {
-                produtos[i].codigo = i + 1;
-            }
-
-            exibirProdutos();
-            alert("Produto excluído com sucesso!");
-        } else {
-            alert("Código inválido ou produto não encontrado.");
-        }
-    } else {
-        alert("Operação cancelada ou código inválido.");
+    public void exibirInformacoes() {
+        double imc = calcularIMC();
+        System.out.println("\n--- RESULTADO DO PACIENTE ---");
+        System.out.println("Nome: " + nome);
+        System.out.printf("Peso: %.2f kg\n", peso);
+        System.out.printf("Altura: %.2f m\n", altura);
+        System.out.printf("IMC: %.2f\n", imc);
+        System.out.println("Classificação: " + obterClassificacao());
+        System.out.println("-----------------------------");
     }
-}
-
-function limparCampos(){
-    descricao.value = "";
-    qtd.value = "";
-    valor.value = "";
-    descricao.focus();
 }
