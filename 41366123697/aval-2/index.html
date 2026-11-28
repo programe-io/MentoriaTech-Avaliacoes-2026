@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Código JavaScript</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <style>body{margin:0;background:#0d1117}pre{margin:0}code.hljs{padding:1.5rem;min-height:100vh;box-sizing:border-box}</style>
+</head>
+<body>
+  <pre><code class="language-javascript">let tarefas = []
+
+function adicionarTarefa(tarefa) {
+    tarefas.push(tarefa)
+    console.log(`Tarefa "${tarefa}" adicionada com sucesso!`)
+}   
+
+function listarTarefas() {
+    if (tarefas.length === 0) {
+        console.log("Nenhuma tarefa encontrada.")
+    } else {
+        console.log("Lista de tarefas:")
+        tarefas.forEach((tarefa, index) =&gt; {
+            console.log(`${index + 1}. ${tarefa}`)
+        })
+    }
+
+    function removerTarefa(index) {
+        if (index &lt; 1 || index &gt; tarefas.length) {
+            console.log("Índice inválido. Nenhuma tarefa removida.")
+        } else {
+            const tarefaRemovida = tarefas.splice(index - 1, 1)
+            console.log(`Tarefa "${tarefaRemovida}" removida com sucesso!`)
+        }
+        
+        console.log("Tarefas restantes:")
+        listarTarefas()
+    }
+
+    const readline = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout
+    })
+
+    if (tarefas.length &gt; 0) {
+        readline.question("Deseja remover alguma tarefa? (s/n) ", (resposta) =&gt; {
+            if (resposta.toLowerCase() === 's') {
+                readline.question("Digite o índice da tarefa que deseja remover: ", (indice) =&gt; {
+                    removerTarefa(parseInt(indice))
+                    readline.close()
+                })
+            } else {
+                console.log("Nenhuma tarefa removida.")
+                readline.close()
+            }</code></pre>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
